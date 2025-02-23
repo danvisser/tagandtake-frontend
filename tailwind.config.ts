@@ -10,6 +10,27 @@ export default {
   ],
   theme: {
   	extend: {
+		fontFamily: {
+			sans: ['"Nunito Sans"', 'sans-serif'],
+		  },
+		TextColor: {
+			DEFAULT: '#000000',
+			primary: '#5E9060',
+			secondary: '#FFFFFF',
+			destructive: '#B75454',
+		  },
+		borderColor: {
+			DEFAULT: '#5E9060',
+			primary: '#5E9060',
+			secondary: '#FFFFFF',
+			destructive: '#B75454',
+		  },  
+		backgroundColor: {
+			DEFAULT: '#FFFFFF',
+			primary: '#5E9060',
+			secondary: '#FFFFFF',
+			destructive: '#B75454',
+		  },
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
@@ -22,11 +43,11 @@ export default {
   				foreground: 'hsl(var(--popover-foreground))'
   			},
   			primary: {
-  				DEFAULT: 'hsl(var(--primary))',
+  				DEFAULT: '#5E9060',
   				foreground: 'hsl(var(--primary-foreground))'
   			},
   			secondary: {
-  				DEFAULT: 'hsl(var(--secondary))',
+  				DEFAULT: 'FFFFFF',
   				foreground: 'hsl(var(--secondary-foreground))'
   			},
   			muted: {
@@ -38,7 +59,7 @@ export default {
   				foreground: 'hsl(var(--accent-foreground))'
   			},
   			destructive: {
-  				DEFAULT: 'hsl(var(--destructive))',
+  				DEFAULT: 'B75454',
   				foreground: 'hsl(var(--destructive-foreground))'
   			},
   			border: 'hsl(var(--border))',
