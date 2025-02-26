@@ -106,14 +106,24 @@ export default function Header({ variant }: { variant: 'public' | 'member' | 'st
             </Link>
           )}
           {variant === 'store' && (
-            <Link href={Routes.STORE_DASHBOARD}>
-              <StoreIcon className="h-6 w-6 dark:text-gray-400" />
-            </Link>
+            <>
+              <Button variant="outline" size="sm">
+                Sign Out
+              </Button>
+              <Link href={Routes.STORE_DASHBOARD}>
+                <StoreIcon className="h-6 w-6 dark:text-gray-400" />
+              </Link>
+            </>
           )}
           {variant === 'member' && (
-            <Link href={Routes.MEMBER_PROFILE}>
-              <ProfileIcon className="h-6 w-6 dark:text-gray-400" />
-            </Link>
+            <>
+              <Button variant="outline" size="sm">
+                Sign Out
+              </Button>
+              <Link href={Routes.MEMBER_PROFILE}>
+                <ProfileIcon className="h-6 w-6 dark:text-gray-400" />
+              </Link>
+            </>
           )}
           <Sheet>
             <SheetTrigger asChild> 
