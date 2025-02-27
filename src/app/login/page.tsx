@@ -21,13 +21,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="container flex min-h-screen w-full flex-col justify-center px-4 md:px-6"> 
-      <div className="mx-auto w-full max-w-[400px] space-y-6">
-        <div className="flex flex-col space-y-2 text-center">
-          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
-            Log in
-          </h2>
-        </div>
+    <div className="flex min-h-screen justify-center items-center w-full md:px-4">
+      <div className="w-full max-w-md flex px-4 flex-col space-y-6">
+        <h2 className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
+          Log in
+        </h2>
         <LoginForm onSubmit={handleLogin} />
       </div>
     </div>
