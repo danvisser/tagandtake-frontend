@@ -1,22 +1,27 @@
 "use client";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@src/stores/authStore";
 import LoginForm from "@src/components/LoginForm";
+import { Routes } from "@src/constants/routes";
 
 export default function LoginPage() {
   const { login } = useAuthStore();
   const router = useRouter();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleLogin = async (email: string, password: string) => {
     try {
+      setErrorMessage(null);
       const result = await login(email, password);
-      // Only redirect if login was successful
       if (result && result.success) {
-        router.push("/dashboard");
+        router.push(Routes.MEMBER_PROFILE);
+      } else if (result && result.error) {
+        setErrorMessage(String(result.error));
       }
     } catch (error) {
       console.error("Login failed:", error);
-      // Error is already handled in the LoginForm component
+      setErrorMessage("An unexpected error occurred. Please try again later.");
     }
   };
 
@@ -26,7 +31,7 @@ export default function LoginPage() {
         <h2 className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
           Log in
         </h2>
-        <LoginForm onSubmit={handleLogin} />
+        <LoginForm onSubmit={handleLogin} errorMessage={errorMessage} />
       </div>
     </div>
   );
