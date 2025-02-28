@@ -20,6 +20,10 @@ export default function LoginForm({ onSubmit, errorMessage }: LoginFormProps) {
   const [rememberMe, setRememberMe] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
+  // Check if the error is about an inactive account
+  const isInactiveAccount =
+    errorMessage?.toLowerCase().includes("inactive") || false;
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setIsLoading(true);
@@ -35,20 +39,37 @@ export default function LoginForm({ onSubmit, errorMessage }: LoginFormProps) {
 
   return (
     <div className="grid gap-6">
-      {errorMessage && (
+      {errorMessage && !isInactiveAccount && (
         <div className="text-destructive px-4 py-3 rounded-md text-sm">
           {errorMessage}
         </div>
       )}
+
+      {isInactiveAccount && (
+        <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-md space-y-2">
+          <p className="text-sm font-medium">
+            Your account hasn&apos;t been activated yet.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-2 text-sm">
+            <Link
+              href={`/resend-activation?email=${encodeURIComponent(email)}`}
+              className="text-primary hover:underline font-medium"
+            >
+              Resend activation email
+            </Link>
+          </div>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-3">
           <div className="space-y-2">
             <Input
               id="email"
               placeholder="Email or username"
-              type="email"
+              type="text"
               autoCapitalize="none"
-              autoComplete="email"
+              autoComplete="username"
               autoCorrect="off"
               disabled={isLoading}
               value={email}

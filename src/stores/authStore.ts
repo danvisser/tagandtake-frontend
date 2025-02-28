@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { fetchUserSession, login, logout } from "@src/api/authApi";
-import { getAccessToken } from "@src/lib/fetchClient";
 import axios from "axios";
 
 interface AuthState {
@@ -22,7 +21,11 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       role: null,
 
-      setAuth: (role) => set({ role, isAuthenticated: !!role }),
+      setAuth: (role) => {
+        set({ role, isAuthenticated: !!role });
+        // Dispatch storage event to sync across tabs
+        window.dispatchEvent(new Event("storage"));
+      },
 
       login: async (username: string, password: string) => {
         try {
@@ -36,6 +39,9 @@ export const useAuthStore = create<AuthState>()(
             role: response.role,
           });
 
+          // Sync across tabs
+          window.dispatchEvent(new Event("storage"));
+
           return { success: true, role: response.role };
         } catch (error) {
           console.error("Login error:", error);
@@ -45,8 +51,7 @@ export const useAuthStore = create<AuthState>()(
           if (axios.isAxiosError(error) && error.response?.data) {
             // Try to get the error message from the response data
             errorMessage =
-              error.response.data.non_field_errors ||
-              "Invalid credentials";
+              error.response.data.non_field_errors || "Invalid credentials";
           }
 
           return { success: false, error: errorMessage };
@@ -57,6 +62,9 @@ export const useAuthStore = create<AuthState>()(
         try {
           await logout();
           set({ isAuthenticated: false, role: null });
+
+          // Sync across tabs
+          window.dispatchEvent(new Event("storage"));
         } catch (error) {
           console.error("Logout error:", error);
         }
@@ -65,11 +73,12 @@ export const useAuthStore = create<AuthState>()(
       initializeAuth: async () => {
         const { isAuthenticated, role } = get();
 
-        // If we already have auth state and an access token, no need to re-fetch
-        if (isAuthenticated && role && getAccessToken()) {
+        // If we already have auth state from localStorage, trust it and don't make an API call
+        if (isAuthenticated && role) {
           return;
         }
 
+        // Only fetch from API if we don't have state in localStorage
         try {
           const session = await fetchUserSession();
           set({
@@ -91,3 +100,14 @@ export const useAuthStore = create<AuthState>()(
     }
   )
 );
+
+// Add the storage event listener for cross-tab sync
+window.addEventListener("storage", () => {
+  const storedState = JSON.parse(localStorage.getItem("auth-storage") || "{}");
+  if (storedState.state) {
+    useAuthStore.setState({
+      role: storedState.state.role,
+      isAuthenticated: storedState.state.isAuthenticated,
+    });
+  }
+});

@@ -14,8 +14,6 @@ export const setAccessToken = (token: string | null) => {
   accessToken = token;
 };
 
-export const getAccessToken = () => accessToken;
-
 // Function to subscribe to token refresh
 const subscribeTokenRefresh = (callback: (token: string) => void) => {
   refreshSubscribers.push(callback);

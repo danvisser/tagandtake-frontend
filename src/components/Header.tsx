@@ -7,13 +7,24 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@src/components/ui/dropdown-menu";
-import { Routes } from "../constants/routes";
+import { Routes } from "@src/constants/routes";
+import { useAuthStore } from "@src/stores/authStore";
+import { useCallback } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Header({
   variant,
 }: {
   variant: "public" | "member" | "store";
 }) {
+  const logout = useAuthStore((state) => state.logout);
+  const router = useRouter();
+
+  const handleLogout = useCallback(async () => {
+    await logout();
+    router.push(Routes.HOME);
+  }, [logout, router]);
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white dark:border-gray-800 dark:bg-gray-950 p-0">
       <div className="container mx-auto flex h-16 max-w-full items-center justify-center px-4 md:px-6 relative">
@@ -32,17 +43,29 @@ export default function Header({
           {variant === "public" && (
             <>
               <Link href={Routes.HOME} prefetch={false}>
-                <Button variant="ghost" size="lg" className="text-lg font-light">
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="text-lg font-light"
+                >
                   Home
                 </Button>
               </Link>
               <Link href={Routes.HOW_IT_WORKS} prefetch={false}>
-                <Button variant="ghost" size="lg" className="text-lg font-light">
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="text-lg font-light"
+                >
                   How it works
                 </Button>
               </Link>
               <Link href={Routes.ABOUT} prefetch={false}>
-                <Button variant="ghost" size="lg" className="text-lg font-light">
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="text-lg font-light"
+                >
                   About
                 </Button>
               </Link>
@@ -51,17 +74,29 @@ export default function Header({
           {variant === "member" && (
             <>
               <Link href={Routes.HOME} prefetch={false}>
-                <Button variant="ghost" size="lg" className="text-lg font-light">
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="text-lg font-light"
+                >
                   Home
                 </Button>
               </Link>
-              <Link href={Routes.MEMBER_WARDROBE} prefetch={false}>
-                <Button variant="ghost" size="lg" className="text-lg font-light">
+              <Link href={Routes.MEMBER.WARDROBE} prefetch={false}>
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="text-lg font-light"
+                >
                   Wardrobe
                 </Button>
               </Link>
-              <Link href={Routes.MEMBER_PROFILE} prefetch={false}>
-                <Button variant="ghost" size="lg" className="text-lg font-light">
+              <Link href={Routes.MEMBER.PROFILE} prefetch={false}>
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="text-lg font-light"
+                >
                   Profile
                 </Button>
               </Link>
@@ -70,17 +105,29 @@ export default function Header({
           {variant === "store" && (
             <>
               <Link href={Routes.HOME} prefetch={false}>
-                <Button variant="ghost" size="lg" className="text-lg font-light">
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="text-lg font-light"
+                >
                   Home
                 </Button>
               </Link>
-              <Link href={Routes.STORE_DASHBOARD} prefetch={false}>
-                <Button variant="ghost" size="lg" className="text-lg font-light">
+              <Link href={Routes.STORE.DASHBOARD} prefetch={false}>
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="text-lg font-light"
+                >
                   Dashboard
                 </Button>
               </Link>
-              <Link href={Routes.STORE_LISTINGS} prefetch={false}>
-                <Button variant="ghost" size="lg" className="text-lg font-light">
+              <Link href={Routes.STORE.LISTINGS} prefetch={false}>
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="text-lg font-light"
+                >
                   Listings
                 </Button>
               </Link>
@@ -98,21 +145,18 @@ export default function Header({
             </Link>
           )}
           {variant === "store" && (
-            <>
-              <Button variant="outline" size="sm">
-                Sign Out
-              </Button>
-              <Link href={Routes.STORE_DASHBOARD}>
-                <StoreIcon className="h-6 w-6 dark:text-gray-400" />
-              </Link>
-            </>
+            <Link href={Routes.STORE.DASHBOARD}>
+              <StoreIcon className="h-6 w-6 dark:text-gray-400" />
+            </Link>
           )}
           {variant === "member" && (
             <>
-              <Button variant="outline" size="sm">
-                Sign Out
-              </Button>
-              <Link href={Routes.MEMBER_PROFILE}>
+              <Link href={Routes.ITEM.NEW}>
+                <Button variant="outline" size="sm">
+                  Sell now
+                </Button>
+              </Link>
+              <Link href={Routes.MEMBER.PROFILE}>
                 <ProfileIcon className="h-6 w-6 dark:text-gray-400" />
               </Link>
             </>
@@ -130,7 +174,7 @@ export default function Header({
               {variant === "public" && (
                 <>
                   <DropdownMenuItem asChild>
-                    <Link href={Routes.MEMBER_SIGNUP} className="w-full">
+                    <Link href={Routes.MEMBER.SIGNUP} className="w-full">
                       Sign up
                     </Link>
                   </DropdownMenuItem>
@@ -160,28 +204,36 @@ export default function Header({
               {variant === "member" && (
                 <>
                   <DropdownMenuItem asChild>
-                    <Link href={Routes.MEMBER_WARDROBE} className="w-full">
+                    <Link href={Routes.MEMBER.WARDROBE} className="w-full">
                       Wardrobe
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href={Routes.MEMBER_PROFILE} className="w-full">
+                    <Link href={Routes.MEMBER.PROFILE} className="w-full">
                       Profile
                     </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    Sign Out
                   </DropdownMenuItem>
                 </>
               )}
               {variant === "store" && (
                 <>
                   <DropdownMenuItem asChild>
-                    <Link href={Routes.STORE_DASHBOARD} className="w-full">
+                    <Link href={Routes.STORE.DASHBOARD} className="w-full">
                       Dashboard
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href={Routes.STORE_LISTINGS} className="w-full">
+                    <Link href={Routes.STORE.LISTINGS} className="w-full">
                       Listings
                     </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    Sign Out
                   </DropdownMenuItem>
                 </>
               )}

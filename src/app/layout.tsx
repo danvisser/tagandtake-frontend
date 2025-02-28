@@ -1,5 +1,5 @@
 import "./globals.css";
-import Header from "@src/components/Header";
+import HeaderWithAuth from "@src/components/HeaderWithAuth";
 
 
 export default function RootLayout({
@@ -10,8 +10,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-          <Header variant="public"/>
-          {children}
+        <HeaderWithAuth />
+        {children}
       </body>
     </html>
   );

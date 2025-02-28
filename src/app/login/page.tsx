@@ -15,7 +15,7 @@ export default function LoginPage() {
       setErrorMessage(null);
       const result = await login(email, password);
       if (result && result.success) {
-        router.push(Routes.MEMBER_PROFILE);
+        router.push(Routes.MEMBER.PROFILE);
       } else if (result && result.error) {
         setErrorMessage(String(result.error));
       }

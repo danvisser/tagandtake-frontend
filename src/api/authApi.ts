@@ -67,3 +67,26 @@ export const logout = async (): Promise<void> => {
   // Clear the access token from memory
   setAccessToken(null);
 };
+
+export const resendActivation = async (email: string): Promise<void> => {
+  await authRequest({
+    method: "POST",
+    url: API_ROUTES.ACTIVATION.RESEND,
+    data: { email },
+  });
+};
+
+export const activateAccount = async (
+  uuid: string,
+  token: string
+): Promise<void> => {
+  try {
+    await authRequest({
+      method: "GET",
+      url: API_ROUTES.ACTIVATION.ACTIVATE(uuid, token),
+    });
+  } catch (error) {
+    console.error("Account activation error:", error);
+    throw error;
+  }
+};
