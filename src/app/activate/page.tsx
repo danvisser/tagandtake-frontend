@@ -28,6 +28,7 @@ export default function ActivatePage() {
     ActivationStatus.LOADING
   );
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [userRole, setUserRole] = useState<string>("");
 
   useEffect(() => {
     const uuid = searchParams.get("uuid");
@@ -40,8 +41,12 @@ export default function ActivatePage() {
 
     const activateUser = async () => {
       try {
-        await activateAccount(uuid, token);
+        const response = await activateAccount(uuid, token);
         setStatus(ActivationStatus.SUCCESS);
+
+        if (response && response.role) {
+          setUserRole(response.role);
+        }
       } catch (error) {
         setStatus(ActivationStatus.ERROR);
         setErrorMessage(
@@ -71,21 +76,37 @@ export default function ActivatePage() {
         <CardContent className="flex flex-col items-center space-y-4">
           {status === ActivationStatus.SUCCESS && (
             <>
-              <CheckCircle className="h-16 w-16 text-green-500" />
-              <p className="text-center">
-                Your account has been successfully activated. You can now log
-                in.
-              </p>
+              <CheckCircle className="h-16 w-16 text-primary" />
+              {userRole === "store" ? (
+                <>
+                  <p className="text-center">
+                    Your store account has been successfully activated. Login to
+                    get started.
+                  </p>
+                  <div className="mt-4 p-4 bg-primary/10 border border-primary/30 rounded-md">
+                    <p className="text-center font-medium text-black">
+                      Important: Store Settings Access
+                    </p>
+                    <p className="text-center text-sm mt-2 text-foreground">
+                      Please check your email for your unique store PIN.
+                      You&apos;ll need this PIN to update your store&apos;s
+                      settings securely.
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <p className="text-center">
+                  Your account has been successfully activated. You can now log
+                  in.
+                </p>
+              )}
             </>
           )}
           {status === ActivationStatus.ERROR && (
             <>
-              <AlertCircle className="h-16 w-16 text-red-500" />
+              <AlertCircle className="h-16 w-16 text-destructive" />
               <p className="text-center">
                 We couldn&apos;t activate your account. {errorMessage}
-              </p>
-              <p className="text-center text-sm text-gray-500">
-                The activation link may have expired or already been used.
               </p>
             </>
           )}

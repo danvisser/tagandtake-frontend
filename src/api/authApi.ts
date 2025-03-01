@@ -1,6 +1,7 @@
 import { authRequest } from "@src/lib/fetchClient";
 import { API_ROUTES } from "@src/constants/apiRoutes";
 import { setAccessToken } from "@src/lib/fetchClient";
+import axios from "axios";
 
 export interface AuthResponse {
   role: string | null;
@@ -34,7 +35,6 @@ export const login = async (credentials: {
     data: credentials,
   });
 
-  // Store the access token in memory
   if (data.access) {
     setAccessToken(data.access);
   }
@@ -64,7 +64,6 @@ export const logout = async (): Promise<void> => {
     url: API_ROUTES.AUTH.LOGOUT,
   });
 
-  // Clear the access token from memory
   setAccessToken(null);
 };
 
@@ -79,14 +78,20 @@ export const resendActivation = async (email: string): Promise<void> => {
 export const activateAccount = async (
   uuid: string,
   token: string
-): Promise<void> => {
+): Promise<AuthResponse> => {
   try {
-    await authRequest({
+    const { data } = await authRequest({
       method: "GET",
       url: API_ROUTES.ACTIVATION.ACTIVATE(uuid, token),
     });
-  } catch (error) {
+    return {
+      role: data.role || null,
+    };
+  } catch (error: unknown) {
     console.error("Account activation error:", error);
+    if (axios.isAxiosError(error) && error.response?.data?.error) {
+      throw new Error(error.response.data.error);
+    }
     throw error;
   }
 };

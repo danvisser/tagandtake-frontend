@@ -44,11 +44,11 @@ export default {
         },
         primary: {
           DEFAULT: "#5E9060",
-          foreground: "hsl(var(--primary-foreground))",
+          foreground: "#FFFFFF",
         },
         secondary: {
           DEFAULT: "#FFFFFF",
-          foreground: "hsl(var(--secondary-foreground))",
+          foreground: "#5E9060",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
@@ -58,10 +58,13 @@ export default {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
-        destructive: "#B75454",
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
+        destructive: {
+          DEFAULT: "#B75454",
+          foreground: "#FFFFFF",
+        },
+        border: "#5E9060",
+        input: "#5E9060",
+        ring: "#5E9060",
         chart: {
           "1": "hsl(var(--chart-1))",
           "2": "hsl(var(--chart-2))",
