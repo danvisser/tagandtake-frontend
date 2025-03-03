@@ -9,13 +9,11 @@ import { Routes } from "@src/constants/routes";
 export default function HomePage() {
   const { isAuthenticated, role } = useAuthStore();
 
-  // Determine which variant to show based on user role
   const variant = React.useMemo(() => {
     if (!isAuthenticated) return "public";
     return role === "store" ? "store" : "member";
   }, [isAuthenticated, role]);
 
-  // Render the appropriate homepage variant
   if (variant === "member") {
     return <MemberHomePage />;
   } else if (variant === "store") {
@@ -25,14 +23,13 @@ export default function HomePage() {
   }
 }
 
-// Public variant (unchanged from original)
 function PublicHomePage() {
   return (
-    <div className="container-fluid mx-0 px-0 py-0 lg:flex lg:items-center lg:justify-between lg:min-h-screen">
+    <div className="container-fluid mx-0 px-0 py-0 flex flex-col lg:flex-row lg:items-stretch lg:min-h-screen">
       {/* Main Content */}
-      <div className="lg:w-1/2 space-y-6 text-center flex flex-col items-center justify-center lg:h-full px-4 py-12 md:py-20">
+      <div className="lg:w-1/2 space-y-6 text-center flex flex-col items-center justify-center px-4 py-12 md:py-20">
         <h1 className="text-3xl font-semibold md:text-4xl lg:text-4xl flex flex-col">
-          <span>Sell your pre-loved clothes,</span>
+          <span>Sell your pre-loved clothes</span>
           <span className="mt-2">
             {" "}
             on the <span className="text-primary">high street</span>
@@ -55,18 +52,22 @@ function PublicHomePage() {
         >
           how it works
         </Link>
-        <p className="text-muted-foreground text-sm">
-          Join our community of local, circular fashion - buy and sell unwanted
-          gems in your favorite spaces.
+        <div className="h-2"></div>
+        <p className="text-muted-foreground text-md flex flex-col items-center">
+          <span>Join our community of local, circular fashion -</span>
+          <span>buy and sell unwanted gems in your favorite spaces.</span>
         </p>
-        <h2 className="text-xl font-semibold mt-6">
-          Make the most of your space.
-        </h2>
-        <Link href="/register/host">
-          <Button variant="outline" className="w-60">
-            Become a pre-loved host
-          </Button>
-        </Link>
+        <div className="h-2"></div>
+        <div className="flex flex-row items-center justify-center gap-3 mt-6">
+          <h2 className="text-lg font-semibold">
+            Become a pre-loved host:
+          </h2>
+          <Link href="/register/host">
+            <Button variant="outline" className="w-60">
+              Register today!
+            </Button>
+          </Link>
+        </div>
       </div>
       <div className="w-full h-64 lg:h-screen lg:w-1/2">
         <div className="bg-blue-500 w-full h-full" />

@@ -26,7 +26,7 @@ export default function Header({
   }, [logout, router]);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white dark:border-gray-800 dark:bg-gray-950 p-0">
+    <header className="sticky top-0 z-50 w-full border-b border-gray-300 bg-white dark:border-gray-800 dark:bg-gray-950 p-0 shadow-sm">
       <div className="container mx-auto flex h-16 max-w-full items-center justify-center px-4 md:px-6 relative">
         {/* Left: Logo */}
         <Link

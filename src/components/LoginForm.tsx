@@ -158,7 +158,7 @@ export default function LoginForm({ onSubmit, errorMessage }: LoginFormProps) {
       <p className="text-center text-sm text-muted-foreground">
         Interested in hosting?&nbsp;
         <Link
-          href={Routes.STORE.ROOT}
+          href={Routes.MEMBER.SIGNUP}
           className="font-medium underline underline-offset-4 hover:text-primary"
         >
           Become a host today
