@@ -5,6 +5,10 @@ export const Routes = {
   ABOUT: "/about",
   LOGIN: "/login",
   CONTACT: "#",
+  PASSWORD: {
+    RESET: "/reset-password",
+    CONFIRM: "/reset-password/confirm",
+  },
 
   // Member routes
   MEMBER: {

@@ -95,3 +95,32 @@ export const activateAccount = async (
     throw error;
   }
 };
+
+export const requestPasswordReset = async (email: string): Promise<void> => {
+  await authRequest({
+    method: "POST",
+    url: API_ROUTES.PASSWORD.RESET,
+    data: { email },
+  });
+};
+
+export const confirmPasswordReset = async (data: {
+  uid: string;
+  token: string;
+  new_password: string;
+  confirm_new_password: string;
+}): Promise<void> => {
+  try {
+    await authRequest({
+      method: "POST",
+      url: API_ROUTES.PASSWORD.RESET_CONFIRM,
+      data,
+    });
+  } catch (error: unknown) {
+    console.error("Password reset confirmation error:", error);
+    if (axios.isAxiosError(error) && error.response?.data?.detail) {
+      throw new Error(error.response.data.detail);
+    }
+    throw error;
+  }
+};

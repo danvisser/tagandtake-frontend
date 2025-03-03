@@ -7,6 +7,7 @@ import { Label } from "@src/components/ui/label";
 import { Input } from "@src/components/ui/input";
 import { Checkbox } from "@src/components/ui/checkbox";
 import { Eye, EyeOff } from "lucide-react";
+import { Routes } from "@src/constants/routes";
 
 interface LoginFormProps {
   onSubmit: (email: string, password: string) => Promise<void>;
@@ -118,7 +119,7 @@ export default function LoginForm({ onSubmit, errorMessage }: LoginFormProps) {
               </Label>
             </div>
             <Link
-              href="/forgot-password"
+              href={Routes.PASSWORD.RESET}
               className="text-sm text-muted-foreground underline-offset-4 hover:text-primary hover:underline"
             >
               Forgot password?
@@ -143,7 +144,7 @@ export default function LoginForm({ onSubmit, errorMessage }: LoginFormProps) {
         </div>
       </div>
       <div className="w-full">
-        <Link href="/register/member" className="w-full">
+        <Link href={Routes.MEMBER.SIGNUP} className="w-full">
           <Button
             variant="secondary"
             type="button"
@@ -157,7 +158,7 @@ export default function LoginForm({ onSubmit, errorMessage }: LoginFormProps) {
       <p className="text-center text-sm text-muted-foreground">
         Interested in hosting?&nbsp;
         <Link
-          href="/register/host"
+          href={Routes.STORE.ROOT}
           className="font-medium underline underline-offset-4 hover:text-primary"
         >
           Become a host today
