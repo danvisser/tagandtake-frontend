@@ -82,7 +82,7 @@ export default function Header({
                   Home
                 </Button>
               </Link>
-              <Link href={Routes.MEMBER.WARDROBE} prefetch={false}>
+              <Link href={Routes.MEMBER.ITEMS.ROOT} prefetch={false}>
                 <Button
                   variant="ghost"
                   size="lg"
@@ -122,7 +122,7 @@ export default function Header({
                   Dashboard
                 </Button>
               </Link>
-              <Link href={Routes.STORE.LISTINGS} prefetch={false}>
+              <Link href={Routes.STORE.LISTINGS.ROOT} prefetch={false}>
                 <Button
                   variant="ghost"
                   size="lg"
@@ -151,7 +151,7 @@ export default function Header({
           )}
           {variant === "member" && (
             <>
-              <Link href={Routes.ITEM.NEW}>
+              <Link href={Routes.MEMBER.ITEMS.NEW}>
                 <Button variant="outline" size="sm">
                   Sell now
                 </Button>
@@ -174,7 +174,7 @@ export default function Header({
               {variant === "public" && (
                 <>
                   <DropdownMenuItem asChild>
-                    <Link href={Routes.MEMBER.SIGNUP} className="w-full">
+                    <Link href={Routes.SIGNUP.MEMBER} className="w-full">
                       Sign up
                     </Link>
                   </DropdownMenuItem>
@@ -204,7 +204,7 @@ export default function Header({
               {variant === "member" && (
                 <>
                   <DropdownMenuItem asChild>
-                    <Link href={Routes.MEMBER.WARDROBE} className="w-full">
+                    <Link href={Routes.MEMBER.ITEMS.ROOT} className="w-full">
                       Wardrobe
                     </Link>
                   </DropdownMenuItem>
@@ -227,7 +227,7 @@ export default function Header({
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href={Routes.STORE.LISTINGS} className="w-full">
+                    <Link href={Routes.STORE.LISTINGS.ROOT} className="w-full">
                       Listings
                     </Link>
                   </DropdownMenuItem>

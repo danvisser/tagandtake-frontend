@@ -144,7 +144,7 @@ export default function LoginForm({ onSubmit, errorMessage }: LoginFormProps) {
         </div>
       </div>
       <div className="w-full">
-        <Link href={Routes.MEMBER.SIGNUP} className="w-full">
+        <Link href={Routes.SIGNUP.MEMBER} className="w-full">
           <Button
             variant="secondary"
             type="button"
@@ -158,7 +158,7 @@ export default function LoginForm({ onSubmit, errorMessage }: LoginFormProps) {
       <p className="text-center text-sm text-muted-foreground">
         Interested in hosting?&nbsp;
         <Link
-          href={Routes.MEMBER.SIGNUP}
+          href={Routes.SIGNUP.STORE}
           className="font-medium underline underline-offset-4 hover:text-primary"
         >
           Become a host today

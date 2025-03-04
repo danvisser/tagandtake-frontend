@@ -90,10 +90,10 @@ function MemberHomePage() {
               Manage your listings and track your sales.
             </p>
             <div className="flex gap-4">
-              <Link href={Routes.MEMBER.WARDROBE}>
+              <Link href={Routes.MEMBER.ITEMS.ROOT}>
                 <Button>View Wardrobe</Button>
               </Link>
-              <Link href={Routes.ITEM.NEW}>
+              <Link href={Routes.MEMBER.ITEMS.NEW}>
                 <Button variant="outline">Add New Item</Button>
               </Link>
             </div>
@@ -127,7 +127,7 @@ function MemberHomePage() {
                 List your pre-loved items in just a few clicks.
               </p>
             </div>
-            <Link href={Routes.ITEM.NEW}>
+            <Link href={Routes.MEMBER.ITEMS.NEW}>
               <Button size="lg">Sell Now</Button>
             </Link>
           </div>
@@ -167,7 +167,7 @@ function StoreHomePage() {
             <p className="text-muted-foreground mb-6">
               View and manage all items in your store.
             </p>
-            <Link href={Routes.STORE.LISTINGS}>
+            <Link href={Routes.STORE.LISTINGS.ROOT}>
               <Button>View Listings</Button>
             </Link>
           </div>
@@ -177,7 +177,7 @@ function StoreHomePage() {
             <p className="text-muted-foreground mb-6">
               Update your store profile and preferences.
             </p>
-            <Link href={Routes.STORE.DASHBOARD}>
+            <Link href={Routes.STORE.SETTINGS}>
               <Button variant="outline">Store Settings</Button>
             </Link>
           </div>

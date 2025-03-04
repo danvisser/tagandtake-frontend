@@ -1,44 +1,66 @@
 export const Routes = {
-  // Public routes
+  // Home routes (Public)
   HOME: "/",
   HOW_IT_WORKS: "/how-it-works",
   ABOUT: "/about",
+  CONTACT: "/contact",
+
+  // Auth routes (Public)
+  SIGNUP: {
+    MEMBER: "/signup/member",
+    STORE: "/signup/store",
+  },
   LOGIN: "/login",
-  CONTACT: "#",
   PASSWORD: {
     RESET: "/reset-password",
     CONFIRM: "/reset-password/confirm",
   },
 
-  // Member routes
+  // Member routes (Private)
   MEMBER: {
-    ROOT: "/member",
-    WARDROBE: "/member/wardrobe",
     PROFILE: "/member/profile",
-    SIGNUP: "/member/signup",
+    SETTINGS: "/member/settings",
+    PAYMENTS: "/member/payments",
+    ITEMS: {
+      ROOT: "/member/items",
+      NEW: "/member/items/new",
+      DETAILS: (itemId: string) => `/member/items/${itemId}`,
+      EDIT: (itemId: string) => `/member/items/${itemId}/edit`,
+    },
   },
 
-  // Store routes
+  // Store routes (Private)
   STORE: {
-    ROOT: "/store",
     DASHBOARD: "/store/dashboard",
-    LISTINGS: "/store/listings",
+    SETTINGS: "/store/settings",
+    PAYMENTS: "/store/payments",
     SUPPLIES: "/store/supplies",
+    SUPPLIES_CHECKOUT: "/store/supplies/checkout",
+    LISTINGS: {
+      ROOT: "/store/listings",
+      DETAILS: (listingId: string) => `/store/listings/${listingId}`,
+      MANAGE: (listingId: string) => `/store/listings/${listingId}/manage`,
+    },
   },
 
-  // Item routes
-  ITEM: {
-    ROOT: "/item",
-    NEW: "/item/new",
-    DETAILS: (itemId: string) => `/item/${itemId}`,
-    EDIT: (itemId: string) => `/item/${itemId}/edit`,
-  },
-
-  // Listing routes
+  // Listing routes (Public)
   LISTING: {
-    ROOT: "/listing",
     DETAILS: (listingId: string) => `/listing/${listingId}`,
+    CHECKOUT: {
+      ROOT: (listingId: string) => `/listing/${listingId}/checkout`,
+      SUCCESS: (listingId: string) => `/listing/${listingId}/checkout/success`,
+    },
   },
 
+  // Store routes (Public)
+  STORES: {
+    ROOT: "/stores",
+    PROFILE: (storeId: string) => `/stores/${storeId}`, 
+  },
 
+  // Member routes (Public)
+  MEMBERS: {
+    ROOT: "/members",
+    PROFILE: (memberId: string) => `/members/${memberId}`,
+  },
 };
