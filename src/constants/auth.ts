@@ -3,3 +3,8 @@ export const AUTH_ROLES = {
     STORE: "store",
   };
   
+export const LISTING_ROLES = {
+    HOST: "HOST",
+    OWNER: "OWNER",
+    GUEST: "GUEST",
+};
