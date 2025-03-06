@@ -2,15 +2,16 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { fetchUserSession, login, logout } from "@src/api/authApi";
 import axios from "axios";
+import { UserRole } from "@src/types/roles";
 
 interface AuthState {
   isAuthenticated: boolean;
-  role: string | null;
-  setAuth: (role: string | null) => void;
+  role: UserRole | null;
+  setAuth: (role: UserRole | null) => void;
   login: (
     username: string,
     password: string
-  ) => Promise<{ success: boolean; role?: string | null; error?: unknown }>;
+  ) => Promise<{ success: boolean; role?: UserRole | null; error?: unknown }>;
   logout: () => Promise<void>;
   initializeAuth: () => Promise<void>;
 }

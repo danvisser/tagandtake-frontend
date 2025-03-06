@@ -2,12 +2,13 @@ import { authRequest } from "@src/lib/fetchClient";
 import { API_ROUTES } from "@src/constants/apiRoutes";
 import { setAccessToken } from "@src/lib/fetchClient";
 import axios from "axios";
+import { UserRole } from "@src/types/roles";
 
 export interface AuthResponse {
-  role: string | null;
+  role: UserRole | null;
   access?: string;
   user?: {
-    role: string;
+    role: UserRole;
   };
 }
 
@@ -18,7 +19,7 @@ export const fetchUserSession = async (): Promise<AuthResponse> => {
       url: API_ROUTES.AUTH.STATUS,
     });
     return {
-      role: data.role,
+      role: data.role as UserRole,
     };
   } catch {
     return { role: null };
@@ -41,7 +42,7 @@ export const login = async (credentials: {
 
   return {
     access: data.access,
-    role: data.user?.role || null,
+    role: (data.user?.role as UserRole) || null,
   };
 };
 
@@ -85,7 +86,7 @@ export const activateAccount = async (
       url: API_ROUTES.ACTIVATION.ACTIVATE(uuid, token),
     });
     return {
-      role: data.role || null,
+      role: (data.role as UserRole) || null,
     };
   } catch (error: unknown) {
     console.error("Account activation error:", error);

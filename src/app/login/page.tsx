@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useAuthStore } from "@src/stores/authStore";
 import LoginForm from "@src/components/LoginForm";
 import { Routes } from "@src/constants/routes";
+import { UserRoles } from "@src/types/roles";
 
 export default function LoginPage() {
   const { login } = useAuthStore();
@@ -15,7 +16,17 @@ export default function LoginPage() {
       setErrorMessage(null);
       const result = await login(email, password);
       if (result && result.success) {
-        router.push(Routes.MEMBER.PROFILE);
+        switch (result.role) {
+          case UserRoles.STORE:
+            router.push(Routes.STORE.DASHBOARD);
+            break;
+          case UserRoles.MEMBER:
+            router.push(Routes.MEMBER.PROFILE);
+            break;
+          default:
+            console.warn(`Unknown user role: ${result.role}`);
+            router.push(Routes.MEMBER.PROFILE);
+        }
       } else if (result && result.error) {
         setErrorMessage(String(result.error));
       }

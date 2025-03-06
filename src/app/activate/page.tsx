@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "@src/components/ui/card";
 import { AlertCircle, CheckCircle } from "lucide-react";
+import { UserRole, UserRoles } from "@src/types/roles";
 
 enum ActivationStatus {
   LOADING = "loading",
@@ -28,7 +29,7 @@ export default function ActivatePage() {
     ActivationStatus.LOADING
   );
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [userRole, setUserRole] = useState<string>("");
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
 
   useEffect(() => {
     const uuid = searchParams.get("uuid");
@@ -77,7 +78,7 @@ export default function ActivatePage() {
           {status === ActivationStatus.SUCCESS && (
             <>
               <CheckCircle className="h-16 w-16 text-primary" />
-              {userRole === "store" ? (
+              {userRole === UserRoles.STORE ? (
                 <>
                   <p className="text-center">
                     Your store account has been successfully activated. Login to

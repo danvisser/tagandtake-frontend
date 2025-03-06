@@ -11,12 +11,9 @@ import { Routes } from "@src/constants/routes";
 import { useAuthStore } from "@src/stores/authStore";
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { UserRole, UserRoles } from "@src/types/roles";
 
-export default function Header({
-  variant,
-}: {
-  variant: "public" | "member" | "store";
-}) {
+export default function Header({ variant }: { variant: "public" | UserRole }) {
   const logout = useAuthStore((state) => state.logout);
   const router = useRouter();
 
@@ -71,7 +68,7 @@ export default function Header({
               </Link>
             </>
           )}
-          {variant === "member" && (
+          {variant === UserRoles.MEMBER && (
             <>
               <Link href={Routes.HOME} prefetch={false}>
                 <Button
@@ -102,7 +99,7 @@ export default function Header({
               </Link>
             </>
           )}
-          {variant === "store" && (
+          {variant === UserRoles.STORE && (
             <>
               <Link href={Routes.HOME} prefetch={false}>
                 <Button
@@ -144,12 +141,12 @@ export default function Header({
               </Button>
             </Link>
           )}
-          {variant === "store" && (
+          {variant === UserRoles.STORE && (
             <Link href={Routes.STORE.DASHBOARD}>
               <StoreIcon className="h-6 w-6 dark:text-gray-400" />
             </Link>
           )}
-          {variant === "member" && (
+          {variant === UserRoles.MEMBER && (
             <>
               <Link href={Routes.MEMBER.ITEMS.NEW}>
                 <Button variant="outline" size="sm">
@@ -201,7 +198,7 @@ export default function Header({
                   </DropdownMenuItem>
                 </>
               )}
-              {variant === "member" && (
+              {variant === UserRoles.MEMBER && (
                 <>
                   <DropdownMenuItem asChild>
                     <Link href={Routes.MEMBER.ITEMS.ROOT} className="w-full">
@@ -219,7 +216,7 @@ export default function Header({
                   </DropdownMenuItem>
                 </>
               )}
-              {variant === "store" && (
+              {variant === UserRoles.STORE && (
                 <>
                   <DropdownMenuItem asChild>
                     <Link href={Routes.STORE.DASHBOARD} className="w-full">

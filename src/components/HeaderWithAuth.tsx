@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Header from "@src/components/Header";
 import { useAuthStore } from "@src/stores/authStore";
+import { UserRoles } from "@src/types/roles";
 
 export default function HeaderWithAuth() {
   const { role, initializeAuth } = useAuthStore();
@@ -22,6 +23,10 @@ export default function HeaderWithAuth() {
   }
 
   return (
-    <Header variant={role === "member" || role === "store" ? role : "public"} />
+    <Header
+      variant={
+        role === UserRoles.MEMBER || role === UserRoles.STORE ? role : "public"
+      }
+    />
   );
 }

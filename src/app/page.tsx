@@ -5,18 +5,21 @@ import Link from "next/link";
 import { Button } from "@src/components/ui/button";
 import { useAuthStore } from "@src/stores/authStore";
 import { Routes } from "@src/constants/routes";
+import { UserRole, UserRoles } from "@src/types/roles";
+
+type PageVariant = "public" | UserRole;
 
 export default function HomePage() {
   const { isAuthenticated, role } = useAuthStore();
 
-  const variant = React.useMemo(() => {
+  const variant = React.useMemo((): PageVariant => {
     if (!isAuthenticated) return "public";
-    return role === "store" ? "store" : "member";
+    return role || "public";
   }, [isAuthenticated, role]);
 
-  if (variant === "member") {
+  if (variant === UserRoles.MEMBER) {
     return <MemberHomePage />;
-  } else if (variant === "store") {
+  } else if (variant === UserRoles.STORE) {
     return <StoreHomePage />;
   } else {
     return <PublicHomePage />;
@@ -59,9 +62,7 @@ function PublicHomePage() {
         </p>
         <div className="h-2"></div>
         <div className="flex flex-row items-center justify-center gap-3 mt-6">
-          <h2 className="text-lg font-semibold">
-            Become a pre-loved host:
-          </h2>
+          <h2 className="text-lg font-semibold">Become a pre-loved host:</h2>
           <Link href="/register/host">
             <Button variant="outline" className="w-60">
               Register today!
