@@ -1,9 +1,14 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { refreshAccessToken } from "@src/api/authApi";
+import { handleSessionExpiration } from "@src/lib/sessionExpirationHandler";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const API_VERSION = process.env.NEXT_PUBLIC_API_VERSION;
 const API_BASE_URL = `${API_URL}/${API_VERSION}`;
+
+// Configuration constants
+const REQUEST_TIMEOUT = 15000; // 15 seconds for regular requests
+const REFRESH_TIMEOUT = 5000; // 5 seconds for token refresh operations
 
 // In-memory storage for the access token
 let accessToken: string | null = null;
@@ -28,6 +33,7 @@ const onTokenRefreshed = (newToken: string) => {
 export const fetchClient = axios.create({
   baseURL: API_BASE_URL,
   headers: { "Content-Type": "application/json" },
+  timeout: REQUEST_TIMEOUT, // Set default timeout for all requests
 });
 
 // Request interceptor to add the token to requests
@@ -52,19 +58,27 @@ fetchClient.interceptors.response.use(
     // If error is 401 and we haven't tried to refresh the token yet
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
-        // If we're already refreshing, wait for the new token
+        // If already refreshing, wait for the result with a shorter timeout
         try {
-          const newToken = await new Promise<string>((resolve) => {
-            subscribeTokenRefresh((token: string) => {
-              resolve(token);
-            });
-          });
+          const newToken = await Promise.race([
+            new Promise<string>((resolve) => {
+              subscribeTokenRefresh((token: string) => {
+                resolve(token);
+              });
+            }),
+            new Promise<never>((_, reject) => {
+              setTimeout(() => {
+                reject(new Error("Token refresh timeout"));
+              }, REFRESH_TIMEOUT);
+            }),
+          ]);
 
-          // Retry the original request with the new token
           originalRequest.headers = originalRequest.headers || {};
           originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
           return fetchClient(originalRequest);
         } catch (refreshError) {
+          // Handle session expiration immediately
+          handleSessionExpiration();
           return Promise.reject(refreshError);
         }
       }
@@ -74,24 +88,35 @@ fetchClient.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const response = await refreshAccessToken();
-        const newToken = response.access || null;
-        setAccessToken(newToken);
-        if (newToken) {
-          onTokenRefreshed(newToken);
-        }
+        // Use Promise.race to add timeout to the refresh token request
+        const response = await Promise.race([
+          refreshAccessToken(),
+          new Promise<never>((_, reject) => {
+            setTimeout(() => {
+              reject(new Error("Token refresh request timeout"));
+            }, REFRESH_TIMEOUT);
+          }),
+        ]);
 
-        // Retry the original request with the new token
-        originalRequest.headers = originalRequest.headers || {};
+        const newToken = response.access || null;
+
         if (newToken) {
+          setAccessToken(newToken);
+          onTokenRefreshed(newToken);
+
+          originalRequest.headers = originalRequest.headers || {};
           originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
+          isRefreshing = false;
+          return fetchClient(originalRequest);
+        } else {
+          throw new Error("No token received during refresh");
         }
-        isRefreshing = false;
-        return fetchClient(originalRequest);
       } catch (refreshError) {
         isRefreshing = false;
-        // If refresh fails, clear token and reject
-        setAccessToken(null);
+
+        // Handle session expiration
+        handleSessionExpiration();
+
         return Promise.reject(refreshError);
       }
     }

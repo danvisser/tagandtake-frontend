@@ -15,17 +15,25 @@ export default function LoginPage() {
     try {
       setErrorMessage(null);
       const result = await login(email, password);
+
       if (result && result.success) {
-        switch (result.role) {
-          case UserRoles.STORE:
-            router.push(Routes.STORE.DASHBOARD);
-            break;
-          case UserRoles.MEMBER:
-            router.push(Routes.MEMBER.PROFILE);
-            break;
-          default:
-            console.warn(`Unknown user role: ${result.role}`);
-            router.push(Routes.MEMBER.PROFILE);
+        // Check for return path from session expiration
+        const returnPath = sessionStorage.getItem("returnPath");
+        if (returnPath) {
+          sessionStorage.removeItem("returnPath");
+          router.push(returnPath);
+        } else {
+          // Normal login flow
+          switch (result.role) {
+            case UserRoles.STORE:
+              router.push(Routes.STORE.DASHBOARD);
+              break;
+            case UserRoles.MEMBER:
+              router.push(Routes.MEMBER.PROFILE);
+              break;
+            default:
+              router.push(Routes.MEMBER.PROFILE);
+          }
         }
       } else if (result && result.error) {
         setErrorMessage(String(result.error));

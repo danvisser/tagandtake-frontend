@@ -4,6 +4,9 @@ import { fetchUserSession, login, logout } from "@src/api/authApi";
 import axios from "axios";
 import { UserRole } from "@src/types/roles";
 
+// Check if window is defined (browser) or not (server)
+const isBrowser = typeof window !== "undefined";
+
 interface AuthState {
   isAuthenticated: boolean;
   role: UserRole | null;
@@ -24,8 +27,10 @@ export const useAuthStore = create<AuthState>()(
 
       setAuth: (role) => {
         set({ role, isAuthenticated: !!role });
-        // Dispatch storage event to sync across tabs
-        window.dispatchEvent(new Event("storage"));
+        // Dispatch storage event to sync across tabs (only in browser)
+        if (isBrowser) {
+          window.dispatchEvent(new Event("storage"));
+        }
       },
 
       login: async (username: string, password: string) => {
@@ -40,8 +45,10 @@ export const useAuthStore = create<AuthState>()(
             role: response.role,
           });
 
-          // Sync across tabs
-          window.dispatchEvent(new Event("storage"));
+          // Sync across tabs (only in browser)
+          if (isBrowser) {
+            window.dispatchEvent(new Event("storage"));
+          }
 
           return { success: true, role: response.role };
         } catch (error) {
@@ -64,8 +71,10 @@ export const useAuthStore = create<AuthState>()(
           await logout();
           set({ isAuthenticated: false, role: null });
 
-          // Sync across tabs
-          window.dispatchEvent(new Event("storage"));
+          // Sync across tabs (only in browser)
+          if (isBrowser) {
+            window.dispatchEvent(new Event("storage"));
+          }
         } catch (error) {
           console.error("Logout error:", error);
         }
@@ -102,13 +111,17 @@ export const useAuthStore = create<AuthState>()(
   )
 );
 
-// Add the storage event listener for cross-tab sync
-window.addEventListener("storage", () => {
-  const storedState = JSON.parse(localStorage.getItem("auth-storage") || "{}");
-  if (storedState.state) {
-    useAuthStore.setState({
-      role: storedState.state.role,
-      isAuthenticated: storedState.state.isAuthenticated,
-    });
-  }
-});
+// Add the storage event listener for cross-tab sync only in browser environments
+if (isBrowser) {
+  window.addEventListener("storage", () => {
+    const storedState = JSON.parse(
+      localStorage.getItem("auth-storage") || "{}"
+    );
+    if (storedState.state) {
+      useAuthStore.setState({
+        role: storedState.state.role,
+        isAuthenticated: storedState.state.isAuthenticated,
+      });
+    }
+  });
+}

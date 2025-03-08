@@ -210,6 +210,11 @@ export default function Header({ variant }: { variant: "public" | UserRole }) {
                       Profile
                     </Link>
                   </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href={Routes.MEMBER.SETTINGS} className="w-full">
+                      Settings
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     Sign Out
@@ -226,6 +231,11 @@ export default function Header({ variant }: { variant: "public" | UserRole }) {
                   <DropdownMenuItem asChild>
                     <Link href={Routes.STORE.LISTINGS.ROOT} className="w-full">
                       Listings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href={Routes.STORE.SETTINGS} className="w-full">
+                      Settings
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />

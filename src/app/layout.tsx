@@ -1,5 +1,6 @@
 import "./globals.css";
 import HeaderWithAuth from "@src/components/HeaderWithAuth";
+import { SessionExpiredModal } from "@src/components/SessionExpiredModal";
 
 
 export default function RootLayout({
@@ -12,6 +13,7 @@ export default function RootLayout({
       <body>
         <HeaderWithAuth />
         {children}
+        <SessionExpiredModal />
       </body>
     </html>
   );
