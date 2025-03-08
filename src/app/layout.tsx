@@ -1,6 +1,6 @@
 import "./globals.css";
-import { Providers } from '@src/lib/Providers';
-import Header from "@src/components/Header";
+import HeaderWithAuth from "@src/components/HeaderWithAuth";
+import { SessionExpiredModal } from "@src/components/SessionExpiredModal";
 
 
 export default function RootLayout({
@@ -11,10 +11,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Providers>
-          <Header variant="public"/>
-          {children}
-        </Providers>
+        <HeaderWithAuth />
+        {children}
+        <SessionExpiredModal />
       </body>
     </html>
   );
