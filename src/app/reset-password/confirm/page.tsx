@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
@@ -25,7 +25,7 @@ enum ResetStatus {
   INVALID = "invalid",
 }
 
-export default function ConfirmResetPasswordPage() {
+function ConfirmResetPasswordContent() {
   const searchParams = useSearchParams();
 
   const [passwords, setPasswords] = useState({
@@ -109,11 +109,9 @@ export default function ConfirmResetPasswordPage() {
         if (response) {
           if (response.new_password) {
             setErrorMessage(response.new_password.join(", "));
-          }
-          else if (response.non_field_errors) {
+          } else if (response.non_field_errors) {
             setErrorMessage(response.non_field_errors.join(", "));
-          }
-          else {
+          } else {
             setErrorMessage(
               "Failed to reset password. The link may have expired."
             );
@@ -211,8 +209,7 @@ export default function ConfirmResetPasswordPage() {
               </div>
 
               <div className="space-y-6">
-                <Label htmlFor="confirm_new_password">
-                </Label>
+                <Label htmlFor="confirm_new_password"></Label>
                 <Input
                   id="confirm_new_password"
                   name="confirm_new_password"
@@ -258,5 +255,30 @@ export default function ConfirmResetPasswordPage() {
         </CardFooter>
       </Card>
     </div>
+  );
+}
+
+export default function ConfirmResetPasswordPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen justify-center items-center w-full md:px-4">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
+                Loading...
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center space-y-4">
+              <div className="flex justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      }
+    >
+      <ConfirmResetPasswordContent />
+    </Suspense>
   );
 }

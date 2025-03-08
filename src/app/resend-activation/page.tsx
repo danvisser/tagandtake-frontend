@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
@@ -8,7 +8,7 @@ import Link from "next/link";
 import { Routes } from "@src/constants/routes";
 import axios from "axios";
 
-export default function Page() {
+function ResendActivationContent() {
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -139,5 +139,26 @@ export default function Page() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen justify-center items-center w-full md:px-4">
+          <div className="w-full max-w-md flex px-4 flex-col space-y-6">
+            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
+              Loading...
+            </h2>
+            <div className="flex justify-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+            </div>
+          </div>
+        </div>
+      }
+    >
+      <ResendActivationContent />
+    </Suspense>
   );
 }

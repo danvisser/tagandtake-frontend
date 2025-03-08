@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Routes } from "@src/constants/routes";
 import { useRouter, useSearchParams } from "next/navigation";
 import { activateAccount } from "@src/api/authApi";
@@ -22,7 +22,7 @@ enum ActivationStatus {
   INVALID = "invalid",
 }
 
-export default function ActivatePage() {
+function ActivateContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<ActivationStatus>(
@@ -133,5 +133,28 @@ export default function ActivatePage() {
         </CardFooter>
       </Card>
     </div>
+  );
+}
+
+export default function ActivatePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center items-center min-h-screen bg-gray-50">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle className="text-center">Loading...</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center space-y-4">
+              <div className="flex justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      }
+    >
+      <ActivateContent />
+    </Suspense>
   );
 }
