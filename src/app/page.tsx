@@ -39,18 +39,18 @@ function PublicHomePage() {
           </span>
         </h1>
         <div className="flex flex-col gap-4 items-center">
-          <Link href="/login">
+          <Link href={Routes.LOGIN}>
             <Button variant="outline" className="w-48">
               Login
             </Button>
           </Link>
           <div className="w-full h-px bg-border mt-4 mb-4" />
-          <Link href="/register/member">
+          <Link href={Routes.SIGNUP.MEMBER}>
             <Button className="w-48">Signup</Button>
           </Link>
         </div>
         <Link
-          href="/how-it-works"
+          href={Routes.HOW_IT_WORKS}
           className="text-muted-foreground underline hover:text-primary"
         >
           how it works
@@ -63,7 +63,7 @@ function PublicHomePage() {
         <div className="h-2"></div>
         <div className="flex flex-row items-center justify-center gap-3 mt-6">
           <h2 className="text-lg font-semibold">Become a pre-loved host:</h2>
-          <Link href="/register/host">
+          <Link href={Routes.SIGNUP.STORE}>
             <Button variant="outline" className="w-60">
               Register today!
             </Button>
