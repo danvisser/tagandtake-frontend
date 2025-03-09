@@ -68,8 +68,14 @@ export const useAuthStore = create<AuthState>()(
 
       logout: async () => {
         try {
-          await logout();
+          // First update the local state
           set({ isAuthenticated: false, role: null });
+
+          // Then attempt the API call, but don't depend on its success
+          await logout().catch((error) => {
+            console.error("Logout API error:", error);
+            // This is non-critical, we've already updated local state
+          });
 
           // Sync across tabs (only in browser)
           if (isBrowser) {
