@@ -11,14 +11,18 @@ import { itemCategories } from "@src/data/itemReferenceData";
 export default function HowItWorksPage() {
   return (
     <div className="container mx-auto px-4 py-8 md:py-12 max-w-6xl">
-      {/* Hero Section */}
-      <div className="max-w-3xl mx-auto mb-10 md:mb-16 text-center">
-        <h1 className="text-2xl md:text-3xl lg:text-4xl font-semibold mb-3 md:mb-4">
-          Your Local Marketplace for Pre-Loved Items
+      {/* Marketplace-Inspired Hero Section */}
+      <div className="max-w-3xl mx-auto mb-12 md:mb-16 text-center">
+        <h1 className="text-2xl md:text-3xl lg:text-4xl font-medium mb-4 leading-tight">
+          Your in-store marketplace for{" "}
+          <span className="border-b-4 border-primary/50">pre-loved pieces</span>
         </h1>
+
         <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-          Local stores, sustainable shopping, and hassle-free selling all in one
-          place. Ready to join the community? Here&apos;s how it works.
+        Sell clothes in stores near you—no messaging, no shipping, no
+          hassle.
+          <br />
+          You bring the items, we handle the rest.
         </p>
       </div>
 
@@ -46,8 +50,7 @@ export default function HowItWorksPage() {
           </h2>
           <p className="text-sm md:text-base text-muted-foreground">
             Bring your items to a participating store, tag them with our secure
-            QR codes, and place them in a designated area. Your item instantly
-            goes online.
+            QR codes, and place them in a designated area. 
           </p>
         </div>
 
@@ -70,7 +73,7 @@ export default function HowItWorksPage() {
             </svg>
           </div>
           <h2 className="text-lg md:text-xl lg:text-2xl font-semibold mb-2">
-            2. Shoppers Buy
+            2. Sell
           </h2>
           <p className="text-sm md:text-base text-muted-foreground">
             Shoppers discover your items in-store or online. No messaging, no
@@ -98,12 +101,11 @@ export default function HowItWorksPage() {
             </svg>
           </div>
           <h2 className="text-lg md:text-xl lg:text-2xl font-semibold mb-2">
-            3. Get Paid
+            3. Earn
           </h2>
           <p className="text-sm md:text-base text-muted-foreground">
             Proceeds are automatically split between you and the store. No
-            invoicing, no payment chasing—just simple, shared rewards for
-            everyone.
+            invoicing, no payment chasing—just simple, shared rewards.
           </p>
         </div>
       </div>
@@ -116,9 +118,7 @@ export default function HowItWorksPage() {
 
         {/* Getting Started & Listing Items */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3 text-primary">
-            Getting Started & Listing Items
-          </h3>
+          <h3 className="text-lg font-semibold mb-3">Getting Started</h3>
           <div className="pl-4 border-l-2 border-primary/20">
             <Accordion type="single" collapsible className="w-full mb-6">
               <AccordionItem value="selling-1">
@@ -182,9 +182,7 @@ export default function HowItWorksPage() {
 
         {/* Earnings & Payment Details */}
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-3 text-primary">
-            Earnings & Payment Details
-          </h3>
+          <h3 className="text-lg font-semibold mb-3">Payments</h3>
           <div className="pl-4 border-l-2 border-primary/20">
             <Accordion type="single" collapsible className="w-full mb-6">
               <AccordionItem value="payments-1">
@@ -240,9 +238,7 @@ export default function HowItWorksPage() {
 
         {/* After Listing & Item Management */}
         <div>
-          <h3 className="text-lg font-semibold mb-3 text-primary">
-            After Listing & Item Management
-          </h3>
+          <h3 className="text-lg font-semibold mb-3">Item Management</h3>
           <div className="pl-4 border-l-2 border-primary/20">
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="management-1">

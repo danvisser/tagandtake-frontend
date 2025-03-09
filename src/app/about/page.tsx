@@ -4,27 +4,31 @@ import { Routes } from "@src/constants/routes";
 
 export default function AboutPage() {
   return (
-    <div className="container mx-auto px-4 py-12 max-w-6xl">
-      <div className="max-w-3xl mx-auto mb-16 text-center">
-        <h1 className="text-3xl md:text-5xl font-semibold mb-4">Our Story</h1>
-        <p className="text-lg text-muted-foreground">
-          Reimagining retail for a sustainable future
+    <div className="container mx-auto px-4 py-16 max-w-6xl">
+      <div className="max-w-3xl mx-auto mb-20 text-center">
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-medium mb-6 leading-tight">
+          Our Story
+        </h1>
+        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+          On a mission to bring pre-loved to the high street
         </p>
       </div>
 
       {/* Main content with image and text side by side */}
-      <div className="flex flex-col md:flex-row gap-8 md:gap-12 mb-16">
+      <div className="flex flex-col md:flex-row gap-12 md:gap-16 mb-20">
         {/* Image column - vertically centered on desktop */}
-        <div className="w-full md:w-1/2 px-4 md:px-0 md:flex md:items-center">
-          <div className="relative mx-auto max-w-md md:max-w-none">
-            <Image
-              src="/images/dan_and_mitch.webp"
-              alt="Michelle and Dan, co-founders of TAG&TAKE"
-              width={600}
-              height={400}
-              className="rounded-lg shadow-lg w-full h-auto"
-              priority
-            />
+        <div className="w-full md:w-1/2 md:flex md:items-start">
+          <div className="relative mx-auto">
+            <div className="relative overflow-hidden rounded-xl shadow-xl">
+              <Image
+                src="/images/dan_and_mitch.webp"
+                alt="Michelle and Dan, co-founders of TAG&TAKE"
+                width={600}
+                height={400}
+                className="w-full h-auto object-cover"
+                priority
+              />
+            </div>
             <p className="text-sm text-center text-muted-foreground mt-4 italic">
               Michelle & Dan, co-founders of TAG&TAKE
             </p>
@@ -32,12 +36,12 @@ export default function AboutPage() {
         </div>
 
         {/* Text column */}
-        <div className="w-full md:w-1/2 px-4 md:px-0 space-y-8 md:space-y-10">
+        <div className="w-full md:w-1/2 space-y-10">
           <section>
-            <h3 className="text-xl md:text-2xl font-medium mb-2 text-primary">
+            <h3 className="text-xl md:text-2xl font-medium mb-3 text-primary inline-block border-b-2 border-primary/30 pb-1">
               Driving value for the high street
             </h3>
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
               We&apos;re led by a conviction that finding a smart solution to
               harness the potential of second hand markets can drive value for a
               struggling high street. Tag&Take was born out of a shared drive to
@@ -48,10 +52,10 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h3 className="text-xl md:text-2xl font-medium mb-2 text-primary">
+            <h3 className="text-xl md:text-2xl font-medium mb-3 text-primary inline-block border-b-2 border-primary/30 pb-1">
               Keeping it circular
             </h3>
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
               Our aim is simple: to empower existing retailers to seamlessly
               integrate second hand sales. It isn&apos;t just about being
               eco-friendly (though that is a plus)—it&apos;s about enabling the
@@ -63,10 +67,10 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h3 className="text-xl md:text-2xl font-medium mb-2 text-primary">
+            <h3 className="text-xl md:text-2xl font-medium mb-3 text-primary inline-block border-b-2 border-primary/30 pb-1">
               Leading the way
             </h3>
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
               We truly believe that technology can help us in sharing the value
               and extending the lifecycle of products we produce, and that smart
               solutions can redefine how we value and use what we already own.
@@ -78,18 +82,33 @@ export default function AboutPage() {
       </div>
 
       {/* CTA section */}
-      <div className="bg-primary/10 p-6 md:p-12 rounded-lg text-center max-w-3xl mx-auto">
-        <h3 className="text-xl md:text-2xl font-medium mb-3">
+      <div className="bg-primary/5 p-10 md:p-16 rounded-2xl text-center max-w-4xl mx-auto border border-primary/10 shadow-sm">
+        <h3 className="text-2xl md:text-3xl font-medium mb-4">
           Want to know more?
         </h3>
-        <p className="mb-6 text-muted-foreground">
-          Discover how our platform works and how it can benefit you.
+        <p className="mb-8 text-muted-foreground text-lg max-w-2xl mx-auto">
+          Discover how our platform can benefit you.
         </p>
         <Link
           href={Routes.HOW_IT_WORKS}
-          className="inline-block bg-primary text-primary-foreground px-8 py-3 rounded-md hover:bg-primary/90 transition-colors font-medium"
+          className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3 rounded-lg hover:bg-primary/90 transition-all duration-300 font-medium shadow-md hover:shadow-lg"
         >
-          Learn how it works →
+          Learn how it works
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="ml-1"
+          >
+            <path d="M5 12h14"></path>
+            <path d="m12 5 7 7-7 7"></path>
+          </svg>
         </Link>
       </div>
     </div>

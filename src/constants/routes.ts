@@ -57,10 +57,4 @@ export const Routes = {
     ROOT: "/stores",
     PROFILE: (storeId: string) => `/stores/${storeId}`, 
   },
-
-  // Member routes (Public)
-  MEMBERS: {
-    ROOT: "/members",
-    PROFILE: (memberId: string) => `/members/${memberId}`,
-  },
 };
