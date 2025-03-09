@@ -6,6 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@src/components/ui/accordion";
+import { itemCategories } from "@src/data/itemReferenceData";
 
 export default function HowItWorksPage() {
   return (
@@ -110,45 +111,184 @@ export default function HowItWorksPage() {
       {/* FAQ Section */}
       <div className="max-w-4xl mx-auto mb-10 md:mb-16">
         <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6 text-center">
-          Frequently Asked Questions
+          FAQs
         </h2>
-        <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="item-1">
-            <AccordionTrigger>How do I price my items?</AccordionTrigger>
-            <AccordionContent>
-              You set your own prices when you drop off your items. Our staff
-              can help with suggestions based on condition and brand if
-              you&apos;re unsure.
-            </AccordionContent>
-          </AccordionItem>
 
-          <AccordionItem value="item-2">
-            <AccordionTrigger>
-              What happens if my item doesn&apos;t sell?
-            </AccordionTrigger>
-            <AccordionContent>
-              Items remain in-store for 30 days. After that, you can either
-              collect them or we can donate them to charity on your behalf.
-            </AccordionContent>
-          </AccordionItem>
+        {/* Getting Started & Listing Items */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-3 text-primary">
+            Getting Started & Listing Items
+          </h3>
+          <div className="pl-4 border-l-2 border-primary/20">
+            <Accordion type="single" collapsible className="w-full mb-6">
+              <AccordionItem value="selling-1">
+                <AccordionTrigger>How do I price my items?</AccordionTrigger>
+                <AccordionContent>
+                  You set your own prices when you drop off your items. Our
+                  staff can help with suggestions based on condition and brand
+                  if you&apos;re unsure.
+                </AccordionContent>
+              </AccordionItem>
 
-          <AccordionItem value="item-3">
-            <AccordionTrigger>When do I get paid?</AccordionTrigger>
-            <AccordionContent>
-              Payment is processed automatically as soon as the sale is
-              completed. Funds typically appear in your account within 1-2
-              business days.
-            </AccordionContent>
-          </AccordionItem>
+              <AccordionItem value="selling-2">
+                <AccordionTrigger>
+                  What types of items can I sell?
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p className="mb-2">
+                    Please check individual store pages for their specific
+                    accepted categories. Common categories include:
+                  </p>
+                  <ul className="list-disc pl-5 space-y-1">
+                    {itemCategories.map((category) => (
+                      <li key={category.id}>{category.name}</li>
+                    ))}
+                  </ul>
+                  <p className="mt-2">
+                    All items must be clean and ready to sell.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
 
-          <AccordionItem value="item-4">
-            <AccordionTrigger>What types of items can I sell?</AccordionTrigger>
-            <AccordionContent>
-              We accept clothing, accessories, shoes, and small household items
-              in good condition. All items must be clean and ready to sell.
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+              <AccordionItem value="selling-3">
+                <AccordionTrigger>
+                  Why do stores have minimum prices?
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p>
+                    Minimum prices ensure quality standards, prevent low-value
+                    items from taking up space, and make sure both sellers and
+                    stores benefit from each sale.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="selling-4">
+                <AccordionTrigger>
+                  Do I need to create an account to sell items?
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p>
+                    Yes, a free account is required to track your items, receive
+                    payment, and get notifications about sales or recalls. You
+                    can quickly create an account when dropping off your first
+                    items.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+        </div>
+
+        {/* Earnings & Payment Details */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-3 text-primary">
+            Earnings & Payment Details
+          </h3>
+          <div className="pl-4 border-l-2 border-primary/20">
+            <Accordion type="single" collapsible className="w-full mb-6">
+              <AccordionItem value="payments-1">
+                <AccordionTrigger>
+                  How much commission do stores take?
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p>
+                    Commission rates vary by store, with a maximum of 50%. You
+                    can find each store&apos;s commission rate on their store
+                    page or when scanning their QR tags.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="payments-2">
+                <AccordionTrigger>
+                  How quickly will I get paid after my item sells?
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p>
+                    Payment processing typically takes 1-3 business days after
+                    an item sells. You&apos;ll receive a notification when
+                    payment has been processed to your account. All payments,
+                    including pending ones, can be viewed and managed on your{" "}
+                    <Link
+                      href={Routes.MEMBER.PAYMENTS}
+                      className="text-primary hover:underline"
+                    >
+                      Payments page
+                    </Link>
+                    .
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="payments-3">
+                <AccordionTrigger>
+                  Do I need to add payment details right away?
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p>
+                    No, you can add your payment details later. We&apos;ll
+                    safely hold any funds in your account until you&apos;re
+                    ready to add your payment information. This gives you
+                    flexibility while ensuring your earnings are secure.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+        </div>
+
+        {/* After Listing & Item Management */}
+        <div>
+          <h3 className="text-lg font-semibold mb-3 text-primary">
+            After Listing & Item Management
+          </h3>
+          <div className="pl-4 border-l-2 border-primary/20">
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="management-1">
+                <AccordionTrigger>
+                  What happens if my item doesn&apos;t sell?
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p>
+                    Items remain in-store for a minimum of 21 days. After this
+                    period, stores may recall items to manage their inventory
+                    effectively. You&apos;ll have a 10-day window post-recall to
+                    collect your unsold items.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="management-2">
+                <AccordionTrigger>
+                  What if I don&apos;t collect my recalled items?
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p>
+                    Items not collected within the 10-day window post-recall
+                    will be considered abandoned. This fair policy prevents
+                    stores from becoming storage facilities and allows them to
+                    maintain quality inventory for all sellers.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="management-3">
+                <AccordionTrigger>
+                  What if my item gets damaged in the store?
+                </AccordionTrigger>
+                <AccordionContent>
+                  <p>
+                    While stores take reasonable care of all items, they are not
+                    responsible for damage that may occur during normal handling
+                    or display. We recommend not listing extremely fragile or
+                    irreplaceable items.
+                  </p>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+        </div>
       </div>
 
       {/* CTA Section */}
