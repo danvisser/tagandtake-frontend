@@ -6,6 +6,7 @@ import { Button } from "@src/components/ui/button";
 import { useAuthStore } from "@src/stores/authStore";
 import { Routes } from "@src/constants/routes";
 import { UserRole, UserRoles } from "@src/types/roles";
+import Image from "next/image";
 
 type PageVariant = "public" | UserRole;
 
@@ -28,53 +29,63 @@ export default function HomePage() {
 
 function PublicHomePage() {
   return (
-    <div className="container-fluid mx-0 px-0 py-0 flex flex-col lg:flex-row lg:items-stretch lg:min-h-screen">
-      {/* Main Content */}
-      <div className="lg:w-1/2 space-y-6 text-center flex flex-col items-center justify-center px-4 py-12 md:py-20">
-        <h1 className="text-3xl font-semibold md:text-4xl lg:text-4xl flex flex-col">
-          <span>
-            Sell your{" "}
-            <span className="text-primary">pre-loved clothes</span> 
-          </span>
-          <span className="mt-2">
-            {" "}
-            on the high street
+    <div className="flex flex-col min-h-screen">
+      {/* Image section - full width on mobile, half width on desktop */}
+      <div className="w-full h-64 md:h-80 lg:h-screen lg:w-1/2 lg:fixed lg:right-0">
+        <div className="relative w-full h-full">
+          <Image
+            src="/images/public_home.webp"
+            alt="Pre-loved clothing on the high street"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+      </div>
+
+      {/* Content section - full width on mobile, half width and centered on desktop */}
+      <div className="w-full lg:w-1/2 space-y-6 text-center flex flex-col items-center justify-center px-4 py-8 md:py-12 lg:min-h-screen">
+        <h1 className="text-2xl font-semibold md:text-3xl lg:text-4xl flex flex-col mt-4 lg:mt-0">
+          <span className="mb-2">Clear space, clear mind</span>
+          <span className="text-lg font-medium md:text-xl lg:text-2xl text-muted-foreground">
+            Sell your pre-loved clothes on the high street
           </span>
         </h1>
-        <div className="flex flex-col gap-4 items-center">
-          <Link href={Routes.LOGIN}>
-            <Button variant="outline" className="w-48">
+
+        <div className="flex flex-col gap-4 items-center w-full max-w-xs">
+          <Link href={Routes.LOGIN} className="w-full">
+            <Button variant="outline" className="w-full">
               Login
             </Button>
           </Link>
-          <div className="w-full h-px bg-border mt-4 mb-4" />
-          <Link href={Routes.SIGNUP.MEMBER}>
-            <Button className="w-48">Signup</Button>
+          <div className="w-full h-px bg-border my-2" />
+          <Link href={Routes.SIGNUP.MEMBER} className="w-full">
+            <Button className="w-full">Signup</Button>
           </Link>
         </div>
+
         <Link
           href={Routes.HOW_IT_WORKS}
-          className="text-muted-foreground underline hover:text-primary"
+          className="text-muted-foreground underline hover:text-primary text-sm md:text-base"
         >
           how it works
         </Link>
-        <div className="h-2"></div>
-        <p className="text-muted-foreground text-md flex flex-col items-center">
+
+        <p className="text-muted-foreground text-sm md:text-base flex flex-col items-center">
           <span>Join our community of local, circular fashion -</span>
           <span>buy and sell unwanted gems in your favorite spaces.</span>
         </p>
-        <div className="h-2"></div>
-        <div className="flex flex-row items-center justify-center gap-3 mt-6">
-          <h2 className="text-lg font-semibold">Become a pre-loved host:</h2>
-          <Link href={Routes.SIGNUP.STORE}>
-            <Button variant="outline" className="w-60">
+
+        <div className="flex flex-col md:flex-row items-center justify-center gap-3 mt-4 w-full max-w-xs md:max-w-md">
+          <h2 className="text-base md:text-lg font-semibold mb-2 md:mb-0">
+            Become a pre-loved host:
+          </h2>
+          <Link href={Routes.SIGNUP.STORE} className="w-full md:w-auto">
+            <Button variant="outline" className="w-full md:w-auto">
               Register today!
             </Button>
           </Link>
         </div>
-      </div>
-      <div className="w-full h-64 lg:h-screen lg:w-1/2">
-        <div className="bg-blue-500 w-full h-full" />
       </div>
     </div>
   );
