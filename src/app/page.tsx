@@ -32,10 +32,13 @@ function PublicHomePage() {
       {/* Main Content */}
       <div className="lg:w-1/2 space-y-6 text-center flex flex-col items-center justify-center px-4 py-12 md:py-20">
         <h1 className="text-3xl font-semibold md:text-4xl lg:text-4xl flex flex-col">
-          <span>Sell your pre-loved clothes</span>
+          <span>
+            Sell your{" "}
+            <span className="text-primary">pre-loved clothes</span> 
+          </span>
           <span className="mt-2">
             {" "}
-            on the <span className="text-primary">high street</span>
+            on the high street
           </span>
         </h1>
         <div className="flex flex-col gap-4 items-center">
