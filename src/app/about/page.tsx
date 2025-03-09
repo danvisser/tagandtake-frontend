@@ -17,16 +17,14 @@ export default function AboutPage() {
         {/* Image column - vertically centered on desktop */}
         <div className="w-full md:w-1/2 px-4 md:px-0 md:flex md:items-center">
           <div className="relative mx-auto max-w-md md:max-w-none">
-            <div className="absolute -top-4 -left-4 w-24 h-24 border-t-2 border-l-2 border-primary opacity-50"></div>
             <Image
               src="/images/dan_and_mitch.webp"
               alt="Michelle and Dan, co-founders of TAG&TAKE"
               width={600}
               height={400}
-              className="rounded-lg shadow-lg w-full h-auto relative z-10"
+              className="rounded-lg shadow-lg w-full h-auto"
               priority
             />
-            <div className="absolute -bottom-4 -right-4 w-24 h-24 border-b-2 border-r-2 border-primary opacity-50"></div>
             <p className="text-sm text-center text-muted-foreground mt-4 italic">
               Michelle & Dan, co-founders of TAG&TAKE
             </p>
