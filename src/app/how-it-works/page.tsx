@@ -19,9 +19,8 @@ export default function HowItWorksPage() {
         </h1>
 
         <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-          Sell clothes in stores near you—no messaging, no shipping, no hassle.
-          <br />
-          You bring the items, we handle the rest.
+          Sell clothes in stores near you. You bring the items, we handle the
+          rest.
         </p>
       </div>
 
@@ -48,8 +47,8 @@ export default function HowItWorksPage() {
             1. Drop Off
           </h2>
           <p className="text-sm md:text-base text-muted-foreground">
-            Bring your items to a participating store, tag them with our secure
-            QR codes, and place them in a designated area.
+            Bring your items to a participating store, tag them with our QR
+            code security tags, and place them in a designated area.
           </p>
         </div>
 
@@ -75,8 +74,8 @@ export default function HowItWorksPage() {
             2. Sell
           </h2>
           <p className="text-sm md:text-base text-muted-foreground">
-            Shoppers discover your items in-store or online. No messaging, no
-            shipping hassles, no meetups—the store handles everything for you.
+            Your items are displayed in-store and online for shoppers to
+            discover. No messaging, no shipping, just effortless selling.
           </p>
         </div>
 
@@ -103,8 +102,8 @@ export default function HowItWorksPage() {
             3. Earn
           </h2>
           <p className="text-sm md:text-base text-muted-foreground">
-            Proceeds are automatically split between you and the store. No
-            invoicing, no payment chasing—just simple, shared rewards.
+            Once your item sells, earnings are automatically split between you 
+            and the store—no waiting, no hassle, just simple, shared rewards.
           </p>
         </div>
       </div>
