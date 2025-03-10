@@ -2,19 +2,19 @@ import { authRequest } from "@src/lib/fetchClient";
 import { API_ROUTES } from "@src/constants/apiRoutes";
 import axios from "axios";
 
-export interface SignupCredentials {
+export interface MemberSignupCredentials {
   username: string;
   email: string;
   password: string;
   password2: string;
 }
 
-export interface SignupResponse {
+export interface MemberSignupResponse {
   username: string;
   email: string;
 }
 
-export interface SignupError {
+export interface MemberSignupError {
   username?: string[];
   email?: string[];
   password?: string[];
@@ -23,11 +23,11 @@ export interface SignupError {
 }
 
 export const signupMember = async (
-  credentials: SignupCredentials
+  credentials: MemberSignupCredentials
 ): Promise<{
   success: boolean;
-  data?: SignupResponse;
-  error?: SignupError;
+  data?: MemberSignupResponse;
+  error?: MemberSignupError;
 }> => {
   try {
     const { data } = await authRequest({
@@ -45,7 +45,7 @@ export const signupMember = async (
     if (axios.isAxiosError(error) && error.response?.data) {
       return {
         success: false,
-        error: error.response.data as SignupError,
+        error: error.response.data as MemberSignupError,
       };
     }
     throw error;

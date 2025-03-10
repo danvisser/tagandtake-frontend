@@ -4,8 +4,8 @@ import { useState } from "react";
 import MemberSignupForm from "@src/components/MemberSignupForm";
 import {
   signupMember,
-  SignupCredentials,
-  SignupError,
+  MemberSignupCredentials,
+  MemberSignupError,
 } from "@src/api/singupApi";
 import { CheckCircle, LogIn } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@src/components/ui/alert";
@@ -14,12 +14,12 @@ import { Button } from "@src/components/ui/button";
 import { useRouter } from "next/navigation";
 
 export default function MemberSignupPage() {
-  const [errors, setErrors] = useState<SignupError | null>(null);
+  const [errors, setErrors] = useState<MemberSignupError | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const router = useRouter();
 
-  const handleSignup = async (credentials: SignupCredentials) => {
+  const handleMemberSignup = async (credentials: MemberSignupCredentials) => {
     try {
       setErrors(null);
       const result = await signupMember(credentials);
@@ -31,7 +31,7 @@ export default function MemberSignupPage() {
         setErrors(result.error);
       }
     } catch (error) {
-      console.error("Signup failed:", error);
+      console.error("Member signup failed:", error);
       setErrors({
         non_field_errors: [
           "An unexpected error occurred. Please try again later.",
@@ -84,7 +84,7 @@ export default function MemberSignupPage() {
         <h2 className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
           Create your account
         </h2>
-        <MemberSignupForm onSubmit={handleSignup} errors={errors} />
+        <MemberSignupForm onSubmit={handleMemberSignup} errors={errors} />
       </div>
     </div>
   );

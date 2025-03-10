@@ -6,14 +6,17 @@ import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import { Routes } from "@src/constants/routes";
-import { SignupCredentials, SignupError } from "@src/api/singupApi";
+import { MemberSignupCredentials, MemberSignupError } from "@src/api/singupApi";
 
-interface SignupFormProps {
-  onSubmit: (credentials: SignupCredentials) => Promise<void>;
-  errors?: SignupError | null;
+interface MemberSignupFormProps {
+  onSubmit: (credentials: MemberSignupCredentials) => Promise<void>;
+  errors?: MemberSignupError | null;
 }
 
-export default function MemberSignupForm({ onSubmit, errors }: SignupFormProps) {
+export default function MemberSignupForm({
+  onSubmit,
+  errors,
+}: MemberSignupFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [username, setUsername] = React.useState("");
   const [email, setEmail] = React.useState("");

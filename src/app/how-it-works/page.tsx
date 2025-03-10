@@ -19,8 +19,7 @@ export default function HowItWorksPage() {
         </h1>
 
         <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-        Sell clothes in stores near you—no messaging, no shipping, no
-          hassle.
+          Sell clothes in stores near you—no messaging, no shipping, no hassle.
           <br />
           You bring the items, we handle the rest.
         </p>
@@ -50,7 +49,7 @@ export default function HowItWorksPage() {
           </h2>
           <p className="text-sm md:text-base text-muted-foreground">
             Bring your items to a participating store, tag them with our secure
-            QR codes, and place them in a designated area. 
+            QR codes, and place them in a designated area.
           </p>
         </div>
 
@@ -112,7 +111,10 @@ export default function HowItWorksPage() {
 
       {/* FAQ Section */}
       <div className="max-w-4xl mx-auto mb-10 md:mb-16">
-        <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6 text-center">
+        <h2
+          id="faq"
+          className="text-xl md:text-2xl font-semibold mb-4 md:mb-6 text-center"
+        >
           FAQs
         </h2>
 

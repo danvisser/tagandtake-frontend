@@ -83,4 +83,7 @@ export const API_ROUTES = {
     CONNECT_WEBHOOK: `/stripe/connect-webhook/`,
     PLATFORM_WEBHOOK: `/stripe/platform-webhook/`,
   },
+  CONTACT: {
+    SUPPORT: "/support/",
+  },
 };
