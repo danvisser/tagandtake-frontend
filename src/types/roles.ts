@@ -13,9 +13,7 @@ export interface AuthUser {
 export const LISTING_ROLES = {
   HOST: "HOST",
   OWNER: "OWNER",
-  GUEST: "GUEST",
+  VIEWER: "VIEWER",
 } as const;
 
 export type ListingRole = (typeof LISTING_ROLES)[keyof typeof LISTING_ROLES];
-
-

@@ -1,0 +1,477 @@
+import { fetchClient } from "@src/lib/fetchClient";
+import { API_ROUTES } from "@src/constants/apiRoutes";
+import axios from "axios";
+import { Item } from "./itemsApi";
+import { ListingRole } from "@src/types/roles";
+
+// Enum for recall reason types
+export enum RecallReasonType {
+  ISSUE = "issue",
+  STORE_DISCRETION = "store discretion",
+  OWNER_REQUEST = "owner request",
+}
+
+// Types for Recall Reason
+export interface RecallReason {
+  id: number;
+  reason: string;
+  type: RecallReasonType;
+  description: string;
+}
+
+// Base interface for listings
+export interface BaseListing {
+  id: number;
+  item: number;
+  tag: number;
+  store_commission: number;
+  min_listing_days: number;
+  item_price: number;
+  transaction_fee: number;
+  listing_price: number;
+  store_commission_amount: number;
+  member_earnings: number;
+  item_details?: Item;
+  created_at: string;
+  updated_at: string;
+  user_listing_relation: ListingRole;
+}
+
+// Interface for active listings
+export interface ItemListing extends BaseListing {
+  listing_exists: boolean;
+  tagandtake_commission: number;
+  tagandtake_flat_fee: number;
+}
+
+// Interface for recalled listings
+export interface RecalledItemListing extends BaseListing {
+  reason: RecallReason;
+  recalled_at: string;
+  collection_pin?: string;
+  collection_deadline: string;
+}
+
+// Interface for listing creation
+export interface CreateListingData {
+  item_id: number;
+  tag_id: number;
+}
+
+// Interface for creating an item and listing together
+export interface CreateItemAndListingData {
+  name: string;
+  description?: string;
+  size?: string;
+  price: number;
+  condition: number;
+  category: number;
+  image: File;
+  tag_id: number;
+}
+
+// Error types
+export interface ListingError {
+  item_id?: string[];
+  tag_id?: string[];
+  non_field_errors?: string[];
+}
+
+// Response for checking listing role
+export interface ListingRoleResponse {
+  user_listing_relation: ListingRole;
+  listing_exists: boolean;
+}
+
+// Create a new listing
+export const createListing = async (
+  listingData: CreateListingData
+): Promise<{
+  success: boolean;
+  data?: ItemListing;
+  error?: ListingError;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "POST",
+      url: API_ROUTES.MEMBERS.LISTINGS.CREATE,
+      data: listingData,
+    });
+
+    return {
+      success: true,
+      data: data.data,
+    };
+  } catch (error: unknown) {
+    console.error("Create listing error:", error);
+    if (axios.isAxiosError(error) && error.response?.data) {
+      return {
+        success: false,
+        error: error.response.data as ListingError,
+      };
+    }
+    throw error;
+  }
+};
+
+// Create an item and listing in one request
+export const createItemAndListing = async (
+  formData: CreateItemAndListingData
+): Promise<{
+  success: boolean;
+  data?: ItemListing;
+  error?: ListingError;
+}> => {
+  try {
+    const form = new FormData();
+    form.append("name", formData.name);
+    if (formData.description) form.append("description", formData.description);
+    if (formData.size) form.append("size", formData.size);
+    form.append("price", formData.price.toString());
+    form.append("condition", formData.condition.toString());
+    form.append("category", formData.category.toString());
+    form.append("image", formData.image);
+    form.append("tag_id", formData.tag_id.toString());
+
+    const { data } = await fetchClient({
+      method: "POST",
+      url: API_ROUTES.MEMBERS.ITEM_LISTINGS,
+      data: form,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return {
+      success: true,
+      data: data.data,
+    };
+  } catch (error: unknown) {
+    console.error("Create item and listing error:", error);
+    if (axios.isAxiosError(error) && error.response?.data) {
+      return {
+        success: false,
+        error: error.response.data as ListingError,
+      };
+    }
+    throw error;
+  }
+};
+
+// Get a listing by ID
+export const getListing = async (
+  id: number
+): Promise<{
+  success: boolean;
+  data?: ItemListing;
+  error?: string;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "GET",
+      url: API_ROUTES.MEMBERS.LISTINGS.DETAILS(id),
+    });
+
+    return {
+      success: true,
+      data,
+    };
+  } catch (error: unknown) {
+    console.error(`Get listing ${id} error:`, error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error: error.response?.data?.detail || `Failed to fetch listing ${id}`,
+      };
+    }
+    throw error;
+  }
+};
+
+// Check user's role for a listing
+export const checkListingRole = async (
+  id: number
+): Promise<{
+  success: boolean;
+  data?: ListingRoleResponse;
+  error?: string;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "GET",
+      url: API_ROUTES.MEMBERS.LISTINGS.CHECK_ROLE(id),
+    });
+
+    return {
+      success: true,
+      data,
+    };
+  } catch (error: unknown) {
+    console.error(`Check listing role ${id} error:`, error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.detail ||
+          `Failed to check listing role for ${id}`,
+      };
+    }
+    throw error;
+  }
+};
+
+// Get all listings for the current store
+export const getStoreListings = async (): Promise<{
+  success: boolean;
+  data?: ItemListing[];
+  error?: string;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "GET",
+      url: API_ROUTES.STORES.LISTINGS.LIST,
+    });
+
+    return {
+      success: true,
+      data,
+    };
+  } catch (error: unknown) {
+    console.error("Get store listings error:", error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error: error.response?.data?.detail || "Failed to fetch store listings",
+      };
+    }
+    throw error;
+  }
+};
+
+// Get all recalled listings for the current store
+export const getStoreRecalledListings = async (): Promise<{
+  success: boolean;
+  data?: RecalledItemListing[];
+  error?: string;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "GET",
+      url: API_ROUTES.STORES.RECALLED_LISTINGS.LIST,
+    });
+
+    return {
+      success: true,
+      data,
+    };
+  } catch (error: unknown) {
+    console.error("Get store recalled listings error:", error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.detail || "Failed to fetch recalled listings",
+      };
+    }
+    throw error;
+  }
+};
+
+// Replace a tag for a listing
+export const replaceListingTag = async (
+  id: number,
+  newTagId: number
+): Promise<{
+  success: boolean;
+  data?: ItemListing;
+  error?: string;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "PATCH",
+      url: API_ROUTES.STORES.LISTINGS.REPLACE_TAG(id),
+      data: { new_tag_id: newTagId },
+    });
+
+    return {
+      success: true,
+      data: data.data,
+    };
+  } catch (error: unknown) {
+    console.error(`Replace tag for listing ${id} error:`, error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.detail ||
+          `Failed to replace tag for listing ${id}`,
+      };
+    }
+    throw error;
+  }
+};
+
+// Recall a listing
+export const recallListing = async (
+  id: number,
+  reasonId: number
+): Promise<{
+  success: boolean;
+  data?: RecalledItemListing;
+  error?: string;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "PATCH",
+      url: API_ROUTES.STORES.LISTINGS.RECALL(id),
+      data: { reason: reasonId },
+    });
+
+    return {
+      success: true,
+      data: data.data,
+    };
+  } catch (error: unknown) {
+    console.error(`Recall listing ${id} error:`, error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error: error.response?.data?.detail || `Failed to recall listing ${id}`,
+      };
+    }
+    throw error;
+  }
+};
+
+// Delist a listing
+export const delistListing = async (
+  id: number,
+  reasonId: number
+): Promise<{
+  success: boolean;
+  data?: RecalledItemListing;
+  error?: string;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "PATCH",
+      url: API_ROUTES.STORES.LISTINGS.DELIST(id),
+      data: { reason: reasonId },
+    });
+
+    return {
+      success: true,
+      data: data.data,
+    };
+  } catch (error: unknown) {
+    console.error(`Delist listing ${id} error:`, error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error: error.response?.data?.detail || `Failed to delist listing ${id}`,
+      };
+    }
+    throw error;
+  }
+};
+
+// Generate a new collection PIN for a recalled listing
+export const generateCollectionPin = async (
+  id: number
+): Promise<{
+  success: boolean;
+  data?: RecalledItemListing;
+  error?: string;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "PATCH",
+      url: API_ROUTES.MEMBERS.RECALLED_LISTINGS.GENERATE_COLLECTION_PIN(id),
+    });
+
+    return {
+      success: true,
+      data: data.data,
+    };
+  } catch (error: unknown) {
+    console.error(`Generate collection PIN for listing ${id} error:`, error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.detail ||
+          `Failed to generate collection PIN for listing ${id}`,
+      };
+    }
+    throw error;
+  }
+};
+
+// Collect a recalled listing
+export const collectRecalledListing = async (
+  id: number,
+  pin: string
+): Promise<{
+  success: boolean;
+  data?: RecalledItemListing;
+  error?: string;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "PATCH",
+      url: API_ROUTES.STORES.RECALLED_LISTINGS.COLLECT(id),
+      data: { pin },
+    });
+
+    return {
+      success: true,
+      data: data.data,
+    };
+  } catch (error: unknown) {
+    console.error(`Collect recalled listing ${id} error:`, error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.detail ||
+          `Failed to collect recalled listing ${id}`,
+      };
+    }
+    throw error;
+  }
+};
+
+// Get public listings for a store
+export const getPublicStoreListings = async (
+  storeId: number
+): Promise<{
+  success: boolean;
+  data?: ItemListing[];
+  error?: string;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "GET",
+      url: `/stores/${storeId}/listings/`,
+    });
+
+    return {
+      success: true,
+      data,
+    };
+  } catch (error: unknown) {
+    console.error(
+      `Get public store listings for store ${storeId} error:`,
+      error
+    );
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.detail ||
+          `Failed to fetch listings for store ${storeId}`,
+      };
+    }
+    throw error;
+  }
+};
