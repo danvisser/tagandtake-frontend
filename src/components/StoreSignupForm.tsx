@@ -572,7 +572,7 @@ export default function StoreSignupForm({
             <div className="space-y-1">
               <Textarea
                 id="store-bio"
-                placeholder="Business Description"
+                placeholder="Business Bio"
                 disabled={isLoading}
                 value={storeBio}
                 onChange={(e) => setStoreBio(e.target.value)}
@@ -674,7 +674,7 @@ export default function StoreSignupForm({
               <div className="space-y-1">
                 <Input
                   id="state"
-                  placeholder="State/Province (optional)"
+                  placeholder="County (optional)"
                   type="text"
                   autoCapitalize="none"
                   autoCorrect="off"
