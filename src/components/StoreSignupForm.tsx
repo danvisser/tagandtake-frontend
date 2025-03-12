@@ -4,7 +4,7 @@ import * as React from "react";
 import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
 import { Textarea } from "@src/components/ui/textarea";
-import { StoreSignupCredentials, StoreSignupError } from "@src/api/singupApi";
+import { StoreSignupCredentials, StoreSignupError } from "@src/api/signupApi";
 import { useLoadScript } from "@react-google-maps/api";
 import { Checkbox } from "@src/components/ui/checkbox";
 import { Label } from "@src/components/ui/label";

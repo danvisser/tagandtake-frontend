@@ -6,7 +6,7 @@ import {
   signupMember,
   MemberSignupCredentials,
   MemberSignupError,
-} from "@src/api/singupApi";
+} from "@src/api/signupApi";
 import { CheckCircle, LogIn } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@src/components/ui/alert";
 import { Routes } from "@src/constants/routes";
@@ -87,8 +87,8 @@ export default function MemberSignupPage() {
             Sign up with email
           </h2>
           <p className="text-center text-muted-foreground mt-2">
-            Turn your pre-loved items into cash — no shipping, 
-            no messaging, just drop off and earn.
+            Turn your pre-loved items into cash — no shipping, no messaging,
+            just drop off and earn.
           </p>
         </div>
       </div>

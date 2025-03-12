@@ -1,6 +1,7 @@
-import { fetchClient } from "@src/lib/fetchClient";
+import { authRequest } from "@src/lib/fetchClient";
 import { API_ROUTES } from "@src/constants/apiRoutes";
 import axios from "axios";
+import { UserRole } from "@src/types/roles";
 
 export interface MemberSignupCredentials {
   username: string;
@@ -30,7 +31,7 @@ export const signupMember = async (
   error?: MemberSignupError;
 }> => {
   try {
-    const { data } = await fetchClient({
+    const { data } = await authRequest({
       method: "POST",
       url: API_ROUTES.SIGNUP.MEMBER,
       data: credentials,
@@ -86,7 +87,7 @@ export interface StoreSignupCredentials {
 export interface StoreSignupResponse {
   username: string;
   email: string;
-  role: string;
+  role: UserRole;
 }
 
 export interface StoreSignupError {
@@ -119,7 +120,7 @@ export const signupStore = async (
   error?: StoreSignupError;
 }> => {
   try {
-    const { data } = await fetchClient({
+    const { data } = await authRequest({
       method: "POST",
       url: API_ROUTES.SIGNUP.STORE,
       data: credentials,

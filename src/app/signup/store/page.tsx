@@ -6,7 +6,7 @@ import {
   signupStore,
   StoreSignupCredentials,
   StoreSignupError,
-} from "@src/api/singupApi";
+} from "@src/api/signupApi";
 import { CheckCircle, LogIn } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@src/components/ui/alert";
 import { Routes } from "@src/constants/routes";
@@ -84,11 +84,12 @@ export default function StoreSignupPage() {
       <div className="w-full py-12 bg-background">
         <div className="container max-w-md mx-auto px-4">
           <h2 className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
-            Sign up and <span className="border-b-4 border-primary/50">become a host!</span>
+            Sign up and{" "}
+            <span className="border-b-4 border-primary/50">become a host!</span>
           </h2>
           <p className="text-center text-muted-foreground mt-2">
-            Join the forward-thinking businesses transforming 
-            unused space into hubs for revenue and community.
+            Join the forward-thinking businesses transforming unused space into
+            hubs for revenue and community.
           </p>
         </div>
       </div>

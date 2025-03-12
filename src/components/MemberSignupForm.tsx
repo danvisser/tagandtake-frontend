@@ -6,7 +6,7 @@ import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import { Routes } from "@src/constants/routes";
-import { MemberSignupCredentials, MemberSignupError } from "@src/api/singupApi";
+import { MemberSignupCredentials, MemberSignupError } from "@src/api/signupApi";
 
 interface MemberSignupFormProps {
   onSubmit: (credentials: MemberSignupCredentials) => Promise<void>;
