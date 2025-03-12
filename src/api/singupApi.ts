@@ -1,4 +1,4 @@
-import { authRequest } from "@src/lib/fetchClient";
+import { fetchClient } from "@src/lib/fetchClient";
 import { API_ROUTES } from "@src/constants/apiRoutes";
 import axios from "axios";
 
@@ -30,7 +30,7 @@ export const signupMember = async (
   error?: MemberSignupError;
 }> => {
   try {
-    const { data } = await authRequest({
+    const { data } = await fetchClient({
       method: "POST",
       url: API_ROUTES.SIGNUP.MEMBER,
       data: credentials,
@@ -46,6 +46,99 @@ export const signupMember = async (
       return {
         success: false,
         error: error.response.data as MemberSignupError,
+      };
+    }
+    throw error;
+  }
+};
+
+export interface StoreSignupCredentials {
+  username: string;
+  email: string;
+  password: string;
+  password2: string;
+  store: {
+    store_name: string;
+    phone?: string;
+    store_bio?: string;
+    google_profile_url?: string;
+    website_url?: string;
+    instagram_url?: string;
+  };
+  store_address: {
+    street_address: string;
+    city: string;
+    state?: string;
+    postal_code: string;
+    country: string;
+    latitude?: number;
+    longitude?: number;
+  };
+  opening_hours: Array<{
+    day_of_week: string;
+    opening_time?: string;
+    closing_time?: string;
+    timezone?: string;
+    is_closed?: boolean;
+  }>;
+}
+
+export interface StoreSignupResponse {
+  username: string;
+  email: string;
+  role: string;
+}
+
+export interface StoreSignupError {
+  username?: string[];
+  email?: string[];
+  password?: string[];
+  password2?: string[];
+  non_field_errors?: string[];
+  store?: {
+    store_name?: string[];
+    phone?: string[];
+    store_bio?: string[];
+    website_url?: string[];
+    instagram_url?: string[];
+  };
+  store_address?: {
+    street_address?: string[];
+    city?: string[];
+    state?: string[];
+    postal_code?: string[];
+    country?: string[];
+  };
+}
+
+export const signupStore = async (
+  credentials: StoreSignupCredentials
+): Promise<{
+  success: boolean;
+  data?: StoreSignupResponse;
+  error?: StoreSignupError;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "POST",
+      url: API_ROUTES.SIGNUP.STORE,
+      data: credentials,
+    });
+
+    return {
+      success: true,
+      data,
+    };
+  } catch (error: unknown) {
+    console.error("Store signup error:", error);
+    if (axios.isAxiosError(error) && error.response?.data) {
+      console.log(
+        "Store signup error details:",
+        JSON.stringify(error.response.data, null, 2)
+      );
+      return {
+        success: false,
+        error: error.response.data as StoreSignupError,
       };
     }
     throw error;

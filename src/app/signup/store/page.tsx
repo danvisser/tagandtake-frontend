@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import MemberSignupForm from "@src/components/MemberSignupForm";
+import StoreSignupForm from "@src/components/StoreSignupForm";
 import {
-  signupMember,
-  MemberSignupCredentials,
-  MemberSignupError,
+  signupStore,
+  StoreSignupCredentials,
+  StoreSignupError,
 } from "@src/api/singupApi";
 import { CheckCircle, LogIn } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@src/components/ui/alert";
@@ -13,16 +13,16 @@ import { Routes } from "@src/constants/routes";
 import { Button } from "@src/components/ui/button";
 import { useRouter } from "next/navigation";
 
-export default function MemberSignupPage() {
-  const [errors, setErrors] = useState<MemberSignupError | null>(null);
+export default function StoreSignupPage() {
+  const [errors, setErrors] = useState<StoreSignupError | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const router = useRouter();
 
-  const handleMemberSignup = async (credentials: MemberSignupCredentials) => {
+  const handleStoreSignup = async (credentials: StoreSignupCredentials) => {
     try {
       setErrors(null);
-      const result = await signupMember(credentials);
+      const result = await signupStore(credentials);
 
       if (result.success && result.data) {
         setIsSuccess(true);
@@ -31,7 +31,7 @@ export default function MemberSignupPage() {
         setErrors(result.error);
       }
     } catch (error) {
-      console.error("Member signup failed:", error);
+      console.error("Store signup failed:", error);
       setErrors({
         non_field_errors: [
           "An unexpected error occurred. Please try again later.",
@@ -49,7 +49,7 @@ export default function MemberSignupPage() {
               <div className="flex items-center">
                 <CheckCircle className="h-6 w-6 text-green-600 mr-2" />
                 <AlertTitle className="text-green-800 font-medium text-lg">
-                  Account created successfully!
+                  Store account created successfully!
                 </AlertTitle>
               </div>
 
@@ -84,11 +84,11 @@ export default function MemberSignupPage() {
       <div className="w-full py-12 bg-background">
         <div className="container max-w-md mx-auto px-4">
           <h2 className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
-            Sign up with email
+            Sign up and <span className="border-b-4 border-primary/50">become a host!</span>
           </h2>
           <p className="text-center text-muted-foreground mt-2">
-            Turn your pre-loved items into cash — no shipping, 
-            no messaging, just drop off and earn.
+            Join the forward-thinking businesses transforming 
+            unused space into hubs for revenue and community.
           </p>
         </div>
       </div>
@@ -96,7 +96,7 @@ export default function MemberSignupPage() {
       {/* Scrollable form section */}
       <div className="flex-1 w-full">
         <div className="container max-w-md mx-auto px-4 py-4">
-          <MemberSignupForm onSubmit={handleMemberSignup} errors={errors} />
+          <StoreSignupForm onSubmit={handleStoreSignup} errors={errors} />
         </div>
       </div>
     </div>
