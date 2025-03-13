@@ -31,6 +31,15 @@ export enum ItemStatus {
   ABANDONED = "abandoned",
 }
 
+// Store info for items
+export interface ItemStoreInfo {
+  store_id: number;
+  store_name: string;
+  listed_at?: string;
+  sold_at?: string;
+  recalled_at?: string;
+}
+
 // Types for Item
 export interface Item {
   id: number;
@@ -46,6 +55,7 @@ export interface Item {
   main_image?: string;
   category_details?: ItemCategory;
   condition_details?: ItemCondition;
+  store_info?: ItemStoreInfo;
 }
 
 // Types for Item Creation
