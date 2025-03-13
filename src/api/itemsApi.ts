@@ -92,10 +92,18 @@ export interface ItemError {
   non_field_errors?: string[];
 }
 
-// Get all items for the current member
+// Add this interface for paginated responses
+export interface PaginatedResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
+// Update getMemberItems to handle pagination
 export const getMemberItems = async (): Promise<{
   success: boolean;
-  data?: Item[];
+  data?: PaginatedResponse<Item>;
   error?: string;
 }> => {
   try {

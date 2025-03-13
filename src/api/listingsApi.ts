@@ -83,6 +83,13 @@ export interface ListingRoleResponse {
   listing_exists: boolean;
 }
 
+export interface PaginatedResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
 // Create a new listing
 export const createListing = async (
   listingData: CreateListingData
@@ -220,10 +227,10 @@ export const checkListingRole = async (
   }
 };
 
-// Get all listings for the current store
+// Update getStoreListings to handle pagination
 export const getStoreListings = async (): Promise<{
   success: boolean;
-  data?: ItemListing[];
+  data?: PaginatedResponse<ItemListing>;
   error?: string;
 }> => {
   try {
@@ -248,10 +255,10 @@ export const getStoreListings = async (): Promise<{
   }
 };
 
-// Get all recalled listings for the current store
+// Update getStoreRecalledListings to handle pagination
 export const getStoreRecalledListings = async (): Promise<{
   success: boolean;
-  data?: RecalledItemListing[];
+  data?: PaginatedResponse<RecalledItemListing>;
   error?: string;
 }> => {
   try {
@@ -441,12 +448,12 @@ export const collectRecalledListing = async (
   }
 };
 
-// Get public listings for a store
+// Update getPublicStoreListings to handle pagination
 export const getPublicStoreListings = async (
   storeId: number
 ): Promise<{
   success: boolean;
-  data?: ItemListing[];
+  data?: PaginatedResponse<ItemListing>;
   error?: string;
 }> => {
   try {
