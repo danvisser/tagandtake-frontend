@@ -59,6 +59,11 @@ export interface AbandonedItemListing extends BaseListing {
   tag_removed: boolean;
 }
 
+// Interface for sold listings
+export interface SoldItemListing extends BaseListing {
+  sold_at: string;
+}
+
 // Interface for listing creation
 export interface CreateListingData {
   item_id: number;
@@ -484,6 +489,69 @@ export const getPublicStoreListings = async (
         error:
           error.response?.data?.detail ||
           `Failed to fetch listings for store ${storeId}`,
+      };
+    }
+    throw error;
+  }
+};
+
+// Get store abandoned listings
+export const getStoreAbandonedListings = async (
+  params?: Record<string, string>
+): Promise<{
+  success: boolean;
+  data?: AbandonedItemListing[];
+  error?: string;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "GET",
+      url: API_ROUTES.STORES.ABANDONED_LISTINGS.LIST,
+      params,
+    });
+
+    return {
+      success: true,
+      data: data,
+    };
+  } catch (error: unknown) {
+    console.error("Get store abandoned listings error:", error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.detail || "Failed to fetch abandoned listings",
+      };
+    }
+    throw error;
+  }
+};
+
+// Get store sold listings
+export const getStoreSoldListings = async (
+  params?: Record<string, string>
+): Promise<{
+  success: boolean;
+  data?: SoldItemListing[];
+  error?: string;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "GET",
+      url: API_ROUTES.STORES.SOLD_LISTINGS.LIST,
+      params,
+    });
+
+    return {
+      success: true,
+      data: data,
+    };
+  } catch (error: unknown) {
+    console.error("Get store sold listings error:", error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error: error.response?.data?.detail || "Failed to fetch sold listings",
       };
     }
     throw error;

@@ -38,6 +38,11 @@ export interface ItemStoreInfo {
   listed_at?: string;
   sold_at?: string;
   recalled_at?: string;
+  abandoned_at?: string;
+  reason?: string;
+  description?: string;
+  collection_deadline?: string;
+  tag_removed?: boolean;
 }
 
 // Types for Item
