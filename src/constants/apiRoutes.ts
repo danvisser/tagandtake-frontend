@@ -59,6 +59,10 @@ export const API_ROUTES = {
       LIST: `/stores/me/recalled-listings/`,
       COLLECT: (id: number) => `/stores/me/recalled-listings/${id}/collect/`,
     },
+    ABANDONED_LISTINGS: {
+      REMOVE_TAG: (id: number) =>
+        `/stores/me/abandoned-listings/${id}/remove-tag/`,
+    },
   },
   CHECKOUT: {
     ITEM: `/checkout/item/`,

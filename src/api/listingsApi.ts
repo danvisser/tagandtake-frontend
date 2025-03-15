@@ -52,6 +52,13 @@ export interface RecalledItemListing extends BaseListing {
   collection_deadline: string;
 }
 
+// Interface for abandoned listings
+export interface AbandonedItemListing extends BaseListing {
+  reason: RecallReason;
+  abandoned_at: string;
+  tag_removed: boolean;
+}
+
 // Interface for listing creation
 export interface CreateListingData {
   item_id: number;
@@ -477,6 +484,38 @@ export const getPublicStoreListings = async (
         error:
           error.response?.data?.detail ||
           `Failed to fetch listings for store ${storeId}`,
+      };
+    }
+    throw error;
+  }
+};
+
+// Remove tag from abandoned listing
+export const removeTagFromAbandonedListing = async (
+  id: number
+): Promise<{
+  success: boolean;
+  data?: AbandonedItemListing;
+  error?: string;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "PATCH",
+      url: API_ROUTES.STORES.ABANDONED_LISTINGS.REMOVE_TAG(id),
+    });
+
+    return {
+      success: true,
+      data: data.data,
+    };
+  } catch (error: unknown) {
+    console.error(`Remove tag from abandoned listing ${id} error:`, error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.detail ||
+          `Failed to remove tag from abandoned listing ${id}`,
       };
     }
     throw error;
