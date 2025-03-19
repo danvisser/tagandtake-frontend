@@ -5,7 +5,7 @@ import { useListingData } from "../hooks/useListingData";
 import { useListingActions } from "../hooks/useListingActions";
 import WithListingState from "./withListingState";
 import ListingNavigation from "./shared/ListingNavigation";
-import { Loader2 } from "lucide-react";
+import LoadingSpinner from "@src/components/LoadingSpinner";
 
 export default function ListingContainer() {
   const { id } = useParams();
@@ -17,8 +17,7 @@ export default function ListingContainer() {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
-        <p>Loading listing...</p>
+        <LoadingSpinner size="md" text="Loading listing..." />
       </div>
     );
   }

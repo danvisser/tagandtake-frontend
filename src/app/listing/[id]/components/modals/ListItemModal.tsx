@@ -11,10 +11,11 @@ import {
   DialogTitle,
 } from "@src/components/ui/dialog";
 import { Button } from "@src/components/ui/button";
-import { Loader2, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Routes } from "@src/constants/routes";
 import { getAvailableItems, Item } from "@src/api/itemsApi";
 import { createListing } from "@src/api/listingsApi";
+import LoadingSpinner from "@src/components/LoadingSpinner";
 
 interface ListItemModalProps {
   isOpen: boolean;
@@ -105,7 +106,7 @@ export default function ListItemModal({
         <div className="py-4">
           {isLoading ? (
             <div className="flex justify-center py-8">
-              <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+              <LoadingSpinner size="md" />
             </div>
           ) : error ? (
             <div className="text-center py-4 text-red-500">{error}</div>
@@ -157,10 +158,7 @@ export default function ListItemModal({
             disabled={!selectedItem || isSubmitting}
           >
             {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Processing...
-              </>
+              <LoadingSpinner size="sm" text="Processing..." />
             ) : (
               "List Selected Item"
             )}

@@ -9,9 +9,9 @@ import {
   DialogTitle,
 } from "@src/components/ui/dialog";
 import { Button } from "@src/components/ui/button";
-import { Loader2 } from "lucide-react";
 import { createCheckoutSession } from "@src/api/paymentsApi";
 import { loadStripe } from "@stripe/stripe-js";
+import LoadingSpinner from "@src/components/LoadingSpinner";
 
 // Initialize Stripe
 const stripePromise = loadStripe(
@@ -84,8 +84,7 @@ export default function CheckoutModal({
         <div className="py-8 flex flex-col items-center justify-center">
           {isLoading ? (
             <>
-              <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
-              <p className="text-center">Preparing your checkout...</p>
+              <LoadingSpinner size="md" text="Preparing your checkout..." />
             </>
           ) : error ? (
             <>

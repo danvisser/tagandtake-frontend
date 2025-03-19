@@ -22,30 +22,29 @@ export interface RecallReason {
 // Base interface for listings
 export interface BaseListing {
   id: number;
-  item: number;
   tag: number;
   store_commission: number;
   min_listing_days: number;
+  user_listing_relation: ListingRole;
+  tagandtake_commission: number;
+  tagandtake_flat_fee: number;
+}
+
+// Interface for active listings
+export interface ItemListing extends BaseListing {
+  item: number;
   item_price: number;
   transaction_fee: number;
   listing_price: number;
   store_commission_amount: number;
   member_earnings: number;
-  item_details?: Item;
+  item_details: Item;
   created_at: string;
   updated_at: string;
-  user_listing_relation: ListingRole;
-}
-
-// Interface for active listings
-export interface ItemListing extends BaseListing {
-  listing_exists: boolean;
-  tagandtake_commission: number;
-  tagandtake_flat_fee: number;
 }
 
 // Interface for recalled listings
-export interface RecalledItemListing extends BaseListing {
+export interface RecalledItemListing extends ItemListing {
   reason: RecallReason;
   recalled_at: string;
   collection_pin?: string;
@@ -53,14 +52,14 @@ export interface RecalledItemListing extends BaseListing {
 }
 
 // Interface for abandoned listings
-export interface AbandonedItemListing extends BaseListing {
+export interface AbandonedItemListing extends ItemListing {
   reason: RecallReason;
   abandoned_at: string;
   tag_removed: boolean;
 }
 
 // Interface for sold listings
-export interface SoldItemListing extends BaseListing {
+export interface SoldItemListing extends ItemListing {
   tag_removed: boolean;
   sold_at: string;
 }
@@ -93,7 +92,6 @@ export interface ListingError {
 // Response for checking listing role
 export interface ListingRoleResponse {
   user_listing_relation: ListingRole;
-  listing_exists: boolean;
 }
 
 export interface PaginatedResponse<T> {

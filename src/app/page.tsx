@@ -3,20 +3,26 @@
 import * as React from "react";
 import Link from "next/link";
 import { Button } from "@src/components/ui/button";
-import { useAuthStore } from "@src/stores/authStore";
 import { Routes } from "@src/constants/routes";
 import { UserRole, UserRoles } from "@src/types/roles";
 import Image from "next/image";
+import { useAuth } from "@src/providers/AuthProvider";
+import LoadingUI from "@src/components/LoadingUI";
 
 type PageVariant = "public" | UserRole;
 
 export default function HomePage() {
-  const { isAuthenticated, role } = useAuthStore();
+  const { isAuthenticated, role, isLoading } = useAuth();
 
   const variant = React.useMemo((): PageVariant => {
     if (!isAuthenticated) return "public";
     return role || "public";
   }, [isAuthenticated, role]);
+
+  // Show loading state while auth is being checked
+  if (isLoading) {
+    return <LoadingUI />;
+  }
 
   if (variant === UserRoles.MEMBER) {
     return <MemberHomePage />;

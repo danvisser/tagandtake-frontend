@@ -24,6 +24,7 @@ import {
 import { Eye, EyeOff, AlertCircle } from "lucide-react";
 import { cn } from "@src/lib/utils";
 import { useState } from "react";
+import LoadingSpinner from "@src/components/LoadingSpinner";
 
 const libraries: ["places"] = ["places"];
 const daysOfWeek = [
@@ -943,10 +944,11 @@ export default function StoreSignupForm({
                 Back
               </Button>
               <Button disabled={isLoading} type="submit">
-                {isLoading && (
-                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent" />
+                {isLoading ? (
+                  <LoadingSpinner size="sm" text="Creating store..." />
+                ) : (
+                  "Create Store Account"
                 )}
-                Create Store Account
               </Button>
             </div>
           </TabsContent>

@@ -32,7 +32,7 @@ export default function RecalledListing({
     });
   };
 
-  let statusMessage = `This item has been recalled due to: ${listing.reason}`;
+  let statusMessage = `This item has been recalled due to: ${listing.reason.reason}`;
 
   if (userRole === LISTING_ROLES.OWNER) {
     statusMessage += `. Please collect by ${formatDate(listing.collection_deadline)}.`;
@@ -41,7 +41,7 @@ export default function RecalledListing({
   return (
     <ListingCard
       title={item.name}
-      price={listing.item_price}
+      price={listing.listing_price}
       condition={item.condition_details?.condition || "Unknown"}
       category={item.category_details?.name || "Unknown"}
       images={item.images || []}

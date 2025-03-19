@@ -10,6 +10,7 @@ const isBrowser = typeof window !== "undefined";
 interface AuthState {
   isAuthenticated: boolean;
   role: UserRole | null;
+  isLoading: boolean;
   setAuth: (role: UserRole | null) => void;
   login: (
     username: string,
@@ -21,9 +22,10 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       isAuthenticated: false,
       role: null,
+      isLoading: true,
 
       setAuth: (role) => {
         set({ role, isAuthenticated: !!role });
@@ -43,6 +45,7 @@ export const useAuthStore = create<AuthState>()(
           set({
             isAuthenticated: !!response.role,
             role: response.role,
+            isLoading: false,
           });
 
           // Sync across tabs (only in browser)
@@ -68,50 +71,40 @@ export const useAuthStore = create<AuthState>()(
 
       logout: async () => {
         try {
-          // First update the local state
-          set({ isAuthenticated: false, role: null });
-
-          // Then attempt the API call, but don't depend on its success
-          await logout().catch((error) => {
-            console.error("Logout API error:", error);
-            // This is non-critical, we've already updated local state
-          });
-
+          await logout();
+          set({ isAuthenticated: false, role: null, isLoading: false });
           // Sync across tabs (only in browser)
           if (isBrowser) {
             window.dispatchEvent(new Event("storage"));
           }
+          // Force a re-render of components using the auth state
+          window.dispatchEvent(new Event("auth-state-changed"));
         } catch (error) {
           console.error("Logout error:", error);
         }
       },
 
       initializeAuth: async () => {
-        const { isAuthenticated, role } = get();
-
-        // If we already have auth state from localStorage, trust it and don't make an API call
-        if (isAuthenticated && role) {
-          return;
-        }
-
-        // Only fetch from API if we don't have state in localStorage
         try {
-          const session = await fetchUserSession();
+          const response = await fetchUserSession();
           set({
-            role: session.role,
-            isAuthenticated: !!session.role,
+            isAuthenticated: !!response.role,
+            role: response.role,
+            isLoading: false,
           });
-        } catch {
-          set({ isAuthenticated: false, role: null });
+        } catch (error) {
+          console.error("Auth initialization error:", error);
+          set({ isAuthenticated: false, role: null, isLoading: false });
         }
       },
     }),
     {
       name: "auth-storage",
-      // Only persist the role and authentication status, not tokens
+      skipHydration: true,
+      // Only persist these fields
       partialize: (state) => ({
-        role: state.role,
         isAuthenticated: state.isAuthenticated,
+        role: state.role,
       }),
     }
   )
@@ -127,6 +120,7 @@ if (isBrowser) {
       useAuthStore.setState({
         role: storedState.state.role,
         isAuthenticated: storedState.state.isAuthenticated,
+        isLoading: false,
       });
     }
   });

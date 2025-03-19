@@ -3,46 +3,42 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@src/stores/authStore";
 import LoginForm from "@src/components/LoginForm";
-import { Routes } from "@src/constants/routes";
-import { UserRoles } from "@src/types/roles";
+import LoadingUI from "@src/components/LoadingUI";
 
 export default function LoginPage() {
   const { login } = useAuthStore();
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (email: string, password: string) => {
     try {
       setErrorMessage(null);
+      setIsLoading(true);
       const result = await login(email, password);
 
-      if (result && result.success) {
+      if (result.success) {
         // Check for return path from session expiration
         const returnPath = sessionStorage.getItem("returnPath");
         if (returnPath) {
           sessionStorage.removeItem("returnPath");
           router.push(returnPath);
-        } else {
-          // Normal login flow
-          switch (result.role) {
-            case UserRoles.STORE:
-              router.push(Routes.STORE.DASHBOARD);
-              break;
-            case UserRoles.MEMBER:
-              router.push(Routes.MEMBER.PROFILE);
-              break;
-            default:
-              router.push(Routes.MEMBER.PROFILE);
-          }
+          router.refresh();
         }
-      } else if (result && result.error) {
+      } else if (result.error) {
         setErrorMessage(String(result.error));
       }
     } catch (error) {
       console.error("Login failed:", error);
       setErrorMessage("An unexpected error occurred. Please try again later.");
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  if (isLoading) {
+    return <LoadingUI />;
+  }
 
   return (
     <div className="flex min-h-screen justify-center items-center w-full md:px-4">

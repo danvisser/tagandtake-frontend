@@ -12,7 +12,7 @@ import {
 import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
 import { Label } from "@src/components/ui/label";
-import { Loader2 } from "lucide-react";
+import LoadingSpinner from "@src/components/LoadingSpinner";
 
 interface CollectionModalProps {
   isOpen: boolean;
@@ -81,10 +81,7 @@ export default function CollectionModal({
             </Button>
             <Button type="submit" disabled={isLoading}>
               {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Processing...
-                </>
+                <LoadingSpinner size="sm" text="Processing..." />
               ) : (
                 "Collect Item"
               )}

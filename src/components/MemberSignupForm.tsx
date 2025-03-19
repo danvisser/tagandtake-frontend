@@ -7,6 +7,7 @@ import { Input } from "@src/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import { Routes } from "@src/constants/routes";
 import { MemberSignupCredentials, MemberSignupError } from "@src/api/signupApi";
+import LoadingSpinner from "@src/components/LoadingSpinner";
 
 interface MemberSignupFormProps {
   onSubmit: (credentials: MemberSignupCredentials) => Promise<void>;
@@ -154,10 +155,11 @@ export default function MemberSignupForm({
           </div>
 
           <Button disabled={isLoading} type="submit" className="w-full mt-6">
-            {isLoading && (
-              <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent" />
+            {isLoading ? (
+              <LoadingSpinner size="sm" text="Creating account..." />
+            ) : (
+              "Create Account"
             )}
-            Create Account
           </Button>
         </div>
       </form>

@@ -44,7 +44,7 @@ export default function SoldListing({
   return (
     <ListingCard
       title={item.name}
-      price={listing.item_price}
+      price={listing.listing_price}
       condition={item.condition_details?.condition || "Unknown"}
       category={item.category_details?.name || "Unknown"}
       images={item.images || []}

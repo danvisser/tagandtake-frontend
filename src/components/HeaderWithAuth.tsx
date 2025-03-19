@@ -1,25 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Header from "@src/components/Header";
-import { useAuthStore } from "@src/stores/authStore";
+import { useAuth } from "@src/providers/AuthProvider";
 import { UserRoles } from "@src/types/roles";
 
 export default function HeaderWithAuth() {
-  const { role, initializeAuth } = useAuthStore();
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const init = async () => {
-      await initializeAuth();
-      setIsLoading(false);
-    };
-
-    init();
-  }, [initializeAuth]);
+  const { role, isLoading } = useAuth();
 
   if (isLoading) {
-    return <Header variant="public" />;
+    return null;
   }
 
   return (

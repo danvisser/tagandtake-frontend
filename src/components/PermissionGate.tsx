@@ -1,12 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useAuth } from "@src/providers/AuthProvider";
 import { UserRole, UserRoles } from "@src/types/roles";
 import { Card, CardContent } from "@src/components/ui/card";
 import { Button } from "@src/components/ui/button";
 import { LogIn } from "lucide-react";
 import { Routes } from "@src/constants/routes";
+import LoadingUI from "@src/components/LoadingUI";
 
 export default function PermissionGate({
   allowedRole,
@@ -16,47 +17,15 @@ export default function PermissionGate({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const [showUI, setShowUI] = useState<
-    "loading" | "authenticated" | "unauthorized" | "unauthenticated"
-  >("loading");
-  const [userRole, setUserRole] = useState<UserRole | null>(null);
+  const { isAuthenticated, role, isLoading } = useAuth();
 
-  useEffect(() => {
-    // Check if we're in a browser environment
-    if (typeof window !== "undefined") {
-      // Get auth state from localStorage directly
-      const authData = localStorage.getItem("auth-storage");
-      if (authData) {
-        try {
-          const parsedData = JSON.parse(authData);
-          if (parsedData.state?.isAuthenticated) {
-            const role = parsedData.state.role;
-            setUserRole(role);
-
-            if (role === allowedRole) {
-              setShowUI("authenticated");
-            } else {
-              setShowUI("unauthorized");
-            }
-            return;
-          }
-        } catch (e) {
-          console.error("Error parsing auth data:", e);
-        }
-      }
-
-      // If we get here, user is not authenticated
-      setShowUI("unauthenticated");
-    }
-  }, [allowedRole]);
-
-  // Show nothing during initial check
-  if (showUI === "loading") {
-    return <div className="min-h-screen" />;
+  // Show loading skeleton during initial check
+  if (isLoading) {
+    return <LoadingUI />;
   }
 
   // If not authenticated, show login prompt
-  if (showUI === "unauthenticated") {
+  if (!isAuthenticated) {
     return (
       <div className="flex items-center justify-center min-h-screen p-4 bg-gray-50 dark:bg-gray-900">
         <Card className="w-full max-w-md shadow-md">
@@ -81,7 +50,7 @@ export default function PermissionGate({
   }
 
   // If authenticated but wrong role
-  if (showUI === "unauthorized") {
+  if (role !== allowedRole) {
     return (
       <div className="flex items-center justify-center min-h-screen p-4 bg-gray-50 dark:bg-gray-900">
         <Card className="w-full max-w-md shadow-md">
@@ -97,7 +66,7 @@ export default function PermissionGate({
                 variant="secondary"
                 onClick={() =>
                   router.push(
-                    userRole === UserRoles.MEMBER
+                    role === UserRoles.MEMBER
                       ? Routes.MEMBER.PROFILE
                       : Routes.STORE.DASHBOARD
                   )

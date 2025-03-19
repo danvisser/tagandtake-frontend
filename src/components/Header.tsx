@@ -20,6 +20,7 @@ export default function Header({ variant }: { variant: "public" | UserRole }) {
   const handleLogout = useCallback(async () => {
     await logout();
     router.push(Routes.HOME);
+    router.refresh();
   }, [logout, router]);
 
   return (

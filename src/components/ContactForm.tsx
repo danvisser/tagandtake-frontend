@@ -5,6 +5,7 @@ import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
 import { Textarea } from "@src/components/ui/textarea";
 import { ContactFormData, ContactFormError } from "@src/api/contactApi";
+import LoadingSpinner from "@src/components/LoadingSpinner";
 
 interface ContactFormProps {
   onSubmit: (formData: ContactFormData) => Promise<void>;
@@ -121,10 +122,11 @@ export default function ContactForm({ onSubmit, errors }: ContactFormProps) {
         </div>
 
         <Button disabled={isLoading} type="submit" className="w-full">
-          {isLoading && (
-            <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent" />
+          {isLoading ? (
+            <LoadingSpinner size="sm" text="Sending..." />
+          ) : (
+            "Send Message"
           )}
-          Send Message
         </Button>
       </form>
     </div>

@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@src/components/ui/button";
-import { Loader2 } from "lucide-react";
 import { ListingRole, LISTING_ROLES } from "@src/types/roles";
 import {
   ItemListing,
@@ -13,6 +12,7 @@ import {
 import { Routes } from "@src/constants/routes";
 import { useAuthStore } from "@src/stores/authStore";
 import { UserRoles } from "@src/types/roles";
+import LoadingSpinner from "@src/components/LoadingSpinner";
 
 interface ListingActionsProps {
   listing:
@@ -101,10 +101,7 @@ export default function ListingActions({
           className="w-full"
         >
           {isCheckoutLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Processing...
-            </>
+            <LoadingSpinner size="sm" text="Processing..." />
           ) : (
             "Buy Now"
           )}
@@ -151,10 +148,7 @@ export default function ListingActions({
           className="w-full"
         >
           {isCollectLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Processing...
-            </>
+            <LoadingSpinner size="sm" text="Processing..." />
           ) : (
             "Collect Item"
           )}
@@ -184,10 +178,7 @@ export default function ListingActions({
           variant="destructive"
         >
           {isRemoveTagLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Processing...
-            </>
+            <LoadingSpinner size="sm" text="Processing..." />
           ) : (
             "Remove Tag"
           )}
@@ -209,10 +200,7 @@ export default function ListingActions({
           variant="destructive"
         >
           {isRemoveTagLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Processing...
-            </>
+            <LoadingSpinner size="sm" text="Processing..." />
           ) : (
             "Remove Tag"
           )}

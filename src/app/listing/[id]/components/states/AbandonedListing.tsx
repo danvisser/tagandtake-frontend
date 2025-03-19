@@ -24,7 +24,7 @@ export default function AbandonedListing({
     return <div>Item details not available</div>;
   }
 
-  let statusMessage = `This item has been abandoned due to: ${listing.reason}`;
+  let statusMessage = `This item has been abandoned due to: ${listing.reason.reason}`;
 
   if (userRole === LISTING_ROLES.HOST && !listing.tag_removed) {
     statusMessage +=
@@ -36,7 +36,7 @@ export default function AbandonedListing({
   return (
     <ListingCard
       title={item.name}
-      price={listing.item_price}
+      price={listing.listing_price}
       condition={item.condition_details?.condition || "Unknown"}
       category={item.category_details?.name || "Unknown"}
       images={item.images || []}

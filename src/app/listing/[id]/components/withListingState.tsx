@@ -48,7 +48,7 @@ export default function WithListingState({
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
 
   // Handle vacant tag
-  if (!listing) {
+  if (!listing?.item) {
     return (
       <>
         <VacantTag

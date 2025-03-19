@@ -63,7 +63,6 @@ export const baseListing = {
 // Mock active listing
 export const activeListing: ItemListing = {
   ...baseListing,
-  listing_exists: true,
   tagandtake_commission: 5,
   tagandtake_flat_fee: 2,
 };
