@@ -1,53 +1,89 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Button, ButtonProps } from "@src/components/ui/button";
+import { Button } from "@src/components/ui/button";
+import { Loader2 } from "lucide-react";
 import { ListingRole, LISTING_ROLES } from "@src/types/roles";
 import {
   ItemListing,
   RecalledItemListing,
   AbandonedItemListing,
+  SoldItemListing,
 } from "@src/api/listingsApi";
 import { Routes } from "@src/constants/routes";
-
-type ListingType =
-  | ItemListing
-  | RecalledItemListing
-  | AbandonedItemListing
-  | null;
+import { useAuthStore } from "@src/stores/authStore";
+import { UserRoles } from "@src/types/roles";
 
 interface ListingActionsProps {
-  listing: ListingType;
-  userRole: ListingRole;
-  onRemoveTag?: () => Promise<void>;
-  onCheckout?: () => Promise<void>;
+  listing:
+    | ItemListing
+    | RecalledItemListing
+    | AbandonedItemListing
+    | SoldItemListing
+    | null;
+  userRole: ListingRole | null;
+  onCheckout?: () => void;
+  onRemoveTagFromAbandoned?: () => void;
+  onRemoveTagFromSold?: () => void;
+  onOpenCollectionModal?: () => void;
+  onOpenListItemModal?: () => void;
+  isCheckoutLoading?: boolean;
+  isRemoveTagLoading?: boolean;
+  isCollectLoading?: boolean;
+  tagId?: number;
 }
 
 export default function ListingActions({
   listing,
   userRole,
-  onRemoveTag,
   onCheckout,
+  onRemoveTagFromAbandoned,
+  onRemoveTagFromSold,
+  onOpenCollectionModal,
+  onOpenListItemModal,
+  isCheckoutLoading,
+  isRemoveTagLoading,
+  isCollectLoading,
 }: ListingActionsProps) {
   const router = useRouter();
+  const { isAuthenticated, role } = useAuthStore();
 
   if (!listing) {
-    // Handle vacant tag case
-    if (userRole === LISTING_ROLES.VIEWER) {
+    // Vacant tag
+    if (userRole === LISTING_ROLES.HOST) {
       return (
         <Button
+          onClick={() => router.push(Routes.STORE.LISTINGS.ROOT)}
           className="w-full"
-          onClick={() => router.push(Routes.MEMBER.ITEMS.NEW)}
         >
-          List item
+          Manage Store Listings
         </Button>
       );
     }
 
-    if (userRole === LISTING_ROLES.HOST) {
+    if (!isAuthenticated) {
       return (
-        <Button className="w-full" variant="ghost" disabled>
-          Manage
+        <Button onClick={() => router.push(Routes.LOGIN)} className="w-full">
+          Login to List Item
+        </Button>
+      );
+    }
+
+    if (role === UserRoles.STORE) {
+      return (
+        <Button
+          onClick={() => router.push(Routes.STORE.DASHBOARD)}
+          className="w-full"
+        >
+          Go to Store Dashboard
+        </Button>
+      );
+    }
+
+    if (role === UserRoles.MEMBER) {
+      return (
+        <Button onClick={onOpenListItemModal} className="w-full">
+          List an Item
         </Button>
       );
     }
@@ -55,93 +91,134 @@ export default function ListingActions({
     return null;
   }
 
-  const isRecalled = "recalled_at" in listing;
-  const isAbandoned = "abandoned_at" in listing;
-  const item = listing.item_details;
-
-  // Viewer actions
-  if (userRole === LISTING_ROLES.VIEWER) {
-    const buttonProps: ButtonProps = {
-      className: "w-full",
-      children: "Buy now",
-    };
-
-    if (isRecalled || isAbandoned) {
-      buttonProps.variant = "ghost";
-      buttonProps.disabled = true;
-    } else {
-      buttonProps.variant = "default";
-      buttonProps.onClick = onCheckout;
-    }
-
-    return <Button {...buttonProps} />;
-  }
-
-  // Owner actions
-  if (userRole === LISTING_ROLES.OWNER) {
-    const buttonProps: ButtonProps = {
-      className: "w-full",
-      children: "Edit",
-    };
-
-    if (isRecalled || isAbandoned) {
-      buttonProps.variant = "ghost";
-      buttonProps.disabled = true;
-    } else {
-      buttonProps.variant = "outline";
-      buttonProps.onClick = () =>
-        router.push(Routes.MEMBER.ITEMS.DETAILS(item?.id?.toString() || ""));
-    }
-
-    return <Button {...buttonProps} />;
-  }
-
-  // Host actions
-  if (userRole === LISTING_ROLES.HOST) {
-    if (isRecalled) {
+  // Active listing
+  if (listing.item_details?.status === "listed") {
+    if (userRole === LISTING_ROLES.VIEWER) {
       return (
         <Button
+          onClick={onCheckout}
+          disabled={isCheckoutLoading}
           className="w-full"
-          variant="secondary"
-          onClick={() =>
-            router.push(Routes.STORE.LISTINGS.DETAILS(listing.id.toString()))
-          }
         >
-          Confirm Collect
+          {isCheckoutLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            "Buy Now"
+          )}
         </Button>
       );
     }
 
-    if (isAbandoned) {
-      const abandonedListing = listing as AbandonedItemListing;
-
-      if (abandonedListing.tag_removed) {
-        return (
-          <Button className="w-full" variant="ghost" disabled>
-            Tag Removed
-          </Button>
-        );
-      }
-
+    if (userRole === LISTING_ROLES.OWNER) {
       return (
-        <Button className="w-full" variant="outline" onClick={onRemoveTag}>
-          Remove tag
+        <Button
+          onClick={() =>
+            router.push(Routes.MEMBER.ITEMS.DETAILS(listing.item.toString()))
+          }
+          variant="outline"
+          className="w-full"
+        >
+          Manage Item
         </Button>
       );
     }
 
-    // Active listing
-    return (
-      <Button
-        className="w-full"
-        variant="destructive"
-        onClick={() =>
-          router.push(Routes.STORE.LISTINGS.DETAILS(listing.id.toString()))
-        }
-      >
-        Manage
-      </Button>
-    );
+    if (userRole === LISTING_ROLES.HOST) {
+      return (
+        <Button
+          onClick={() =>
+            router.push(Routes.STORE.LISTINGS.MANAGE(listing.id.toString()))
+          }
+          variant="outline"
+          className="w-full"
+        >
+          Manage Listing
+        </Button>
+      );
+    }
+  }
+
+  // Recalled listing
+  if (listing.item_details?.status === "recalled") {
+    if (userRole === LISTING_ROLES.HOST) {
+      return (
+        <Button
+          onClick={onOpenCollectionModal}
+          disabled={isCollectLoading}
+          className="w-full"
+        >
+          {isCollectLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            "Collect Item"
+          )}
+        </Button>
+      );
+    }
+
+    if (userRole === LISTING_ROLES.OWNER) {
+      return (
+        <Button variant="outline" className="w-full" disabled>
+          Awaiting Collection
+        </Button>
+      );
+    }
+  }
+
+  // Abandoned listing
+  if (listing.item_details?.status === "abandoned") {
+    const abandonedListing = listing as AbandonedItemListing;
+
+    if (userRole === LISTING_ROLES.HOST && !abandonedListing.tag_removed) {
+      return (
+        <Button
+          onClick={onRemoveTagFromAbandoned}
+          disabled={isRemoveTagLoading}
+          className="w-full"
+          variant="destructive"
+        >
+          {isRemoveTagLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            "Remove Tag"
+          )}
+        </Button>
+      );
+    }
+  }
+
+  // Sold listing
+  if (listing.item_details?.status === "sold") {
+    const soldListing = listing as SoldItemListing;
+
+    if (userRole === LISTING_ROLES.HOST && !soldListing.tag_removed) {
+      return (
+        <Button
+          onClick={onRemoveTagFromSold}
+          disabled={isRemoveTagLoading}
+          className="w-full"
+          variant="destructive"
+        >
+          {isRemoveTagLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            "Remove Tag"
+          )}
+        </Button>
+      );
+    }
   }
 
   return null;

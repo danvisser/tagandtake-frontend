@@ -1,15 +1,13 @@
 import { Meta, StoryObj } from "@storybook/react";
-import { LISTING_ROLES } from "@src/types/roles";
 import ListingCard from "@src/app/listing/[id]/components/shared/ListingCard";
 import { Button } from "@src/components/ui/button";
-import { AlertCircle } from "lucide-react";
 import {
   activeListing,
   recalledListing,
   abandonedListing,
   soldListing,
   noImagesListing,
-  noListing,
+  mockImages,
 } from "./mockData/listingMocks";
 
 const meta: Meta<typeof ListingCard> = {
@@ -24,27 +22,99 @@ export default meta;
 
 type Story = StoryObj<typeof ListingCard>;
 
+// Base story
+export const Default: Story = {
+  args: {
+    title: "Vintage Denim Jacket",
+    price: 100,
+    condition: "Excellent",
+    category: "Outerwear",
+    images: mockImages,
+  },
+};
+
+// With status message
+export const WithStatusMessage: Story = {
+  args: {
+    ...Default.args,
+    statusMessage: "This item is no longer for sale",
+  },
+};
+
+// With status badge
+export const WithStatusBadge: Story = {
+  args: {
+    ...Default.args,
+    statusBadge: {
+      label: "Sold",
+      variant: "destructive",
+    },
+  },
+};
+
+// With footer content
+export const WithFooterContent: Story = {
+  args: {
+    ...Default.args,
+    footerContent: <Button>Buy now</Button>,
+  },
+};
+
+// No images
+export const NoImages: Story = {
+  args: {
+    ...Default.args,
+    images: [],
+  },
+};
+
+// Complete example
+export const CompleteExample: Story = {
+  args: {
+    ...Default.args,
+    statusMessage: "This item has been sold",
+    statusBadge: {
+      label: "Sold",
+      variant: "destructive",
+    },
+    footerContent: (
+      <Button variant="ghost" disabled>
+        Buy now
+      </Button>
+    ),
+  },
+};
+
 // Active Listing Variants
 export const ActiveListingViewer: Story = {
   args: {
-    listing: activeListing,
-    userRole: LISTING_ROLES.VIEWER,
+    title: activeListing.item_details?.name || "",
+    price: activeListing.listing_price,
+    condition: activeListing.item_details?.condition_details?.condition || "",
+    category: activeListing.item_details?.category_details?.name || "",
+    images: activeListing.item_details?.images || [],
     footerContent: <Button>Buy now</Button>,
   },
 };
 
 export const ActiveListingOwner: Story = {
   args: {
-    listing: activeListing,
-    userRole: LISTING_ROLES.OWNER,
+    title: activeListing.item_details?.name || "",
+    price: activeListing.listing_price,
+    condition: activeListing.item_details?.condition_details?.condition || "",
+    category: activeListing.item_details?.category_details?.name || "",
+    images: activeListing.item_details?.images || [],
     footerContent: <Button variant="outline">Edit</Button>,
   },
 };
 
 export const ActiveListingHost: Story = {
   args: {
-    listing: activeListing,
-    userRole: LISTING_ROLES.HOST,
+    title: activeListing.item_details?.name || "",
+    price: activeListing.listing_price,
+    condition: activeListing.item_details?.condition_details?.condition || "",
+    category: activeListing.item_details?.category_details?.name || "",
+    images: activeListing.item_details?.images || [],
     footerContent: <Button variant="destructive">Manage</Button>,
   },
 };
@@ -52,14 +122,12 @@ export const ActiveListingHost: Story = {
 // Recalled Listing Variants
 export const RecalledListingViewer: Story = {
   args: {
-    listing: recalledListing,
-    userRole: LISTING_ROLES.VIEWER,
-    statusMessage: (
-      <>
-        <AlertCircle />
-        <span>Item is no longer for sale</span>
-      </>
-    ),
+    title: recalledListing.item_details?.name || "",
+    price: recalledListing.listing_price,
+    condition: recalledListing.item_details?.condition_details?.condition || "",
+    category: recalledListing.item_details?.category_details?.name || "",
+    images: recalledListing.item_details?.images || [],
+    statusMessage: "Item is no longer for sale",
     footerContent: (
       <Button variant="ghost" disabled>
         Buy now
@@ -70,14 +138,12 @@ export const RecalledListingViewer: Story = {
 
 export const RecalledListingOwner: Story = {
   args: {
-    listing: recalledListing,
-    userRole: LISTING_ROLES.OWNER,
-    statusMessage: (
-      <>
-        <AlertCircle />
-        <span>Item is no longer for sale</span>
-      </>
-    ),
+    title: recalledListing.item_details?.name || "",
+    price: recalledListing.listing_price,
+    condition: recalledListing.item_details?.condition_details?.condition || "",
+    category: recalledListing.item_details?.category_details?.name || "",
+    images: recalledListing.item_details?.images || [],
+    statusMessage: "Item is no longer for sale",
     footerContent: (
       <Button variant="ghost" disabled>
         Edit
@@ -88,14 +154,12 @@ export const RecalledListingOwner: Story = {
 
 export const RecalledListingHost: Story = {
   args: {
-    listing: recalledListing,
-    userRole: LISTING_ROLES.HOST,
-    statusMessage: (
-      <>
-        <AlertCircle />
-        <span>Item is no longer for sale</span>
-      </>
-    ),
+    title: recalledListing.item_details?.name || "",
+    price: recalledListing.listing_price,
+    condition: recalledListing.item_details?.condition_details?.condition || "",
+    category: recalledListing.item_details?.category_details?.name || "",
+    images: recalledListing.item_details?.images || [],
+    statusMessage: "Item is no longer for sale",
     footerContent: <Button variant="secondary">Confirm Collect</Button>,
   },
 };
@@ -103,14 +167,13 @@ export const RecalledListingHost: Story = {
 // Abandoned Listing Variants
 export const AbandonedListingViewer: Story = {
   args: {
-    listing: abandonedListing,
-    userRole: LISTING_ROLES.VIEWER,
-    statusMessage: (
-      <>
-        <AlertCircle />
-        <span>Item is no longer for sale</span>
-      </>
-    ),
+    title: abandonedListing.item_details?.name || "",
+    price: abandonedListing.listing_price,
+    condition:
+      abandonedListing.item_details?.condition_details?.condition || "",
+    category: abandonedListing.item_details?.category_details?.name || "",
+    images: abandonedListing.item_details?.images || [],
+    statusMessage: "Item is no longer for sale",
     footerContent: (
       <Button variant="ghost" disabled>
         Buy now
@@ -121,14 +184,13 @@ export const AbandonedListingViewer: Story = {
 
 export const AbandonedListingOwner: Story = {
   args: {
-    listing: abandonedListing,
-    userRole: LISTING_ROLES.OWNER,
-    statusMessage: (
-      <>
-        <AlertCircle />
-        <span>Item is no longer for sale</span>
-      </>
-    ),
+    title: abandonedListing.item_details?.name || "",
+    price: abandonedListing.listing_price,
+    condition:
+      abandonedListing.item_details?.condition_details?.condition || "",
+    category: abandonedListing.item_details?.category_details?.name || "",
+    images: abandonedListing.item_details?.images || [],
+    statusMessage: "Item is no longer for sale",
     footerContent: (
       <Button variant="ghost" disabled>
         Edit
@@ -139,14 +201,13 @@ export const AbandonedListingOwner: Story = {
 
 export const AbandonedListingHost: Story = {
   args: {
-    listing: abandonedListing,
-    userRole: LISTING_ROLES.HOST,
-    statusMessage: (
-      <>
-        <AlertCircle />
-        <span>Item is no longer for sale</span>
-      </>
-    ),
+    title: abandonedListing.item_details?.name || "",
+    price: abandonedListing.listing_price,
+    condition:
+      abandonedListing.item_details?.condition_details?.condition || "",
+    category: abandonedListing.item_details?.category_details?.name || "",
+    images: abandonedListing.item_details?.images || [],
+    statusMessage: "Item is no longer for sale",
     footerContent: <Button variant="outline">Remove tag</Button>,
   },
 };
@@ -154,46 +215,27 @@ export const AbandonedListingHost: Story = {
 // Sold Listing
 export const SoldListingViewer: Story = {
   args: {
-    listing: soldListing,
-    userRole: LISTING_ROLES.VIEWER,
-    statusMessage: (
-      <>
-        <AlertCircle />
-        <span>This item has been sold</span>
-      </>
-    ),
+    title: soldListing.item_details?.name || "",
+    price: soldListing.listing_price,
+    condition: soldListing.item_details?.condition_details?.condition || "",
+    category: soldListing.item_details?.category_details?.name || "",
+    images: soldListing.item_details?.images || [],
+    statusMessage: "This item has been sold",
+    statusBadge: {
+      label: "Sold",
+      variant: "destructive",
+    },
   },
 };
 
 // No Images Listing
 export const NoImagesListing: Story = {
   args: {
-    listing: noImagesListing,
-    userRole: LISTING_ROLES.VIEWER,
+    title: noImagesListing.item_details?.name || "",
+    price: noImagesListing.listing_price,
+    condition: noImagesListing.item_details?.condition_details?.condition || "",
+    category: noImagesListing.item_details?.category_details?.name || "",
+    images: [],
     footerContent: <Button>Buy now</Button>,
-  },
-};
-
-// Vacant Tag (No Listing)
-export const VacantTagViewer: Story = {
-  args: {
-    listing: noListing,
-    userRole: LISTING_ROLES.VIEWER,
-    statusMessage: <span>This tag is not associated with any listing</span>,
-    footerContent: <Button>List item</Button>,
-  },
-};
-
-// Vacant Tag Host
-export const VacantTagHost: Story = {
-  args: {
-    listing: noListing,
-    userRole: LISTING_ROLES.HOST,
-    statusMessage: <span>This tag is not associated with any listing</span>,
-    footerContent: (
-      <Button variant="ghost" disabled>
-        Manage
-      </Button>
-    ),
   },
 };

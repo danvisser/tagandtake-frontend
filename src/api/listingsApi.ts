@@ -61,6 +61,7 @@ export interface AbandonedItemListing extends BaseListing {
 
 // Interface for sold listings
 export interface SoldItemListing extends BaseListing {
+  tag_removed: boolean;
   sold_at: string;
 }
 
@@ -190,7 +191,6 @@ export const getListing = async (
       method: "GET",
       url: API_ROUTES.MEMBERS.LISTINGS.DETAILS(id),
     });
-
     return {
       success: true,
       data,
@@ -377,7 +377,6 @@ export const delistListing = async (
       url: API_ROUTES.STORES.LISTINGS.DELIST(id),
       data: { reason: reasonId },
     });
-
     return {
       success: true,
       data: data.data,
@@ -584,6 +583,38 @@ export const removeTagFromAbandonedListing = async (
         error:
           error.response?.data?.detail ||
           `Failed to remove tag from abandoned listing ${id}`,
+      };
+    }
+    throw error;
+  }
+};
+
+// Remove tag from sold listing
+export const removeTagFromSoldListing = async (
+  id: number
+): Promise<{
+  success: boolean;
+  data?: SoldItemListing;
+  error?: string;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "PATCH",
+      url: API_ROUTES.STORES.SOLD_LISTINGS.REMOVE_TAG(id),
+    });
+
+    return {
+      success: true,
+      data: data.data,
+    };
+  } catch (error: unknown) {
+    console.error(`Remove tag from sold listing ${id} error:`, error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.detail ||
+          `Failed to remove tag from sold listing ${id}`,
       };
     }
     throw error;

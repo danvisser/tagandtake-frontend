@@ -12,11 +12,37 @@ const REFRESH_TIMEOUT = 5000; // 5 seconds for token refresh operations
 
 // In-memory storage for the access token
 let accessToken: string | null = null;
+
+// Initialize token from localStorage if available (only in browser)
+if (typeof window !== "undefined") {
+  try {
+    const storedToken = localStorage.getItem("auth_access_token");
+    if (storedToken) {
+      accessToken = storedToken;
+    }
+  } catch (e) {
+    console.error("Error accessing localStorage:", e);
+  }
+}
+
 let isRefreshing = false;
 let refreshSubscribers: Array<(token: string) => void> = [];
 
 export const setAccessToken = (token: string | null) => {
   accessToken = token;
+
+  // Also store in localStorage for persistence across page loads
+  if (typeof window !== "undefined") {
+    try {
+      if (token) {
+        localStorage.setItem("auth_access_token", token);
+      } else {
+        localStorage.removeItem("auth_access_token");
+      }
+    } catch (e) {
+      console.error("Error accessing localStorage:", e);
+    }
+  }
 };
 
 // Function to subscribe to token refresh

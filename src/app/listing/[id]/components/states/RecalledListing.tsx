@@ -1,6 +1,5 @@
 "use client";
 
-import { AlertCircle } from "lucide-react";
 import { ListingRole, LISTING_ROLES } from "@src/types/roles";
 import { RecalledItemListing } from "@src/api/listingsApi";
 import ListingCard from "../shared/ListingCard";
@@ -8,56 +7,57 @@ import ListingActions from "../shared/ListingActions";
 
 interface RecalledListingProps {
   listing: RecalledItemListing;
-  userRole: ListingRole;
+  userRole: ListingRole | null;
+  onOpenCollectionModal: () => void;
+  isCollectLoading: boolean;
 }
 
 export default function RecalledListing({
   listing,
   userRole,
+  onOpenCollectionModal,
+  isCollectLoading,
 }: RecalledListingProps) {
-  // Generate status message based on user role
-  const statusMessage = (() => {
-    if (userRole === LISTING_ROLES.VIEWER) {
-      return (
-        <div className="flex items-center text-muted-foreground">
-          <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
-          <span>Item is no longer for sale</span>
-        </div>
-      );
-    }
+  const item = listing.item_details;
 
-    if (userRole === LISTING_ROLES.OWNER) {
-      return (
-        <div className="flex items-start text-amber-600">
-          <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0 mt-0.5" />
-          <div>
-            <p>Item has been recalled</p>
-            <p className="text-xs mt-1">
-              Please take to a member of staff to remove tag
-            </p>
-          </div>
-        </div>
-      );
-    }
+  if (!item) {
+    return <div>Item details not available</div>;
+  }
 
-    if (userRole === LISTING_ROLES.HOST) {
-      return (
-        <div className="flex items-center text-amber-600">
-          <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
-          <span>Item has been recalled</span>
-        </div>
-      );
-    }
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
 
-    return null;
-  })();
+  let statusMessage = `This item has been recalled due to: ${listing.reason}`;
+
+  if (userRole === LISTING_ROLES.OWNER) {
+    statusMessage += `. Please collect by ${formatDate(listing.collection_deadline)}.`;
+  }
 
   return (
     <ListingCard
-      listing={listing}
-      userRole={userRole}
+      title={item.name}
+      price={listing.item_price}
+      condition={item.condition_details?.condition || "Unknown"}
+      category={item.category_details?.name || "Unknown"}
+      images={item.images || []}
+      statusBadge={{
+        label: "Recalled",
+        variant: "destructive",
+      }}
       statusMessage={statusMessage}
-      footerContent={<ListingActions listing={listing} userRole={userRole} />}
+      footerContent={
+        <ListingActions
+          listing={listing}
+          userRole={userRole}
+          onOpenCollectionModal={onOpenCollectionModal}
+          isCollectLoading={isCollectLoading}
+        />
+      }
     />
   );
 }

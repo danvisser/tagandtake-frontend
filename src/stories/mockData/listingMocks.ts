@@ -99,6 +99,7 @@ export const abandonedListing: AbandonedItemListing = {
 export const soldListing: SoldItemListing = {
   ...baseListing,
   sold_at: "2023-10-25T16:45:00Z",
+  tag_removed: false,
 };
 
 // Mock listing with no images

@@ -66,6 +66,7 @@ export const API_ROUTES = {
     },
     SOLD_LISTINGS: {
       LIST: `/stores/me/sold-listings/`,
+      REMOVE_TAG: (id: number) => `/stores/me/sold-listings/${id}/remove-tag/`,
     },
   },
   CHECKOUT: {
@@ -77,15 +78,13 @@ export const API_ROUTES = {
     CATEGORIES: `/items/categories/`,
     CONDITIONS: `/items/conditions/`,
   },
-  PAYMENT: {
-    ACCOUNTS: {
-      MANAGEMENT: `/payment-accounts/management/`,
-      NOTIFICATIONS: `/payment-accounts/notifications/`,
-      ONBOARDING: `/payment-accounts/onboarding/`,
-      PAYMENTS: `/payment-accounts/payments/`,
-      PAYOUTS: `/payment-accounts/payouts/`,
-      STATUS: `/payment-accounts/status/`,
-    },
+  PAYMENTS: {
+    ACCOUNT_STATUS: `/payment-accounts/status/`,
+    ONBOARDING: `/payment-accounts/onboarding/`,
+    MANAGEMENT: `/payment-accounts/management/`,
+    PAYOUTS: `/payment-accounts/payouts/`,
+    CHECKOUT_ITEM: `/checkout/item/`,
+    CHECKOUT_SUPPLIES: `/checkout/supplies/`,
   },
   STRIPE: {
     CONNECT_WEBHOOK: `/stripe/connect-webhook/`,

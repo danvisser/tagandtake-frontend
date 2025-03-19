@@ -6,37 +6,31 @@ import { ListingRole, LISTING_ROLES } from "@src/types/roles";
 import { Routes } from "@src/constants/routes";
 
 interface ListingNavigationProps {
-  userRole: ListingRole;
+  userRole: ListingRole | null;
 }
 
 export default function ListingNavigation({
   userRole,
 }: ListingNavigationProps) {
-  // No navigation for viewers
-  if (userRole === LISTING_ROLES.VIEWER) {
-    return null;
-  }
+  let backLink = Routes.HOME;
+  let backText = "Home";
 
-  let navigationText = "";
-  let navigationPath = "";
-
-  // Determine navigation text and path based on role
-  if (userRole === LISTING_ROLES.OWNER) {
-    navigationText = "My wardrobe";
-    navigationPath = Routes.MEMBER.ITEMS.ROOT;
-  } else if (userRole === LISTING_ROLES.HOST) {
-    navigationText = "All listings";
-    navigationPath = Routes.STORE.LISTINGS.ROOT;
+  if (userRole === LISTING_ROLES.HOST) {
+    backLink = Routes.STORE.LISTINGS.ROOT;
+    backText = "Store Listings";
+  } else if (userRole === LISTING_ROLES.OWNER) {
+    backLink = Routes.MEMBER.ITEMS.ROOT;
+    backText = "My Items";
   }
 
   return (
     <div className="mb-6">
       <Link
-        href={navigationPath}
-        className="flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"
+        href={backLink}
+        className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
       >
         <ChevronLeft className="h-4 w-4 mr-1" />
-        {navigationText}
+        Back to {backText}
       </Link>
     </div>
   );

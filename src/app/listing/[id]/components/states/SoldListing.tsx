@@ -1,30 +1,38 @@
 "use client";
 
 import { ListingRole, LISTING_ROLES } from "@src/types/roles";
-import { AbandonedItemListing } from "@src/api/listingsApi";
+import { SoldItemListing } from "@src/api/listingsApi";
 import ListingCard from "../shared/ListingCard";
 import ListingActions from "../shared/ListingActions";
 
-interface AbandonedListingProps {
-  listing: AbandonedItemListing;
+interface SoldListingProps {
+  listing: SoldItemListing;
   userRole: ListingRole | null;
   onRemoveTag: () => void;
   isRemoveTagLoading: boolean;
 }
 
-export default function AbandonedListing({
+export default function SoldListing({
   listing,
   userRole,
   onRemoveTag,
   isRemoveTagLoading,
-}: AbandonedListingProps) {
+}: SoldListingProps) {
   const item = listing.item_details;
 
   if (!item) {
     return <div>Item details not available</div>;
   }
 
-  let statusMessage = `This item has been abandoned due to: ${listing.reason}`;
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  let statusMessage = `This item was sold on ${formatDate(listing.sold_at)}`;
 
   if (userRole === LISTING_ROLES.HOST && !listing.tag_removed) {
     statusMessage +=
@@ -41,15 +49,15 @@ export default function AbandonedListing({
       category={item.category_details?.name || "Unknown"}
       images={item.images || []}
       statusBadge={{
-        label: "Abandoned",
-        variant: "destructive",
+        label: "Sold",
+        variant: "secondary",
       }}
       statusMessage={statusMessage}
       footerContent={
         <ListingActions
           listing={listing}
           userRole={userRole}
-          onRemoveTagFromAbandoned={onRemoveTag}
+          onRemoveTagFromSold={onRemoveTag}
           isRemoveTagLoading={isRemoveTagLoading}
         />
       }

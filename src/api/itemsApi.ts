@@ -105,16 +105,53 @@ export interface PaginatedResponse<T> {
   results: T[];
 }
 
-// Update getMemberItems to handle pagination
-export const getMemberItems = async (): Promise<{
+// Interface for member items filter options
+export interface MemberItemsFilters {
+  status?: string | string[]; // Can be single status or array of statuses
+  category?: number;
+  condition?: number;
+  search?: string;
+  sort_by?: string; // For sorting options
+}
+
+// Get member items with filters
+export const getMemberItems = async (
+  filters?: MemberItemsFilters
+): Promise<{
   success: boolean;
   data?: PaginatedResponse<Item>;
   error?: string;
 }> => {
   try {
+    // Build query string from filters
+    const queryParams = new URLSearchParams();
+
+    if (filters?.status) {
+      // Handle both single status and array of statuses
+      if (Array.isArray(filters.status)) {
+        filters.status.forEach((status) =>
+          queryParams.append("status", status)
+        );
+      } else {
+        queryParams.append("status", filters.status);
+      }
+    }
+
+    if (filters?.category)
+      queryParams.append("category", filters.category.toString());
+    if (filters?.condition)
+      queryParams.append("condition", filters.condition.toString());
+    if (filters?.search) queryParams.append("search", filters.search);
+    if (filters?.sort_by) queryParams.append("sort_by", filters.sort_by);
+
+    const queryString = queryParams.toString();
+    const url = queryString
+      ? `${API_ROUTES.MEMBERS.ITEMS.LIST}?${queryString}`
+      : API_ROUTES.MEMBERS.ITEMS.LIST;
+
     const { data } = await fetchClient({
       method: "GET",
-      url: API_ROUTES.MEMBERS.ITEMS.LIST,
+      url: url,
     });
 
     return {
@@ -126,11 +163,26 @@ export const getMemberItems = async (): Promise<{
     if (axios.isAxiosError(error)) {
       return {
         success: false,
-        error: error.response?.data?.detail || "Failed to fetch items",
+        error: error.response?.data?.detail || "Failed to fetch member items",
       };
     }
     throw error;
   }
+};
+
+// Helper function to get available items
+export const getAvailableItems = async (): Promise<{
+  success: boolean;
+  data?: Item[];
+  error?: string;
+}> => {
+  const response = await getMemberItems({ status: ItemStatus.AVAILABLE });
+
+  return {
+    success: response.success,
+    data: response.data?.results,
+    error: response.error,
+  };
 };
 
 // Create a new item
