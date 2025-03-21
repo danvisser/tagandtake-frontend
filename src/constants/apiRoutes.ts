@@ -34,6 +34,7 @@ export const API_ROUTES = {
       CREATE: `/members/me/listings/`,
       DETAILS: (id: number) => `/listings/${id}/`,
       CHECK_ROLE: (id: number) => `/listings/${id}/check-role/`,
+      CHECK_TAG_AVAILABILITY: (tagId: number) => `/tags/${tagId}/availability/`,
     },
     ITEM_LISTINGS: `/members/me/items-listings/`,
     RECALLED_LISTINGS: {

@@ -23,6 +23,7 @@ export interface RecallReason {
 export interface BaseListing {
   id: number;
   tag: number;
+  store: number;
   store_commission: number;
   min_listing_days: number;
   user_listing_relation: ListingRole;
@@ -99,6 +100,12 @@ export interface PaginatedResponse<T> {
   next: string | null;
   previous: string | null;
   results: T[];
+}
+
+// Interface for tag availability response
+export interface TagAvailabilityResponse {
+  is_available: boolean;
+  reason?: string;
 }
 
 // Create a new listing
@@ -613,6 +620,44 @@ export const removeTagFromSoldListing = async (
         error:
           error.response?.data?.detail ||
           `Failed to remove tag from sold listing ${id}`,
+      };
+    }
+    throw error;
+  }
+};
+
+export const checkTagAvailability = async (
+  tagId: number
+): Promise<{
+  success: boolean;
+  data?: TagAvailabilityResponse;
+  error?: string;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "GET",
+      url: API_ROUTES.MEMBERS.LISTINGS.CHECK_TAG_AVAILABILITY(tagId),
+    });
+
+    return {
+      success: true,
+      data,
+    };
+  } catch (error: unknown) {
+    console.error(`Check tag availability ${tagId} error:`, error);
+    if (axios.isAxiosError(error)) {
+      // Handle 404 case specifically
+      if (error.response?.status === 404) {
+        return {
+          success: false,
+          error: error.response.data.DETAIL || "Tag not found",
+        };
+      }
+      return {
+        success: false,
+        error:
+          error.response?.data?.DETAIL ||
+          `Failed to check tag availability for ${tagId}`,
       };
     }
     throw error;
