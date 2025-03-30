@@ -14,7 +14,7 @@ import { formatCurrency } from "@src/lib/formatters";
 
 interface ListingCardProps {
   title: string;
-  price: number;  
+  price: number;
   condition: string;
   category: string;
   images: { image_url: string; order: number }[];
@@ -39,7 +39,7 @@ export default function ListingCard({
   const mainImage = images && images.length > 0 ? images[0].image_url : null;
 
   return (
-    <Card className="w-full overflow-hidden">
+    <Card className="w-full overflow-hidden" variant="borderless">
       <CardHeader className="p-0">
         <div className="relative w-full h-64">
           {mainImage ? (

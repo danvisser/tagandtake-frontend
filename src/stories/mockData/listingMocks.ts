@@ -21,10 +21,11 @@ export const mockImages = [
 ];
 
 // Base mock listing data
-export const baseListing = {
+export const baseListing: ItemListing = {
   id: 1,
   item: 1,
   tag: 123,
+  store: 1,
   store_commission: 20,
   min_listing_days: 30,
   item_price: 80,
@@ -35,6 +36,8 @@ export const baseListing = {
   created_at: "2023-10-15T12:00:00Z",
   updated_at: "2023-10-15T12:00:00Z",
   user_listing_relation: LISTING_ROLES.VIEWER,
+  tagandtake_commission: 5,
+  tagandtake_flat_fee: 2,
   item_details: {
     id: 1,
     name: "Vintage Denim Jacket",
@@ -63,8 +66,6 @@ export const baseListing = {
 // Mock active listing
 export const activeListing: ItemListing = {
   ...baseListing,
-  tagandtake_commission: 5,
-  tagandtake_flat_fee: 2,
 };
 
 // Mock recalled listing
@@ -103,7 +104,7 @@ export const soldListing: SoldItemListing = {
 
 // Mock listing with no images
 export const noImagesListing: ItemListing = {
-  ...activeListing,
+  ...baseListing,
   item_details: {
     id: 1,
     name: "Vintage Denim Jacket",
@@ -130,4 +131,4 @@ export const noImagesListing: ItemListing = {
 };
 
 // Vacant tag (no listing)
-export const noListing: undefined = undefined;
+export const noListing = undefined;

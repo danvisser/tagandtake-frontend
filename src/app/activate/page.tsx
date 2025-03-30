@@ -46,8 +46,8 @@ function ActivateContent() {
         const response = await activateAccount(uuid, token);
         setStatus(ActivationStatus.SUCCESS);
 
-        if (response && response.role) {
-          setUserRole(response.role);
+        if (response && response.user.role) {
+          setUserRole(response.user.role);
         }
       } catch (error) {
         setStatus(ActivationStatus.ERROR);
