@@ -17,9 +17,13 @@ export default function AuthenticatedPage({
   requiredRole,
 }: AuthenticatedPageProps) {
   const router = useRouter();
-  const { isAuthenticated, role, isLoading } = useAuth();
+  const { isAuthenticated, role, isLoading, error } = useAuth();
 
   useEffect(() => {
+    if (error) {
+      console.error("Auth error in AuthenticatedPage:", error);
+    }
+
     if (!isLoading) {
       if (!isAuthenticated) {
         // Save current path for return after login
@@ -32,7 +36,7 @@ export default function AuthenticatedPage({
         );
       }
     }
-  }, [isLoading, isAuthenticated, role, requiredRole, router]);
+  }, [isLoading, isAuthenticated, role, requiredRole, router, error]);
 
   // Show loading state while checking auth
   if (isLoading) {

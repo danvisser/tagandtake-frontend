@@ -7,7 +7,6 @@ import {
   removeTagFromSoldListing,
   collectRecalledListing,
 } from "@src/api/listingsApi";
-import { Routes } from "@src/constants/routes";
 
 export function useListingActions(listingId: number) {
   const router = useRouter();
@@ -20,7 +19,6 @@ export function useListingActions(listingId: number) {
     setIsCheckoutLoading(true);
     try {
       // Redirect to checkout page
-      router.push(Routes.LISTING.CHECKOUT.ROOT(listingId.toString()));
     } catch (err) {
       console.error("Checkout error:", err);
     } finally {

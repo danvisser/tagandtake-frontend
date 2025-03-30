@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
-import { refreshAccessToken } from "@src/api/authApi";
+import { refreshAccessToken, AuthErrorResponse } from "@src/api/authApi";
 import { handleSessionExpiration } from "@src/lib/sessionExpirationHandler";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -76,7 +76,7 @@ fetchClient.interceptors.request.use(
 // Response interceptor to handle token refresh
 fetchClient.interceptors.response.use(
   (response) => response,
-  async (error: AxiosError) => {
+  async (error: AxiosError<AuthErrorResponse>) => {
     const originalRequest = error.config as AxiosRequestConfig & {
       _retry?: boolean;
     };
@@ -145,6 +145,18 @@ fetchClient.interceptors.response.use(
 
         return Promise.reject(refreshError);
       }
+    }
+
+    // When handling errors
+    if (error.response?.data) {
+      const errorData = error.response.data;
+      const errorMessage =
+        errorData.non_field_errors?.[0] ||
+        errorData.detail ||
+        errorData.error ||
+        "Request failed";
+
+      return Promise.reject(new Error(errorMessage));
     }
 
     return Promise.reject(error);

@@ -1,12 +1,9 @@
 "use client";
 
-import AuthenticatedPage from "@src/components/AuthenticatedPage";
-import ListingContainer from "./components/ListingContainer";
+import ListingContainer from "@src/app/listing/[id]/components/ListingContainer";
 
 export default function ListingPage() {
   return (
-    <AuthenticatedPage>
-      <ListingContainer />
-    </AuthenticatedPage>
+    <ListingContainer />
   );
 }

@@ -1,16 +1,15 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { fetchUserSession, login, logout } from "@src/api/authApi";
+import { setAccessToken } from "@src/lib/fetchClient";
 import axios from "axios";
 import { UserRole } from "@src/types/roles";
-
-// Check if window is defined (browser) or not (server)
-const isBrowser = typeof window !== "undefined";
 
 interface AuthState {
   isAuthenticated: boolean;
   role: UserRole | null;
-  isLoading: boolean;
+  initializationStatus: "idle" | "loading" | "completed" | "error";
+  error: Error | null;
   setAuth: (role: UserRole | null) => void;
   login: (
     username: string,
@@ -22,16 +21,47 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       isAuthenticated: false,
       role: null,
-      isLoading: true,
+      initializationStatus: "idle",
+      error: null,
 
       setAuth: (role) => {
-        set({ role, isAuthenticated: !!role });
-        // Dispatch storage event to sync across tabs (only in browser)
-        if (isBrowser) {
-          window.dispatchEvent(new Event("storage"));
+        set({
+          role,
+          isAuthenticated: !!role,
+          initializationStatus: "completed",
+        });
+        // Dispatch storage event to sync across tabs
+        window.dispatchEvent(new Event("storage"));
+      },
+
+      initializeAuth: async () => {
+        // Don't re-initialize if already completed
+        if (get().initializationStatus === "completed") {
+          return;
+        }
+
+        set({ initializationStatus: "loading", error: null });
+
+        try {
+          const session = await fetchUserSession();
+          set({
+            role: session.user.role,
+            isAuthenticated: !!session.user.role,
+            initializationStatus: "completed",
+          });
+        } catch (error) {
+          set({
+            isAuthenticated: false,
+            role: null,
+            initializationStatus: "error",
+            error:
+              error instanceof Error
+                ? error
+                : new Error("Authentication failed"),
+          });
         }
       },
 
@@ -43,28 +73,24 @@ export const useAuthStore = create<AuthState>()(
           });
 
           set({
-            isAuthenticated: !!response.role,
-            role: response.role,
-            isLoading: false,
+            isAuthenticated: !!response.user.role,
+            role: response.user.role,
+            initializationStatus: "completed",
+            error: null,
           });
 
-          // Sync across tabs (only in browser)
-          if (isBrowser) {
-            window.dispatchEvent(new Event("storage"));
-          }
-
-          return { success: true, role: response.role };
+          window.dispatchEvent(new Event("storage"));
+          return { success: true, role: response.user.role };
         } catch (error) {
           console.error("Login error:", error);
-          // Extract the error message from the Axios error response
           let errorMessage = "Login failed";
 
           if (axios.isAxiosError(error) && error.response?.data) {
-            // Try to get the error message from the response data
             errorMessage =
               error.response.data.non_field_errors || "Invalid credentials";
           }
 
+          set({ error: new Error(errorMessage) });
           return { success: false, error: errorMessage };
         }
       },
@@ -72,56 +98,41 @@ export const useAuthStore = create<AuthState>()(
       logout: async () => {
         try {
           await logout();
-          set({ isAuthenticated: false, role: null, isLoading: false });
-          // Sync across tabs (only in browser)
-          if (isBrowser) {
-            window.dispatchEvent(new Event("storage"));
-          }
-          // Force a re-render of components using the auth state
-          window.dispatchEvent(new Event("auth-state-changed"));
+          // Clear the token
+          setAccessToken(null);
+          set({
+            isAuthenticated: false,
+            role: null,
+            initializationStatus: "idle",
+            error: null,
+          });
+          window.dispatchEvent(new Event("storage"));
         } catch (error) {
           console.error("Logout error:", error);
-        }
-      },
-
-      initializeAuth: async () => {
-        try {
-          const response = await fetchUserSession();
           set({
-            isAuthenticated: !!response.role,
-            role: response.role,
-            isLoading: false,
+            error: error instanceof Error ? error : new Error("Logout failed"),
           });
-        } catch (error) {
-          console.error("Auth initialization error:", error);
-          set({ isAuthenticated: false, role: null, isLoading: false });
         }
       },
     }),
     {
       name: "auth-storage",
-      skipHydration: true,
-      // Only persist these fields
       partialize: (state) => ({
-        isAuthenticated: state.isAuthenticated,
         role: state.role,
+        isAuthenticated: state.isAuthenticated,
+        initializationStatus: state.initializationStatus,
       }),
     }
   )
 );
 
-// Add the storage event listener for cross-tab sync only in browser environments
-if (isBrowser) {
-  window.addEventListener("storage", () => {
-    const storedState = JSON.parse(
-      localStorage.getItem("auth-storage") || "{}"
-    );
-    if (storedState.state) {
-      useAuthStore.setState({
-        role: storedState.state.role,
-        isAuthenticated: storedState.state.isAuthenticated,
-        isLoading: false,
-      });
-    }
-  });
-}
+// Add the storage event listener for cross-tab sync
+window.addEventListener("storage", () => {
+  const storedState = JSON.parse(localStorage.getItem("auth-storage") || "{}");
+  if (storedState.state) {
+    useAuthStore.setState({
+      role: storedState.state.role,
+      isAuthenticated: storedState.state.isAuthenticated,
+    });
+  }
+});

@@ -16,7 +16,7 @@ export const Routes = {
     RESET: "/reset-password",
     CONFIRM: "/reset-password/confirm",
   },
-
+  
   // Member routes (Private)
   MEMBER: {
     PROFILE: "/member/profile",
@@ -37,6 +37,7 @@ export const Routes = {
     PAYMENTS: "/store/payments",
     SUPPLIES: "/store/supplies",
     SUPPLIES_CHECKOUT: "/store/supplies/checkout",
+    SUPPLIES_CHECKOUT_SUCCESS: "/store/supplies/checkout-success",
     LISTINGS: {
       ROOT: "/store/listings",
       DETAILS: (listingId: string) => `/store/listings/${listingId}`,
@@ -47,15 +48,12 @@ export const Routes = {
   // Listing routes (Public)
   LISTING: {
     DETAILS: (listingId: string) => `/listing/${listingId}`,
-    CHECKOUT: {
-      ROOT: (listingId: string) => `/listing/${listingId}/checkout`,
-      SUCCESS: (listingId: string) => `/listing/${listingId}/checkout/success`,
-    },
+    CHECKOUT_SUCCESS: (listingId: string) =>
+      `/listing/${listingId}/checkout-success`,
   },
 
   // Store routes (Public)
   STORES: {
     ROOT: "/stores",
-    PROFILE: (storeId: string) => `/stores/${storeId}`, 
   },
 };

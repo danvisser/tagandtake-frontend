@@ -21,11 +21,10 @@ export function canListItem(
  * Determines if the user can checkout an item
  */
 export function canCheckout(
-  isAuthenticated: boolean,
   listingRole: ListingRole | null
 ): boolean {
-  // Only authenticated viewers can checkout
-  return isAuthenticated && listingRole === LISTING_ROLES.VIEWER;
+  // Only viewers can checkout
+  return listingRole === LISTING_ROLES.VIEWER;
 }
 
 /**

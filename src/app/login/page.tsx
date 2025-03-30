@@ -1,38 +1,36 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "@src/stores/authStore";
+import { useAuth } from "@src/providers/AuthProvider";
 import LoginForm from "@src/components/LoginForm";
 import LoadingUI from "@src/components/LoadingUI";
+import { Routes } from "@src/constants/routes";
 
 export default function LoginPage() {
-  const { login } = useAuthStore();
+  const { login, isLoading, error } = useAuth();
   const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (email: string, password: string) => {
     try {
       setErrorMessage(null);
-      setIsLoading(true);
       const result = await login(email, password);
 
       if (result.success) {
-        // Check for return path from session expiration
         const returnPath = sessionStorage.getItem("returnPath");
         if (returnPath) {
           sessionStorage.removeItem("returnPath");
           router.push(returnPath);
-          router.refresh();
+        } else {
+          router.push(Routes.HOME);
         }
-      } else if (result.error) {
-        setErrorMessage(String(result.error));
+      } else {
+        setErrorMessage(result.error || "Login failed");
       }
-    } catch (error) {
-      console.error("Login failed:", error);
-      setErrorMessage("An unexpected error occurred. Please try again later.");
-    } finally {
-      setIsLoading(false);
+    } catch (err) {
+      setErrorMessage(
+        err instanceof Error ? err.message : "An unexpected error occurred"
+      );
     }
   };
 
@@ -46,7 +44,10 @@ export default function LoginPage() {
         <h2 className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
           Log in
         </h2>
-        <LoginForm onSubmit={handleLogin} errorMessage={errorMessage} />
+        <LoginForm
+          onSubmit={handleLogin}
+          errorMessage={errorMessage || error?.message}
+        />
       </div>
     </div>
   );

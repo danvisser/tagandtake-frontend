@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import {
   getListing,
-  checkListingRole,
   ItemListing,
   RecalledItemListing,
   AbandonedItemListing,
@@ -44,16 +43,11 @@ export function useListingData() {
           throw new Error(listingResponse.error || "Failed to load listing");
         }
 
-        // Fetch user role for this listing
-        const roleResponse = await checkListingRole(listingId);
-        if (!roleResponse.success) {
-          throw new Error(roleResponse.error || "Failed to check user role");
-        }
+        console.log("listingResponse", listingResponse.data);
 
         setListing(listingResponse.data || null);
-        setUserRole(roleResponse.data?.user_listing_relation || null);
+        setUserRole(listingResponse.data?.user_listing_relation || null);
 
-        console.log("Listing data:", listingResponse.data);
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "An unknown error occurred"

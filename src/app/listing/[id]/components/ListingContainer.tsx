@@ -1,10 +1,10 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useListingData } from "../hooks/useListingData";
-import { useListingActions } from "../hooks/useListingActions";
-import WithListingState from "./withListingState";
-import ListingNavigation from "./shared/ListingNavigation";
+import { useListingData } from "@src/app/listing/[id]/hooks/useListingData";
+import { useListingActions } from "@src/app/listing/[id]/hooks/useListingActions";
+import WithListingState from "@src/app/listing/[id]/components/withListingState";
+import ListingNavigation from "@src/app/listing/[id]/components/shared/ListingNavigation";
 import LoadingSpinner from "@src/components/LoadingSpinner";
 
 export default function ListingContainer() {

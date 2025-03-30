@@ -1,4 +1,3 @@
-// Define types for your reference data
 export interface ItemCategory {
   id: number;
   name: string;
@@ -11,8 +10,6 @@ export interface ItemCondition {
   description: string;
 }
 
-// You can either fetch this data from an API endpoint
-// or hardcode it if it rarely changes
 export const itemCategories: ItemCategory[] = [
   { id: 1, name: "Tops", description: "Upper body garments" },
   { id: 2, name: "Bottoms", description: "Lower body garments" },
@@ -54,7 +51,6 @@ export const itemConditions: ItemCondition[] = [
   { id: 5, condition: "Needs Repair", description: "Minor repairs needed" },
 ];
 
-// Helper functions to get items by ID
 export function getCategoryById(id: number): ItemCategory | undefined {
   return itemCategories.find((category) => category.id === id);
 }

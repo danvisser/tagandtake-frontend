@@ -137,7 +137,7 @@ export default function LoginForm({ onSubmit, errorMessage }: LoginFormProps) {
       </form>
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
+          <span className="w-full l border-t" />
         </div>
         <div className="relative flex justify-center text-sm">
           <span className="bg-background px-2 text-muted-foreground">
