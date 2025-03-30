@@ -8,9 +8,10 @@ import { UserRole } from "@src/types/roles";
 interface AuthState {
   isAuthenticated: boolean;
   role: UserRole | null;
+  accessToken: string | null;
   initializationStatus: "idle" | "loading" | "completed" | "error";
   error: Error | null;
-  setAuth: (role: UserRole | null) => void;
+  setAuth: (role: UserRole | null, token: string | null) => void;
   login: (
     username: string,
     password: string
@@ -24,16 +25,18 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       isAuthenticated: false,
       role: null,
+      accessToken: null,
       initializationStatus: "idle",
       error: null,
 
-      setAuth: (role) => {
+      setAuth: (role, token) => {
+        setAccessToken(token);
         set({
           role,
+          accessToken: token,
           isAuthenticated: !!role,
           initializationStatus: "completed",
         });
-        // Dispatch storage event to sync across tabs
         window.dispatchEvent(new Event("storage"));
       },
 
@@ -49,6 +52,7 @@ export const useAuthStore = create<AuthState>()(
           const session = await fetchUserSession();
           set({
             role: session.user.role,
+            accessToken: session.access,
             isAuthenticated: !!session.user.role,
             initializationStatus: "completed",
           });
@@ -56,6 +60,7 @@ export const useAuthStore = create<AuthState>()(
           set({
             isAuthenticated: false,
             role: null,
+            accessToken: null,
             initializationStatus: "error",
             error:
               error instanceof Error
@@ -72,9 +77,11 @@ export const useAuthStore = create<AuthState>()(
             password: password,
           });
 
+          setAccessToken(response.access);
           set({
             isAuthenticated: !!response.user.role,
             role: response.user.role,
+            accessToken: response.access,
             initializationStatus: "completed",
             error: null,
           });
@@ -103,6 +110,7 @@ export const useAuthStore = create<AuthState>()(
           set({
             isAuthenticated: false,
             role: null,
+            accessToken: null,
             initializationStatus: "idle",
             error: null,
           });
@@ -120,6 +128,7 @@ export const useAuthStore = create<AuthState>()(
       partialize: (state) => ({
         role: state.role,
         isAuthenticated: state.isAuthenticated,
+        accessToken: state.accessToken,
         initializationStatus: state.initializationStatus,
       }),
     }
@@ -133,6 +142,7 @@ window.addEventListener("storage", () => {
     useAuthStore.setState({
       role: storedState.state.role,
       isAuthenticated: storedState.state.isAuthenticated,
+      accessToken: storedState.state.accessToken,
     });
   }
 });
