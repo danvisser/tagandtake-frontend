@@ -2,8 +2,8 @@
 
 import { ListingRole, LISTING_ROLES } from "@src/types/roles";
 import { SoldItemListing } from "@src/api/listingsApi";
-import ListingCard from "../shared/ListingCard";
-import ListingActions from "../shared/ListingActions";
+import ListingCard from "@src/app/listing/[id]/components/shared/ListingCard";
+import ListingActions from "@src/app/listing/[id]/components/shared/ListingActions";
 
 interface SoldListingProps {
   listing: SoldItemListing;
@@ -25,7 +25,7 @@ export default function SoldListing({
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
+    return new Date(dateString).toLocaleDateString("en-GB", {
       year: "numeric",
       month: "long",
       day: "numeric",

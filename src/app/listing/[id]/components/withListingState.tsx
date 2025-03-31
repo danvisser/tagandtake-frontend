@@ -8,14 +8,14 @@ import {
   AbandonedItemListing,
   SoldItemListing,
 } from "@src/api/listingsApi";
-import ActiveListing from "./states/ActiveListing";
-import RecalledListing from "./states/RecalledListing";
-import AbandonedListing from "./states/AbandonedListing";
-import SoldListing from "./states/SoldListing";
-import VacantTag from "./states/VacantTag";
-import CollectionModal from "./modals/CollectionModal";
-import ListItemModal from "./modals/ListItemModal";
-import CheckoutModal from "./modals/CheckoutModal";
+import ActiveListing from "@src/app/listing/[id]/components/states/ActiveListing";
+import RecalledListing from "@src/app/listing/[id]/components/states/RecalledListing";
+import AbandonedListing from "@src/app/listing/[id]/components/states/AbandonedListing";
+import SoldListing from "@src/app/listing/[id]/components/states/SoldListing";
+import VacantTag from "@src/app/listing/[id]/components/states/VacantTag";
+import CollectionModal from "@src/app/listing/[id]/components/modals/CollectionModal";
+import ListItemModal from "@src/app/listing/[id]/components/modals/ListItemModal";
+import CheckoutModal from "@src/app/listing/[id]/components/modals/CheckoutModal";
 
 interface WithListingStateProps {
   listing:
