@@ -66,6 +66,10 @@ export const baseListing: ItemListing = {
 // Mock active listing
 export const activeListing: ItemListing = {
   ...baseListing,
+  item_details: {
+    ...baseListing.item_details,
+    status: ItemStatus.LISTED,
+  },
 };
 
 // Mock recalled listing
@@ -80,6 +84,10 @@ export const recalledListing: RecalledItemListing = {
   recalled_at: "2023-10-20T14:30:00Z",
   collection_pin: "1234",
   collection_deadline: "2023-11-20T14:30:00Z",
+  item_details: {
+    ...baseListing.item_details,
+    status: ItemStatus.RECALLED,
+  },
 };
 
 // Mock abandoned listing
@@ -93,13 +101,21 @@ export const abandonedListing: AbandonedItemListing = {
   },
   abandoned_at: "2023-11-21T14:30:00Z",
   tag_removed: false,
+  item_details: {
+    ...baseListing.item_details,
+    status: ItemStatus.ABANDONED,
+  },
 };
 
 // Mock sold listing
 export const soldListing: SoldItemListing = {
   ...baseListing,
-  sold_at: "2023-10-25T16:45:00Z",
+  sold_at: "2023-11-15T16:45:00Z",
   tag_removed: false,
+  item_details: {
+    ...baseListing.item_details,
+    status: ItemStatus.SOLD,
+  },
 };
 
 // Mock listing with no images
