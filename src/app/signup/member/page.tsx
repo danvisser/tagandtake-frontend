@@ -83,12 +83,11 @@ export default function MemberSignupPage() {
       {/* Fixed header section */}
       <div className="w-full py-12 bg-background">
         <div className="container max-w-md mx-auto px-4">
-          <h2 className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
+          <h2 className="text-2xl font-medium tracking-tight md:text-3xl text-center">
             Sign up with email
           </h2>
           <p className="text-center text-muted-foreground mt-2">
-            Turn your pre-loved items into cash — no shipping, no messaging,
-            just drop off and earn.
+            Once singed up, scan a tag to list your item.
           </p>
         </div>
       </div>

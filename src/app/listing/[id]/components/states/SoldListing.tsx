@@ -32,21 +32,42 @@ export default function SoldListing({
     });
   };
 
-  let statusMessage = `This item was sold on ${formatDate(listing.sold_at)}`;
+  let statusMessage: string | React.ReactNode =
+    `This item was sold on ${formatDate(listing.sold_at)}`;
 
   if (userRole === LISTING_ROLES.HOST && !listing.tag_removed) {
-    statusMessage +=
-      ". Please remove the tag to make it available for new listings.";
-  } else if (listing.tag_removed) {
-    statusMessage += ". The tag has been removed.";
+    statusMessage = (
+      <>
+        <span>Please remove the tag</span>
+        <br />
+        <span className="mt-2 block text-muted-foreground">
+          This item was sold on {formatDate(listing.sold_at)}
+        </span>
+      </>
+    );
+  } else if (userRole === LISTING_ROLES.VIEWER && !listing.tag_removed) {
+    statusMessage = (
+      <>
+        <span>Please ask staff to remove the tag</span>
+        <br />
+        <span className="mt-2 block text-muted-foreground">
+          This item was sold on {formatDate(listing.sold_at)}
+        </span>
+      </>
+    );
   }
 
   return (
     <ListingCard
       title={item.name}
-      price={listing.listing_price}
+      item_price={listing.item_price}
+      listing_price={listing.listing_price}
       condition={item.condition_details?.condition || "Unknown"}
+      conditionDescription={item.condition_details?.description}
       category={item.category_details?.name || "Unknown"}
+      categoryDescription={item.category_details?.description}
+      size={item.size}
+      description={item.description}
       images={item.images || []}
       statusBadge={{
         label: "Sold",

@@ -62,6 +62,22 @@ export function getStatusBadge(status: string | undefined) {
   }
 }
 
+export function isItemListing(
+  listing:
+    | ItemListing
+    | RecalledItemListing
+    | AbandonedItemListing
+    | SoldItemListing
+    | VacantTag
+    | null
+): listing is
+  | ItemListing
+  | RecalledItemListing
+  | AbandonedItemListing
+  | SoldItemListing {
+  return Boolean(listing && "item_details" in listing);
+}
+
 export function isVacantTag(
   listing:
     | ItemListing

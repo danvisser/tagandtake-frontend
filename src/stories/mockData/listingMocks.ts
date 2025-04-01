@@ -123,27 +123,9 @@ export const soldListing: SoldItemListing = {
 export const noImagesListing: ItemListing = {
   ...baseListing,
   item_details: {
-    id: 1,
-    name: "Vintage Denim Jacket",
-    description: "Classic vintage denim jacket in excellent condition",
-    size: "M",
-    price: 80,
-    condition: 2,
-    category: 3,
-    status: ItemStatus.LISTED,
-    tag_id: 123,
+    ...baseListing.item_details,
     images: [],
     main_image: "",
-    category_details: {
-      id: 3,
-      name: "Outerwear",
-      description: "Jackets, coats, and other outer layers",
-    },
-    condition_details: {
-      id: 2,
-      condition: "Excellent",
-      description: "Like new with minimal signs of wear",
-    },
   },
 };
 

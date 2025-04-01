@@ -13,6 +13,10 @@ import {
 import { Routes } from "@src/constants/routes";
 import LoadingSpinner from "@src/components/LoadingSpinner";
 import { ItemStatus } from "@src/api/itemsApi";
+import {
+  isVacantTag,
+  isItemListing,
+} from "@src/app/listing/[id]/utils/listingHelpers";
 
 interface ListingActionsProps {
   listing:
@@ -48,36 +52,6 @@ export default function ListingActions({
 }: ListingActionsProps) {
   const router = useRouter();
 
-  // Type guard for VacantTag
-  const isVacantTag = (
-    listing:
-      | ItemListing
-      | RecalledItemListing
-      | AbandonedItemListing
-      | SoldItemListing
-      | VacantTag
-      | null
-  ): listing is VacantTag => {
-    return Boolean(listing && "is_member" in listing);
-  };
-
-  // Type guard for ItemListing and its variants
-  const isItemListing = (
-    listing:
-      | ItemListing
-      | RecalledItemListing
-      | AbandonedItemListing
-      | SoldItemListing
-      | VacantTag
-      | null
-  ): listing is
-    | ItemListing
-    | RecalledItemListing
-    | AbandonedItemListing
-    | SoldItemListing => {
-    return Boolean(listing && "item_details" in listing);
-  };
-
   if (!listing) {
     return null;
   }
@@ -88,6 +62,7 @@ export default function ListingActions({
       return (
         <Button
           onClick={() => router.push(Routes.STORE.LISTINGS.ROOT)}
+          variant="outline"
           className="w-full"
         >
           Manage Store Listings
@@ -97,9 +72,21 @@ export default function ListingActions({
 
     if (userRole === LISTING_ROLES.VIEWER) {
       return (
-        <Button onClick={() => router.push(Routes.LOGIN)} className="w-full">
-          Login to List Item
-        </Button>
+        <div className="flex flex-col gap-4 w-full">
+          <Button
+            onClick={() => router.push(Routes.SIGNUP.MEMBER)}
+            className="w-full"
+          >
+            List an Item
+          </Button>
+          <Button
+            onClick={() => router.push(Routes.LOGIN)}
+            variant="outline"
+            className="w-full"
+          >
+            Have an Account? Sign In
+          </Button>
+        </div>
       );
     }
 
@@ -121,6 +108,7 @@ export default function ListingActions({
           <Button
             onClick={onCheckout}
             disabled={isCheckoutLoading}
+            variant="secondary-inverse"
             className="w-full"
           >
             {isCheckoutLoading ? (
@@ -220,7 +208,6 @@ export default function ListingActions({
             onClick={onRemoveTagFromSold}
             disabled={isRemoveTagLoading}
             className="w-full"
-            variant="destructive"
           >
             {isRemoveTagLoading ? (
               <LoadingSpinner size="sm" text="Processing..." />

@@ -4,6 +4,7 @@ import { ListingRole, LISTING_ROLES } from "@src/types/roles";
 import { AbandonedItemListing } from "@src/api/listingsApi";
 import ListingCard from "../shared/ListingCard";
 import ListingActions from "../shared/ListingActions";
+import { formatDate } from "../../utils/listingHelpers";
 
 interface AbandonedListingProps {
   listing: AbandonedItemListing;
@@ -24,25 +25,46 @@ export default function AbandonedListing({
     return <div>Item details not available</div>;
   }
 
-  let statusMessage = `This item has been abandoned due to: ${listing.reason.reason}`;
+  let statusMessage: string | React.ReactNode =
+    `This item has been abandoned due to: ${listing.reason.reason}`;
 
   if (userRole === LISTING_ROLES.HOST && !listing.tag_removed) {
-    statusMessage +=
-      ". Please remove the tag to make it available for new listings.";
-  } else if (listing.tag_removed) {
-    statusMessage += ". The tag has been removed.";
+    statusMessage = (
+      <span className="block text-muted-foreground">
+        Recall reason: {listing.reason.reason}
+        <br />
+        <span className="mt-2 block">
+          Abandoned on: {formatDate(listing.abandoned_at)}
+        </span>
+      </span>
+    );
+  } else if (userRole !== LISTING_ROLES.HOST && !listing.tag_removed) {
+    statusMessage = (
+      <>
+        <span>Please ask a member of staff to remove the tag</span>
+        <br />
+        <span className="mt-2 block text-muted-foreground">
+          The item was abandoned on {formatDate(listing.abandoned_at)}
+        </span>
+      </>
+    );
   }
 
   return (
     <ListingCard
       title={item.name}
-      price={listing.listing_price}
+      item_price={listing.item_price}
+      listing_price={listing.listing_price}
       condition={item.condition_details?.condition || "Unknown"}
+      conditionDescription={item.condition_details?.description}
       category={item.category_details?.name || "Unknown"}
+      categoryDescription={item.category_details?.description}
+      size={item.size}
+      description={item.description}
       images={item.images || []}
       statusBadge={{
         label: "Abandoned",
-        variant: "destructive",
+        variant: "destructive-inverse",
       }}
       statusMessage={statusMessage}
       footerContent={
