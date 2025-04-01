@@ -7,15 +7,18 @@ import {
   RecalledItemListing,
   AbandonedItemListing,
   SoldItemListing,
+  VacantTag,
 } from "@src/api/listingsApi";
 import ActiveListing from "@src/app/listing/[id]/components/states/ActiveListing";
 import RecalledListing from "@src/app/listing/[id]/components/states/RecalledListing";
 import AbandonedListing from "@src/app/listing/[id]/components/states/AbandonedListing";
 import SoldListing from "@src/app/listing/[id]/components/states/SoldListing";
-import VacantTag from "@src/app/listing/[id]/components/states/VacantTag";
+import VacantTagState from "@src/app/listing/[id]/components/states/VacantTag";
 import CollectionModal from "@src/app/listing/[id]/components/modals/CollectionModal";
 import ListItemModal from "@src/app/listing/[id]/components/modals/ListItemModal";
 import CheckoutModal from "@src/app/listing/[id]/components/modals/CheckoutModal";
+import { isVacantTag } from "@src/app/listing/[id]/utils/listingHelpers";
+import { ItemStatus } from "@src/api/itemsApi";
 
 interface WithListingStateProps {
   listing:
@@ -23,6 +26,7 @@ interface WithListingStateProps {
     | RecalledItemListing
     | AbandonedItemListing
     | SoldItemListing
+    | VacantTag
     | null;
   userRole: ListingRole | null;
   listingId: number;
@@ -47,12 +51,16 @@ export default function WithListingState({
   const [isListItemModalOpen, setIsListItemModalOpen] = useState(false);
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
 
+  if (!listing) {
+    return null;
+  }
+
   // Handle vacant tag
-  if (!listing?.item) {
+  if (isVacantTag(listing)) {
     return (
       <>
-        <VacantTag
-          tagId={listingId}
+        <VacantTagState
+          listing={listing}
           userRole={userRole}
           onOpenListItemModal={() => setIsListItemModalOpen(true)}
         />
@@ -67,7 +75,7 @@ export default function WithListingState({
   }
 
   // Handle active listing
-  if (listing.item_details?.status === "listed") {
+  if (listing.item_details?.status === ItemStatus.LISTED) {
     const activeListing = listing as ItemListing;
 
     return (
@@ -89,7 +97,7 @@ export default function WithListingState({
   }
 
   // Handle recalled listing
-  if (listing.item_details?.status === "recalled") {
+  if (listing.item_details?.status === ItemStatus.RECALLED) {
     const recalledListing = listing as RecalledItemListing;
 
     return (
@@ -112,7 +120,7 @@ export default function WithListingState({
   }
 
   // Handle abandoned listing
-  if (listing.item_details?.status === "abandoned") {
+  if (listing.item_details?.status === ItemStatus.ABANDONED) {
     const abandonedListing = listing as AbandonedItemListing;
 
     return (
@@ -126,7 +134,7 @@ export default function WithListingState({
   }
 
   // Handle sold listing
-  if (listing.item_details?.status === "sold") {
+  if (listing.item_details?.status === ItemStatus.SOLD) {
     const soldListing = listing as SoldItemListing;
 
     return (

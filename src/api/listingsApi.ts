@@ -31,6 +31,11 @@ export interface BaseListing {
   tagandtake_flat_fee: number;
 }
 
+// Interface for vacant tags
+export interface VacantTag extends BaseListing {
+  is_member: boolean;
+}
+
 // Interface for active listings
 export interface ItemListing extends BaseListing {
   item: number;

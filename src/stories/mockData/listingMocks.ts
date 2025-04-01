@@ -5,6 +5,7 @@ import {
   AbandonedItemListing,
   SoldItemListing,
   RecallReasonType,
+  VacantTag,
 } from "@src/api/listingsApi";
 import { LISTING_ROLES } from "@src/types/roles";
 
@@ -148,3 +149,15 @@ export const noImagesListing: ItemListing = {
 
 // Vacant tag (no listing)
 export const noListing = undefined;
+
+export const vacantTag: VacantTag = {
+  id: 1,
+  tag: 123,
+  store: 1,
+  store_commission: 0.1,
+  min_listing_days: 30,
+  user_listing_relation: LISTING_ROLES.VIEWER,
+  tagandtake_commission: 0.1,
+  tagandtake_flat_fee: 1,
+  is_member: true,
+};

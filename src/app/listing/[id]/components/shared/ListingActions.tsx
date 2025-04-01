@@ -8,11 +8,11 @@ import {
   RecalledItemListing,
   AbandonedItemListing,
   SoldItemListing,
+  VacantTag,
 } from "@src/api/listingsApi";
 import { Routes } from "@src/constants/routes";
-import { useAuthStore } from "@src/stores/authStore";
-import { UserRoles } from "@src/types/roles";
 import LoadingSpinner from "@src/components/LoadingSpinner";
+import { ItemStatus } from "@src/api/itemsApi";
 
 interface ListingActionsProps {
   listing:
@@ -20,6 +20,7 @@ interface ListingActionsProps {
     | RecalledItemListing
     | AbandonedItemListing
     | SoldItemListing
+    | VacantTag
     | null;
   userRole: ListingRole | null;
   onCheckout?: () => void;
@@ -46,10 +47,43 @@ export default function ListingActions({
   isCollectLoading,
 }: ListingActionsProps) {
   const router = useRouter();
-  const { isAuthenticated, role } = useAuthStore();
+
+  // Type guard for VacantTag
+  const isVacantTag = (
+    listing:
+      | ItemListing
+      | RecalledItemListing
+      | AbandonedItemListing
+      | SoldItemListing
+      | VacantTag
+      | null
+  ): listing is VacantTag => {
+    return Boolean(listing && "is_member" in listing);
+  };
+
+  // Type guard for ItemListing and its variants
+  const isItemListing = (
+    listing:
+      | ItemListing
+      | RecalledItemListing
+      | AbandonedItemListing
+      | SoldItemListing
+      | VacantTag
+      | null
+  ): listing is
+    | ItemListing
+    | RecalledItemListing
+    | AbandonedItemListing
+    | SoldItemListing => {
+    return Boolean(listing && "item_details" in listing);
+  };
 
   if (!listing) {
-    // Vacant tag
+    return null;
+  }
+
+  if (isVacantTag(listing)) {
+    // Vacant tag logic
     if (userRole === LISTING_ROLES.HOST) {
       return (
         <Button
@@ -61,7 +95,7 @@ export default function ListingActions({
       );
     }
 
-    if (!isAuthenticated) {
+    if (userRole === LISTING_ROLES.VIEWER) {
       return (
         <Button onClick={() => router.push(Routes.LOGIN)} className="w-full">
           Login to List Item
@@ -69,143 +103,133 @@ export default function ListingActions({
       );
     }
 
-    if (role === UserRoles.STORE) {
-      return (
-        <Button
-          onClick={() => router.push(Routes.STORE.DASHBOARD)}
-          className="w-full"
-        >
-          Go to Store Dashboard
-        </Button>
-      );
-    }
-
-    if (role === UserRoles.MEMBER) {
+    if (listing.is_member) {
       return (
         <Button onClick={onOpenListItemModal} className="w-full">
           List an Item
         </Button>
       );
     }
-
     return null;
   }
 
-  // Active listing
-  if (listing.item_details?.status === "listed") {
-    if (userRole === LISTING_ROLES.VIEWER) {
-      return (
-        <Button
-          onClick={onCheckout}
-          disabled={isCheckoutLoading}
-          className="w-full"
-        >
-          {isCheckoutLoading ? (
-            <LoadingSpinner size="sm" text="Processing..." />
-          ) : (
-            "Buy Now"
-          )}
-        </Button>
-      );
+  if (isItemListing(listing)) {
+    // Active listing
+    if (listing.item_details?.status === ItemStatus.LISTED) {
+      if (userRole === LISTING_ROLES.VIEWER) {
+        return (
+          <Button
+            onClick={onCheckout}
+            disabled={isCheckoutLoading}
+            className="w-full"
+          >
+            {isCheckoutLoading ? (
+              <LoadingSpinner size="sm" text="Processing..." />
+            ) : (
+              "Buy Now"
+            )}
+          </Button>
+        );
+      }
+
+      if (userRole === LISTING_ROLES.OWNER) {
+        return (
+          <Button
+            onClick={() =>
+              router.push(Routes.MEMBER.ITEMS.DETAILS(listing.item.toString()))
+            }
+            variant="outline"
+            className="w-full"
+          >
+            Manage Item
+          </Button>
+        );
+      }
+
+      if (userRole === LISTING_ROLES.HOST) {
+        return (
+          <Button
+            onClick={() =>
+              router.push(Routes.STORE.LISTINGS.MANAGE(listing.id.toString()))
+            }
+            variant="outline"
+            className="w-full"
+          >
+            Manage Listing
+          </Button>
+        );
+      }
     }
 
-    if (userRole === LISTING_ROLES.OWNER) {
-      return (
-        <Button
-          onClick={() =>
-            router.push(Routes.MEMBER.ITEMS.DETAILS(listing.item.toString()))
-          }
-          variant="outline"
-          className="w-full"
-        >
-          Manage Item
-        </Button>
-      );
+    // Recalled listing
+    if (listing.item_details?.status === ItemStatus.RECALLED) {
+      if (userRole === LISTING_ROLES.HOST) {
+        return (
+          <Button
+            onClick={onOpenCollectionModal}
+            disabled={isCollectLoading}
+            className="w-full"
+          >
+            {isCollectLoading ? (
+              <LoadingSpinner size="sm" text="Processing..." />
+            ) : (
+              "Collect Item"
+            )}
+          </Button>
+        );
+      }
+
+      if (userRole === LISTING_ROLES.OWNER) {
+        return (
+          <Button variant="outline" className="w-full" disabled>
+            Awaiting Collection
+          </Button>
+        );
+      }
     }
 
-    if (userRole === LISTING_ROLES.HOST) {
-      return (
-        <Button
-          onClick={() =>
-            router.push(Routes.STORE.LISTINGS.MANAGE(listing.id.toString()))
-          }
-          variant="outline"
-          className="w-full"
-        >
-          Manage Listing
-        </Button>
-      );
-    }
-  }
+    // Abandoned listing
+    if (listing.item_details?.status === ItemStatus.ABANDONED) {
+      const abandonedListing = listing as AbandonedItemListing;
 
-  // Recalled listing
-  if (listing.item_details?.status === "recalled") {
-    if (userRole === LISTING_ROLES.HOST) {
-      return (
-        <Button
-          onClick={onOpenCollectionModal}
-          disabled={isCollectLoading}
-          className="w-full"
-        >
-          {isCollectLoading ? (
-            <LoadingSpinner size="sm" text="Processing..." />
-          ) : (
-            "Collect Item"
-          )}
-        </Button>
-      );
+      if (userRole === LISTING_ROLES.HOST && !abandonedListing.tag_removed) {
+        return (
+          <Button
+            onClick={onRemoveTagFromAbandoned}
+            disabled={isRemoveTagLoading}
+            className="w-full"
+            variant="destructive"
+          >
+            {isRemoveTagLoading ? (
+              <LoadingSpinner size="sm" text="Processing..." />
+            ) : (
+              "Remove Tag"
+            )}
+          </Button>
+        );
+      }
     }
 
-    if (userRole === LISTING_ROLES.OWNER) {
-      return (
-        <Button variant="outline" className="w-full" disabled>
-          Awaiting Collection
-        </Button>
-      );
-    }
-  }
+    // Sold listing
+    if (listing.item_details?.status === ItemStatus.SOLD) {
+      const soldListing = listing as SoldItemListing;
 
-  // Abandoned listing
-  if (listing.item_details?.status === "abandoned") {
-    const abandonedListing = listing as AbandonedItemListing;
-
-    if (userRole === LISTING_ROLES.HOST && !abandonedListing.tag_removed) {
-      return (
-        <Button
-          onClick={onRemoveTagFromAbandoned}
-          disabled={isRemoveTagLoading}
-          className="w-full"
-          variant="destructive"
-        >
-          {isRemoveTagLoading ? (
-            <LoadingSpinner size="sm" text="Processing..." />
-          ) : (
-            "Remove Tag"
-          )}
-        </Button>
-      );
-    }
-  }
-
-  // Sold listing
-  if (listing.item_details?.status === "sold") {
-    const soldListing = listing as SoldItemListing;
-
-    if (userRole === LISTING_ROLES.HOST && !soldListing.tag_removed) {
-      return (
-        <Button
-          onClick={onRemoveTagFromSold}
-          disabled={isRemoveTagLoading}
-          className="w-full"
-          variant="destructive"
-        >
-          {isRemoveTagLoading ? (
-            <LoadingSpinner size="sm" text="Processing..." />
-          ) : (
-            "Remove Tag"
-          )}
-        </Button>
-      );
+      if (userRole === LISTING_ROLES.HOST && !soldListing.tag_removed) {
+        return (
+          <Button
+            onClick={onRemoveTagFromSold}
+            disabled={isRemoveTagLoading}
+            className="w-full"
+            variant="destructive"
+          >
+            {isRemoveTagLoading ? (
+              <LoadingSpinner size="sm" text="Processing..." />
+            ) : (
+              "Remove Tag"
+            )}
+          </Button>
+        );
+      }
     }
   }
 

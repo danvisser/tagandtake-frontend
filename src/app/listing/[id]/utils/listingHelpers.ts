@@ -1,5 +1,13 @@
 import { ListingRole, LISTING_ROLES } from "@src/types/roles";
 import { UserRoles } from "@src/types/roles";
+import {
+  VacantTag,
+  ItemListing,
+  RecalledItemListing,
+  AbandonedItemListing,
+  SoldItemListing,
+} from "@src/api/listingsApi";
+import { ItemStatus } from "@src/api/itemsApi";
 
 /**
  * Determines if the user can list an item based on their role and authentication status
@@ -20,9 +28,7 @@ export function canListItem(
 /**
  * Determines if the user can checkout an item
  */
-export function canCheckout(
-  listingRole: ListingRole | null
-): boolean {
+export function canCheckout(listingRole: ListingRole | null): boolean {
   // Only viewers can checkout
   return listingRole === LISTING_ROLES.VIEWER;
 }
@@ -43,15 +49,29 @@ export function formatDate(dateString: string): string {
  */
 export function getStatusBadge(status: string | undefined) {
   switch (status) {
-    case "listed":
+    case ItemStatus.LISTED:
       return { label: "Available", variant: "default" as const };
-    case "recalled":
+    case ItemStatus.RECALLED:
       return { label: "Recalled", variant: "destructive" as const };
-    case "abandoned":
+    case ItemStatus.ABANDONED:
       return { label: "Abandoned", variant: "destructive" as const };
-    case "sold":
+    case ItemStatus.SOLD:
       return { label: "Sold", variant: "secondary" as const };
     default:
       return { label: "Unknown", variant: "outline" as const };
   }
+}
+
+export function isVacantTag(
+  listing:
+    | ItemListing
+    | RecalledItemListing
+    | AbandonedItemListing
+    | SoldItemListing
+    | VacantTag
+    | null
+): listing is VacantTag {
+  return Boolean(
+    listing && "is_member" in listing && !("item_details" in listing)
+  );
 }

@@ -8,6 +8,7 @@ import {
   RecalledItemListing,
   AbandonedItemListing,
   SoldItemListing,
+  VacantTag,
 } from "@src/api/listingsApi";
 import { ListingRole } from "@src/types/roles";
 
@@ -20,6 +21,7 @@ export function useListingData() {
     | RecalledItemListing
     | AbandonedItemListing
     | SoldItemListing
+    | VacantTag
     | null
   >(null);
   const [userRole, setUserRole] = useState<ListingRole | null>(null);
@@ -47,7 +49,6 @@ export function useListingData() {
 
         setListing(listingResponse.data || null);
         setUserRole(listingResponse.data?.user_listing_relation || null);
-
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "An unknown error occurred"

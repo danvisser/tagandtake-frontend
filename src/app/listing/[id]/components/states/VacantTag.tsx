@@ -3,15 +3,16 @@
 import { ListingRole } from "@src/types/roles";
 import ListingCard from "../shared/ListingCard";
 import ListingActions from "../shared/ListingActions";
+import type { VacantTag } from "@src/api/listingsApi";
 
 interface VacantTagProps {
-  tagId: number;
+  listing: VacantTag;
   userRole: ListingRole | null;
   onOpenListItemModal: () => void;
 }
 
-export default function VacantTag({
-  tagId,
+export default function NoListing({
+  listing,
   userRole,
   onOpenListItemModal,
 }: VacantTagProps) {
@@ -29,10 +30,9 @@ export default function VacantTag({
       statusMessage="This tag is currently vacant and available for listing an item."
       footerContent={
         <ListingActions
-          listing={null}
+          listing={listing}
           userRole={userRole}
           onOpenListItemModal={onOpenListItemModal}
-          tagId={tagId}
         />
       }
     />
