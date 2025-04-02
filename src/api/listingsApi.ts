@@ -19,6 +19,23 @@ export interface RecallReason {
   description: string;
 }
 
+// Add these interfaces for store conditions and categories
+export interface StoreCondition {
+  id: number;
+  condition: {
+    id: number;
+    condition: string;
+  };
+}
+
+export interface StoreCategory {
+  id: number;
+  category: {
+    id: number;
+    name: string;
+  };
+}
+
 // Base interface for listings
 export interface BaseListing {
   id: number;
@@ -34,6 +51,8 @@ export interface BaseListing {
 // Interface for vacant tags
 export interface VacantTag extends BaseListing {
   is_member: boolean;
+  store_conditions: StoreCondition[];
+  store_categories: StoreCategory[];
 }
 
 // Interface for active listings

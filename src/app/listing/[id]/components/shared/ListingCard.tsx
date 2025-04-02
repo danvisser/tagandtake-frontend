@@ -23,6 +23,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@src/components/ui/carousel";
+import { StoreCondition, StoreCategory} from '@src/api/listingsApi'
 
 interface ListingCardProps {
   title: string;
@@ -34,6 +35,9 @@ interface ListingCardProps {
   categoryDescription?: string;
   size?: string;
   description?: string;
+  store_commission?: number;
+  store_conditions?: StoreCondition[]
+  store_categories?: StoreCategory[]
   images: { image_url: string; order: number }[];
   statusMessage?: ReactNode;
   statusBadge?: {
