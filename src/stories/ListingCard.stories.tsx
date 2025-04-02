@@ -35,22 +35,27 @@ const meta: Meta<typeof ListingCard> = {
 export default meta;
 type Story = StoryObj<typeof ListingCard>;
 
-interface ListingCardWithRoleProps
-  extends React.ComponentProps<typeof ListingCard> {
-  defaultRole?: ListingRole;
+interface ListingCardWithRoleProps {
   listing:
     | ItemListing
     | RecalledItemListing
     | AbandonedItemListing
     | SoldItemListing
-    | VacantTag
-    | null;
+    | VacantTag;
+  defaultRole?: ListingRole;
+  statusBadge?: {
+    label: string;
+    variant: "default" | "destructive" | "secondary" | "outline";
+  };
+  statusMessage?: React.ReactNode;
 }
 
 // Wrapper component to handle role state
 function ListingCardWithRole({
   defaultRole,
-  ...props
+  listing,
+  statusBadge,
+  statusMessage,
 }: ListingCardWithRoleProps) {
   const [userRole, setUserRole] = useState<ListingRole>(
     defaultRole || LISTING_ROLES.VIEWER
@@ -58,10 +63,8 @@ function ListingCardWithRole({
   const [isMember, setIsMember] = useState(false);
 
   // If the listing is a vacant tag, create a new object with the updated is_member state
-  const listing =
-    props.listing && "is_member" in props.listing
-      ? { ...props.listing, is_member: isMember }
-      : props.listing;
+  const listingWithMemberState =
+    "is_member" in listing ? { ...listing, is_member: isMember } : listing;
 
   return (
     <div className="space-y-4">
@@ -77,7 +80,7 @@ function ListingCardWithRole({
             {role}
           </button>
         ))}
-        {props.listing && "is_member" in props.listing && (
+        {"is_member" in listing && (
           <button
             className={`px-4 py-2 rounded ${
               isMember ? "bg-green-500 text-white" : "bg-gray-200"
@@ -90,10 +93,12 @@ function ListingCardWithRole({
       </div>
 
       <ListingCard
-        {...props}
+        listing={listingWithMemberState}
+        statusBadge={statusBadge}
+        statusMessage={statusMessage}
         footerContent={
           <ListingActions
-            listing={listing}
+            listing={listingWithMemberState}
             userRole={userRole}
             onCheckout={() => console.log("Checkout clicked")}
             onRemoveTagFromAbandoned={() =>
@@ -121,27 +126,12 @@ export const Active: Story = {
       {...args}
       listing={activeListing}
       defaultRole={LISTING_ROLES.VIEWER}
+      statusBadge={{
+        label: "Available",
+        variant: "default",
+      }}
     />
   ),
-  args: {
-    title: activeListing.item_details.name,
-    item_price: activeListing.item_price,
-    listing_price: activeListing.listing_price,
-    condition:
-      activeListing.item_details.condition_details?.condition || "Unknown",
-    conditionDescription:
-      activeListing.item_details.condition_details?.description,
-    category: activeListing.item_details.category_details?.name || "Unknown",
-    categoryDescription:
-      activeListing.item_details.category_details?.description,
-    size: activeListing.item_details.size,
-    description: activeListing.item_details.description,
-    images: activeListing.item_details.images || [],
-    statusBadge: {
-      label: "Available",
-      variant: "default",
-    },
-  },
 };
 
 export const Recalled: Story = {
@@ -150,28 +140,13 @@ export const Recalled: Story = {
       {...args}
       listing={recalledListing}
       defaultRole={LISTING_ROLES.HOST}
+      statusBadge={{
+        label: "Recalled",
+        variant: "destructive",
+      }}
+      statusMessage={`This item has been recalled due to: ${recalledListing.reason.reason}`}
     />
   ),
-  args: {
-    title: recalledListing.item_details.name,
-    item_price: recalledListing.item_price,
-    listing_price: recalledListing.listing_price,
-    condition:
-      recalledListing.item_details.condition_details?.condition || "Unknown",
-    conditionDescription:
-      recalledListing.item_details.condition_details?.description,
-    category: recalledListing.item_details.category_details?.name || "Unknown",
-    categoryDescription:
-      recalledListing.item_details.category_details?.description,
-    size: recalledListing.item_details.size,
-    description: recalledListing.item_details.description,
-    images: recalledListing.item_details.images || [],
-    statusBadge: {
-      label: "Recalled",
-      variant: "destructive",
-    },
-    statusMessage: `This item has been recalled due to: ${recalledListing.reason.reason}`,
-  },
 };
 
 export const Abandoned: Story = {
@@ -180,28 +155,13 @@ export const Abandoned: Story = {
       {...args}
       listing={abandonedListing}
       defaultRole={LISTING_ROLES.HOST}
+      statusBadge={{
+        label: "Abandoned",
+        variant: "destructive",
+      }}
+      statusMessage={`This item has been abandoned due to: ${abandonedListing.reason.reason}`}
     />
   ),
-  args: {
-    title: abandonedListing.item_details.name,
-    item_price: abandonedListing.item_price,
-    listing_price: abandonedListing.listing_price,
-    condition:
-      abandonedListing.item_details.condition_details?.condition || "Unknown",
-    conditionDescription:
-      abandonedListing.item_details.condition_details?.description,
-    category: abandonedListing.item_details.category_details?.name || "Unknown",
-    categoryDescription:
-      abandonedListing.item_details.category_details?.description,
-    size: abandonedListing.item_details.size,
-    description: abandonedListing.item_details.description,
-    images: abandonedListing.item_details.images || [],
-    statusBadge: {
-      label: "Abandoned",
-      variant: "destructive-inverse",
-    },
-    statusMessage: `This item has been abandoned due to: ${abandonedListing.reason.reason}`,
-  },
 };
 
 export const Sold: Story = {
@@ -210,27 +170,13 @@ export const Sold: Story = {
       {...args}
       listing={soldListing}
       defaultRole={LISTING_ROLES.HOST}
+      statusBadge={{
+        label: "Sold",
+        variant: "secondary",
+      }}
+      statusMessage={`This item was sold on ${new Date(soldListing.sold_at).toLocaleDateString()}`}
     />
   ),
-  args: {
-    title: soldListing.item_details.name,
-    item_price: soldListing.item_price,
-    listing_price: soldListing.listing_price,
-    condition:
-      soldListing.item_details.condition_details?.condition || "Unknown",
-    conditionDescription:
-      soldListing.item_details.condition_details?.description,
-    category: soldListing.item_details.category_details?.name || "Unknown",
-    categoryDescription: soldListing.item_details.category_details?.description,
-    size: soldListing.item_details.size,
-    description: soldListing.item_details.description,
-    images: soldListing.item_details.images || [],
-    statusBadge: {
-      label: "Sold",
-      variant: "secondary",
-    },
-    statusMessage: `This item was sold on ${new Date(soldListing.sold_at).toLocaleDateString()}`,
-  },
 };
 
 export const Vacant: Story = {
@@ -239,22 +185,11 @@ export const Vacant: Story = {
       {...args}
       listing={vacantTag}
       defaultRole={LISTING_ROLES.VIEWER}
+      statusBadge={{
+        label: "Available for Listing",
+        variant: "outline",
+      }}
+      statusMessage="This tag is currently vacant and available for listing an item"
     />
   ),
-  args: {
-    title: "Vacant Tag",
-    item_price: 0,
-    listing_price: 0,
-    condition: "N/A",
-    conditionDescription: "This tag is currently vacant",
-    category: "N/A",
-    categoryDescription: "Ready for any category",
-    images: [],
-    statusBadge: {
-      label: "Available for Listing",
-      variant: "outline",
-    },
-    statusMessage:
-      "This tag is currently vacant and available for listing an item",
-  },
 };

@@ -15,6 +15,11 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@src/components/ui/hover-card";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@src/components/ui/dialog";
 import { formatCurrency } from "@src/lib/formatters";
 import {
   Carousel,
@@ -23,22 +28,21 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@src/components/ui/carousel";
-import { StoreCondition, StoreCategory} from '@src/api/listingsApi'
+import {
+  ItemListing,
+  RecalledItemListing,
+  AbandonedItemListing,
+  SoldItemListing,
+  VacantTag,
+} from "@src/api/listingsApi";
 
 interface ListingCardProps {
-  title: string;
-  item_price: number;
-  listing_price: number;
-  condition: string;
-  conditionDescription?: string;
-  category: string;
-  categoryDescription?: string;
-  size?: string;
-  description?: string;
-  store_commission?: number;
-  store_conditions?: StoreCondition[]
-  store_categories?: StoreCategory[]
-  images: { image_url: string; order: number }[];
+  listing:
+    | ItemListing
+    | RecalledItemListing
+    | AbandonedItemListing
+    | SoldItemListing
+    | VacantTag;
   statusMessage?: ReactNode;
   statusBadge?: {
     label: string;
@@ -54,38 +58,57 @@ interface ListingCardProps {
 }
 
 export default function ListingCard({
-  title,
-  item_price,
-  listing_price,
-  condition,
-  conditionDescription,
-  category,
-  categoryDescription,
-  size,
-  description,
-  images,
+  listing,
   statusMessage,
   statusBadge,
   footerContent,
 }: ListingCardProps) {
+  // Extract common properties
+  const item = "item_details" in listing ? listing.item_details : null;
+  const title = item?.name || "Vacant Tag";
+  const item_price = "item_price" in listing ? listing.item_price : 0;
+  const listing_price = "listing_price" in listing ? listing.listing_price : 0;
+  const condition = item?.condition_details?.condition || "Unknown";
+  const conditionDescription = item?.condition_details?.description;
+  const category = item?.category_details?.name || "Unknown";
+  const categoryDescription = item?.category_details?.description;
+  const size = item?.size;
+  const description = item?.description;
+  const images = item?.images || [];
+
   return (
     <Card className="w-full overflow-hidden" variant="borderless">
       <CardHeader className="p-0">
-        <div className="relative w-full h-[400px]">
+        <div className="relative w-full h-full">
           {images && images.length > 0 ? (
             <Carousel className="w-full">
               <CarouselContent>
                 {images.map((image, index) => (
                   <CarouselItem key={index}>
-                    <div className="relative w-full h-[400px]">
-                      <Image
-                        src={image.image_url}
-                        alt={`${title} - Image ${index + 1}`}
-                        fill
-                        className="object-cover"
-                        priority={index === 0}
-                      />
-                    </div>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <div className="relative w-full h-[400px] cursor-pointer">
+                          <Image
+                            src={image.image_url}
+                            alt={`${title} - Image ${index + 1}`}
+                            fill
+                            className="object-cover"
+                            priority={index === 0}
+                          />
+                        </div>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden">
+                        <div className="relative w-full aspect-square sm:aspect-[4/3]">
+                          <Image
+                            src={image.image_url}
+                            alt={`${title} - Image ${index + 1}`}
+                            fill
+                            className="object-contain"
+                            priority
+                          />
+                        </div>
+                      </DialogContent>
+                    </Dialog>
                   </CarouselItem>
                 ))}
               </CarouselContent>
@@ -98,7 +121,7 @@ export default function ListingCard({
             </Carousel>
           ) : (
             <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-              <span className="text-gray-400">No image available</span>
+              <span className="text-gray-400">No item image available</span>
             </div>
           )}
         </div>

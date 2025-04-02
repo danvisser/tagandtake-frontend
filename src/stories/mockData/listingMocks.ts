@@ -142,4 +142,36 @@ export const vacantTag: VacantTag = {
   tagandtake_commission: 0.1,
   tagandtake_flat_fee: 1,
   is_member: true,
+  store_conditions: [
+    {
+      id: 1,
+      condition: {
+        id: 1,
+        condition: "Excellent",
+      },
+    },
+    {
+      id: 2,
+      condition: {
+        id: 2,
+        condition: "Good",
+      },
+    },
+  ],
+  store_categories: [
+    {
+      id: 1,
+      category: {
+        id: 1,
+        name: "Clothing",
+      },
+    },
+    {
+      id: 2,
+      category: {
+        id: 2,
+        name: "Accessories",
+      },
+    },
+  ],
 };

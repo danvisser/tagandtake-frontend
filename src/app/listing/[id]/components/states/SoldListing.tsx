@@ -4,6 +4,7 @@ import { ListingRole, LISTING_ROLES } from "@src/types/roles";
 import { SoldItemListing } from "@src/api/listingsApi";
 import ListingCard from "@src/app/listing/[id]/components/shared/ListingCard";
 import ListingActions from "@src/app/listing/[id]/components/shared/ListingActions";
+import { formatDate } from "../../utils/listingHelpers";
 
 interface SoldListingProps {
   listing: SoldItemListing;
@@ -24,14 +25,6 @@ export default function SoldListing({
     return <div>Item details not available</div>;
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-GB", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
   let statusMessage: string | React.ReactNode =
     `This item was sold on ${formatDate(listing.sold_at)}`;
 
@@ -48,7 +41,7 @@ export default function SoldListing({
   } else if (userRole === LISTING_ROLES.VIEWER && !listing.tag_removed) {
     statusMessage = (
       <>
-        <span>Please ask staff to remove the tag</span>
+        <span>Please ask a member of staff to remove the tag</span>
         <br />
         <span className="mt-2 block text-muted-foreground">
           This item was sold on {formatDate(listing.sold_at)}
@@ -59,16 +52,7 @@ export default function SoldListing({
 
   return (
     <ListingCard
-      title={item.name}
-      item_price={listing.item_price}
-      listing_price={listing.listing_price}
-      condition={item.condition_details?.condition || "Unknown"}
-      conditionDescription={item.condition_details?.description}
-      category={item.category_details?.name || "Unknown"}
-      categoryDescription={item.category_details?.description}
-      size={item.size}
-      description={item.description}
-      images={item.images || []}
+      listing={listing}
       statusBadge={{
         label: "Sold",
         variant: "secondary",

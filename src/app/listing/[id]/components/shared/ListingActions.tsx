@@ -35,7 +35,6 @@ interface ListingActionsProps {
   isCheckoutLoading?: boolean;
   isRemoveTagLoading?: boolean;
   isCollectLoading?: boolean;
-  tagId?: number;
 }
 
 export default function ListingActions({

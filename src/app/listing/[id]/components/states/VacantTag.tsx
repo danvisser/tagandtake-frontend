@@ -18,14 +18,7 @@ export default function NoListing({
 }: VacantTagProps) {
   return (
     <ListingCard
-      title="Vacant Tag"
-      item_price={0}
-      listing_price={0}
-      condition="N/A"
-      conditionDescription="This tag is currently vacant"
-      category="N/A"
-      categoryDescription="Ready for any category"
-      images={[]}
+      listing={listing}
       statusBadge={{
         label: "Available for Listing",
         variant: "outline",

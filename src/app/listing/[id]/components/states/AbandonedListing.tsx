@@ -52,16 +52,7 @@ export default function AbandonedListing({
 
   return (
     <ListingCard
-      title={item.name}
-      item_price={listing.item_price}
-      listing_price={listing.listing_price}
-      condition={item.condition_details?.condition || "Unknown"}
-      conditionDescription={item.condition_details?.description}
-      category={item.category_details?.name || "Unknown"}
-      categoryDescription={item.category_details?.description}
-      size={item.size}
-      description={item.description}
-      images={item.images || []}
+      listing={listing}
       statusBadge={{
         label: "Abandoned",
         variant: "destructive-inverse",
