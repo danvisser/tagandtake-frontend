@@ -28,7 +28,7 @@ export default function SoldListing({
   let statusMessage: string | React.ReactNode =
     `This item was sold on ${formatDate(listing.sold_at)}`;
 
-  if (userRole === LISTING_ROLES.HOST && !listing.tag_removed) {
+  if (userRole === LISTING_ROLES.HOST) {
     statusMessage = (
       <>
         <span>Please remove the tag</span>
@@ -38,7 +38,7 @@ export default function SoldListing({
         </span>
       </>
     );
-  } else if (userRole === LISTING_ROLES.VIEWER && !listing.tag_removed) {
+  } else if (userRole === LISTING_ROLES.VIEWER) {
     statusMessage = (
       <>
         <span>Please ask a member of staff to remove the tag</span>

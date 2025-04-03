@@ -44,6 +44,20 @@ export default function RecalledListing({
     );
   }
 
+  if (userRole === LISTING_ROLES.HOST) {
+    statusMessage = (
+      <>
+        <span>This item has been recalled due to: {listing.reason.reason}</span>
+        <br />
+        <span className="mt-2 block text-muted-foreground">
+          The item was recalled on {formatDate(listing.recalled_at)}
+          <br />
+          The item must be collected by {formatDate(listing.collection_deadline)}
+        </span>
+      </>
+    );
+  }
+
   return (
     <ListingCard
       listing={listing}

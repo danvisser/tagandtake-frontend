@@ -25,10 +25,17 @@ export default function AbandonedListing({
     return <div>Item details not available</div>;
   }
 
-  let statusMessage: string | React.ReactNode =
-    `This item has been abandoned due to: ${listing.reason.reason}`;
+  let statusMessage: string | React.ReactNode = (
+    <>
+      <span>Please ask a member of staff to remove the tag</span>
+      <br />
+      <span className="mt-2 block text-muted-foreground">
+        The item was abandoned on {formatDate(listing.abandoned_at)}
+      </span>
+    </>
+  )
 
-  if (userRole === LISTING_ROLES.HOST && !listing.tag_removed) {
+  if (userRole === LISTING_ROLES.HOST) {
     statusMessage = (
       <span className="block text-muted-foreground">
         Recall reason: {listing.reason.reason}
@@ -37,16 +44,6 @@ export default function AbandonedListing({
           Abandoned on: {formatDate(listing.abandoned_at)}
         </span>
       </span>
-    );
-  } else if (userRole !== LISTING_ROLES.HOST && !listing.tag_removed) {
-    statusMessage = (
-      <>
-        <span>Please ask a member of staff to remove the tag</span>
-        <br />
-        <span className="mt-2 block text-muted-foreground">
-          The item was abandoned on {formatDate(listing.abandoned_at)}
-        </span>
-      </>
     );
   }
 
