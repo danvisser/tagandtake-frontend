@@ -1,7 +1,7 @@
 "use client";
 
 import { ListingRole } from "@src/types/roles";
-import ListingCard from "../shared/ListingCard";
+import VacantTagCard from "../shared/VacantTagCard";
 import ListingActions from "../shared/ListingActions";
 import type { VacantTag } from "@src/api/listingsApi";
 
@@ -17,13 +17,12 @@ export default function NoListing({
   onOpenListItemModal,
 }: VacantTagProps) {
   return (
-    <ListingCard
+    <VacantTagCard
       listing={listing}
       statusBadge={{
         label: "Available for Listing",
         variant: "outline",
       }}
-      statusMessage="This tag is currently vacant and available for listing an item."
       footerContent={
         <ListingActions
           listing={listing}

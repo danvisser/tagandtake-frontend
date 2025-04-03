@@ -25,6 +25,7 @@ export interface StoreCondition {
   condition: {
     id: number;
     condition: string;
+    description?: string;
   };
 }
 
@@ -33,6 +34,7 @@ export interface StoreCategory {
   category: {
     id: number;
     name: string;
+    description?: string;
   };
 }
 

@@ -33,7 +33,6 @@ import {
   RecalledItemListing,
   AbandonedItemListing,
   SoldItemListing,
-  VacantTag,
 } from "@src/api/listingsApi";
 
 interface ListingCardProps {
@@ -42,7 +41,6 @@ interface ListingCardProps {
     | RecalledItemListing
     | AbandonedItemListing
     | SoldItemListing
-    | VacantTag;
   statusMessage?: ReactNode;
   statusBadge?: {
     label: string;
