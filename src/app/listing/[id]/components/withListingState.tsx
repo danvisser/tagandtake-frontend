@@ -13,6 +13,7 @@ import RecalledListing from "@src/app/listing/[id]/components/states/RecalledLis
 import AbandonedListing from "@src/app/listing/[id]/components/states/AbandonedListing";
 import SoldListing from "@src/app/listing/[id]/components/states/SoldListing";
 import VacantTagState from "@src/app/listing/[id]/components/states/VacantTag";
+import TagNotFound from "@src/app/listing/[id]/components/states/TagNotFound";
 import { isVacantTag } from "@src/app/listing/[id]/utils/listingHelpers";
 import { ItemStatus } from "@src/api/itemsApi";
 import { useListingContext } from "../context/ListingContext";
@@ -40,7 +41,7 @@ export default function WithListingState({
   } = useListingContext();
 
   if (!listing) {
-    return null;
+    return <TagNotFound />;
   }
 
   // Handle vacant tag

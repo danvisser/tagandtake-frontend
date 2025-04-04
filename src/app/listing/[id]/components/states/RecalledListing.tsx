@@ -2,9 +2,9 @@
 
 import { ListingRole } from "@src/types/roles";
 import { RecalledItemListing } from "@src/api/listingsApi";
-import ListingCard from "../shared/ListingCard";
-import ListingActions from "../shared/ListingActions";
-import { getStatusMessage } from "../../utils/statusMessageUtils";
+import ListingCard from "@src/app/listing/[id]/components/shared/ListingCard";
+import ListingActions from "@src/app/listing/[id]/components/shared/ListingActions";
+import { getStatusMessage } from "@src/app/listing/[id]/utils/statusMessageUtils";
 
 interface RecalledListingProps {
   listing: RecalledItemListing;

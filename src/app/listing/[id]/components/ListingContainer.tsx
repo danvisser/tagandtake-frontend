@@ -6,10 +6,11 @@ import { useListingActions } from "@src/app/listing/[id]/hooks/useListingActions
 import WithListingState from "@src/app/listing/[id]/components/withListingState";
 import ListingNavigation from "@src/app/listing/[id]/components/shared/ListingNavigation";
 import LoadingSpinner from "@src/components/LoadingSpinner";
-import { ListingProvider, useListingContext } from "../context/ListingContext";
-import CollectionModal from "./modals/CollectionModal";
-import ListItemModal from "./modals/ListItemModal";
-import CheckoutModal from "./modals/CheckoutModal";
+import { ListingProvider, useListingContext } from "@src/app/listing/[id]/context/ListingContext";
+import CollectionModal from "@src/app/listing/[id]/components/modals/CollectionModal";
+import ListItemModal from "@src/app/listing/[id]/components/modals/ListItemModal";
+import CheckoutModal from "@src/app/listing/[id]/components/modals/CheckoutModal";
+import TagNotFound from "@src/app/listing/[id]/components/states/TagNotFound";
 
 // Inner component that uses the context
 function ListingContent() {
@@ -35,12 +36,9 @@ function ListingContent() {
   }
 
   if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] text-red-500">
-        <p>Error: {error}</p>
-      </div>
-    );
+    return <TagNotFound />;
   }
+
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">

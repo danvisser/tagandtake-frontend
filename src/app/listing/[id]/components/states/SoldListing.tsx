@@ -4,7 +4,7 @@ import { ListingRole } from "@src/types/roles";
 import { SoldItemListing } from "@src/api/listingsApi";
 import ListingCard from "@src/app/listing/[id]/components/shared/ListingCard";
 import ListingActions from "@src/app/listing/[id]/components/shared/ListingActions";
-import { getStatusMessage } from "../../utils/statusMessageUtils";
+import { getStatusMessage } from "@src/app/listing/[id]/utils/statusMessageUtils";
 
 interface SoldListingProps {
   listing: SoldItemListing;

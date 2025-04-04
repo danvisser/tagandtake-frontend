@@ -81,7 +81,7 @@ function ListingCardWithRole({
   const message = statusMessage || getStatusMessage(listing, userRole);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 max-w-3xl">
       <div className="flex gap-2">
         {Object.values(LISTING_ROLES).map((role) => (
           <button
@@ -170,6 +170,7 @@ function VacantTagWithRole({
           label: "Available for Listing",
           variant: "outline",
         }}
+        userRole={userRole}
         footerContent={
           <ListingActions
             listing={listingWithMemberState}

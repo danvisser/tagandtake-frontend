@@ -222,6 +222,7 @@ export const getListing = async (
       method: "GET",
       url: API_ROUTES.MEMBERS.LISTINGS.DETAILS(id),
     });
+    console.log(data);
     return {
       success: true,
       data,

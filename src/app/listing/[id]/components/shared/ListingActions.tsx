@@ -69,26 +69,6 @@ export default function ListingActions({
       );
     }
 
-    if (userRole === LISTING_ROLES.VIEWER) {
-      return (
-        <div className="flex flex-col gap-4 w-full">
-          <Button
-            onClick={() => router.push(Routes.SIGNUP.MEMBER)}
-            className="w-full"
-          >
-            List an Item
-          </Button>
-          <Button
-            onClick={() => router.push(Routes.LOGIN)}
-            variant="outline"
-            className="w-full"
-          >
-            Have an Account? Sign In
-          </Button>
-        </div>
-      );
-    }
-
     if (listing.is_member) {
       return (
         <Button onClick={onOpenListItemModal} className="w-full">
@@ -96,6 +76,24 @@ export default function ListingActions({
         </Button>
       );
     }
+
+    if (userRole === LISTING_ROLES.VIEWER) {
+      return (
+        <div className="flex flex-col gap-4 w-full">
+          <Button onClick={() => router.push(Routes.LOGIN)} className="w-full">
+            Login to List an Item
+          </Button>
+          <Button
+            onClick={() => router.push(Routes.SIGNUP.MEMBER)}
+            variant="outline"
+            className="w-full"
+          >
+            Don&apos;t have an account? Sign up
+          </Button>
+        </div>
+      );
+    }
+    
     return null;
   }
 

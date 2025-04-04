@@ -1,8 +1,8 @@
 "use client";
 
 import { ListingRole } from "@src/types/roles";
-import VacantTagCard from "../shared/VacantTagCard";
-import ListingActions from "../shared/ListingActions";
+import VacantTagCard from "@src/app/listing/[id]/components/shared/VacantTagCard";
+import ListingActions from "@src/app/listing/[id]/components/shared/ListingActions";
 import type { VacantTag } from "@src/api/listingsApi";
 interface VacantTagProps {
   listing: VacantTag;
@@ -18,10 +18,7 @@ export default function NoListing({
   return (
     <VacantTagCard
       listing={listing}
-      statusBadge={{
-        label: "Available for Listing",
-        variant: "outline",
-      }}
+      userRole={userRole}
       footerContent={
         <ListingActions
           listing={listing}
