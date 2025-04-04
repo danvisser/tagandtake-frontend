@@ -1,10 +1,10 @@
 "use client";
 
-import { ListingRole, LISTING_ROLES } from "@src/types/roles";
+import { ListingRole } from "@src/types/roles";
 import { SoldItemListing } from "@src/api/listingsApi";
 import ListingCard from "@src/app/listing/[id]/components/shared/ListingCard";
 import ListingActions from "@src/app/listing/[id]/components/shared/ListingActions";
-import { formatDate } from "../../utils/listingHelpers";
+import { getStatusMessage } from "../../utils/statusMessageUtils";
 
 interface SoldListingProps {
   listing: SoldItemListing;
@@ -25,30 +25,7 @@ export default function SoldListing({
     return <div>Item details not available</div>;
   }
 
-  let statusMessage: string | React.ReactNode =
-    `This item was sold on ${formatDate(listing.sold_at)}`;
-
-  if (userRole === LISTING_ROLES.HOST) {
-    statusMessage = (
-      <>
-        <span>Please remove the tag</span>
-        <br />
-        <span className="mt-2 block text-muted-foreground">
-          This item was sold on {formatDate(listing.sold_at)}
-        </span>
-      </>
-    );
-  } else if (userRole === LISTING_ROLES.VIEWER) {
-    statusMessage = (
-      <>
-        <span>Please ask a member of staff to remove the tag</span>
-        <br />
-        <span className="mt-2 block text-muted-foreground">
-          This item was sold on {formatDate(listing.sold_at)}
-        </span>
-      </>
-    );
-  }
+  const statusMessage = getStatusMessage(listing, userRole);
 
   return (
     <ListingCard

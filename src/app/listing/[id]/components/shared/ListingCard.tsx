@@ -19,6 +19,7 @@ import {
   Dialog,
   DialogContent,
   DialogTrigger,
+  DialogTitle,
 } from "@src/components/ui/dialog";
 import { formatCurrency } from "@src/lib/formatters";
 import {
@@ -40,7 +41,7 @@ interface ListingCardProps {
     | ItemListing
     | RecalledItemListing
     | AbandonedItemListing
-    | SoldItemListing
+    | SoldItemListing;
   statusMessage?: ReactNode;
   statusBadge?: {
     label: string;
@@ -96,6 +97,7 @@ export default function ListingCard({
                         </div>
                       </DialogTrigger>
                       <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden">
+                        <DialogTitle className="sr-only">{`${title} - Image ${index + 1}`}</DialogTitle>
                         <div className="relative w-full aspect-square sm:aspect-[4/3]">
                           <Image
                             src={image.image_url}

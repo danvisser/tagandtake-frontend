@@ -4,6 +4,7 @@ import { ListingRole } from "@src/types/roles";
 import { ItemListing } from "@src/api/listingsApi";
 import ListingCard from "../shared/ListingCard";
 import ListingActions from "../shared/ListingActions";
+import { getStatusMessage } from "../../utils/statusMessageUtils";
 
 interface ActiveListingProps {
   listing: ItemListing;
@@ -24,6 +25,8 @@ export default function ActiveListing({
     return <div>Item details not available</div>;
   }
 
+  const statusMessage = getStatusMessage(listing, userRole);
+
   return (
     <ListingCard
       listing={listing}
@@ -31,6 +34,7 @@ export default function ActiveListing({
         label: "Available",
         variant: "default",
       }}
+      statusMessage={statusMessage}
       footerContent={
         <ListingActions
           listing={listing}

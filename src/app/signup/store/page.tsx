@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import StoreSignupForm from "@src/components/StoreSignupForm";
+import StoreSignupForm from "@src/app/signup/store/components/StoreSignupForm";
 import {
   signupStore,
   StoreSignupCredentials,

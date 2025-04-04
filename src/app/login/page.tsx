@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@src/providers/AuthProvider";
-import LoginForm from "@src/components/LoginForm";
+import LoginForm from "@src/app/login/components/LoginForm";
 import LoadingUI from "@src/components/LoadingUI";
 import { Routes } from "@src/constants/routes";
 

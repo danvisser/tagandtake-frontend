@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { ListingRole } from "@src/types/roles";
 import {
   ItemListing,
@@ -14,11 +13,9 @@ import RecalledListing from "@src/app/listing/[id]/components/states/RecalledLis
 import AbandonedListing from "@src/app/listing/[id]/components/states/AbandonedListing";
 import SoldListing from "@src/app/listing/[id]/components/states/SoldListing";
 import VacantTagState from "@src/app/listing/[id]/components/states/VacantTag";
-import CollectionModal from "@src/app/listing/[id]/components/modals/CollectionModal";
-import ListItemModal from "@src/app/listing/[id]/components/modals/ListItemModal";
-import CheckoutModal from "@src/app/listing/[id]/components/modals/CheckoutModal";
 import { isVacantTag } from "@src/app/listing/[id]/utils/listingHelpers";
 import { ItemStatus } from "@src/api/itemsApi";
+import { useListingContext } from "../context/ListingContext";
 
 interface WithListingStateProps {
   listing:
@@ -29,27 +26,18 @@ interface WithListingStateProps {
     | VacantTag
     | null;
   userRole: ListingRole | null;
-  listingId: number;
-  actions: {
-    handleCheckout: () => void;
-    handleRemoveTagFromAbandoned: () => void;
-    handleRemoveTagFromSold: () => void;
-    handleCollect: (pin: string) => void;
-    isCheckoutLoading: boolean;
-    isRemoveTagLoading: boolean;
-    isCollectLoading: boolean;
-  };
 }
 
 export default function WithListingState({
   listing,
   userRole,
-  listingId,
-  actions,
 }: WithListingStateProps) {
-  const [isCollectionModalOpen, setIsCollectionModalOpen] = useState(false);
-  const [isListItemModalOpen, setIsListItemModalOpen] = useState(false);
-  const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
+  const {
+    setIsCollectionModalOpen,
+    setIsListItemModalOpen,
+    setIsCheckoutModalOpen,
+    actions,
+  } = useListingContext();
 
   if (!listing) {
     return null;
@@ -58,19 +46,11 @@ export default function WithListingState({
   // Handle vacant tag
   if (isVacantTag(listing)) {
     return (
-      <>
-        <VacantTagState
-          listing={listing}
-          userRole={userRole}
-          onOpenListItemModal={() => setIsListItemModalOpen(true)}
-        />
-
-        <ListItemModal
-          isOpen={isListItemModalOpen}
-          onClose={() => setIsListItemModalOpen(false)}
-          tagId={listingId}
-        />
-      </>
+      <VacantTagState
+        listing={listing}
+        userRole={userRole}
+        onOpenListItemModal={() => setIsListItemModalOpen(true)}
+      />
     );
   }
 
@@ -79,20 +59,12 @@ export default function WithListingState({
     const activeListing = listing as ItemListing;
 
     return (
-      <>
-        <ActiveListing
-          listing={activeListing}
-          userRole={userRole}
-          onCheckout={() => setIsCheckoutModalOpen(true)}
-          isCheckoutLoading={actions.isCheckoutLoading}
-        />
-
-        <CheckoutModal
-          isOpen={isCheckoutModalOpen}
-          onClose={() => setIsCheckoutModalOpen(false)}
-          listingId={listingId}
-        />
-      </>
+      <ActiveListing
+        listing={activeListing}
+        userRole={userRole}
+        onCheckout={() => setIsCheckoutModalOpen(true)}
+        isCheckoutLoading={actions.isCheckoutLoading}
+      />
     );
   }
 
@@ -101,21 +73,12 @@ export default function WithListingState({
     const recalledListing = listing as RecalledItemListing;
 
     return (
-      <>
-        <RecalledListing
-          listing={recalledListing}
-          userRole={userRole}
-          onOpenCollectionModal={() => setIsCollectionModalOpen(true)}
-          isCollectLoading={actions.isCollectLoading}
-        />
-
-        <CollectionModal
-          isOpen={isCollectionModalOpen}
-          onClose={() => setIsCollectionModalOpen(false)}
-          onCollect={actions.handleCollect}
-          isLoading={actions.isCollectLoading}
-        />
-      </>
+      <RecalledListing
+        listing={recalledListing}
+        userRole={userRole}
+        onOpenCollectionModal={() => setIsCollectionModalOpen(true)}
+        isCollectLoading={actions.isCollectLoading}
+      />
     );
   }
 

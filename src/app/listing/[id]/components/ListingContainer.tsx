@@ -6,13 +6,25 @@ import { useListingActions } from "@src/app/listing/[id]/hooks/useListingActions
 import WithListingState from "@src/app/listing/[id]/components/withListingState";
 import ListingNavigation from "@src/app/listing/[id]/components/shared/ListingNavigation";
 import LoadingSpinner from "@src/components/LoadingSpinner";
+import { ListingProvider, useListingContext } from "../context/ListingContext";
+import CollectionModal from "./modals/CollectionModal";
+import ListItemModal from "./modals/ListItemModal";
+import CheckoutModal from "./modals/CheckoutModal";
 
-export default function ListingContainer() {
+// Inner component that uses the context
+function ListingContent() {
   const { id } = useParams();
   const listingId = typeof id === "string" ? parseInt(id) : 0;
-
   const { listing, userRole, isLoading, error } = useListingData();
-  const actions = useListingActions(listingId);
+  const {
+    isCollectionModalOpen,
+    setIsCollectionModalOpen,
+    isListItemModalOpen,
+    setIsListItemModalOpen,
+    isCheckoutModalOpen,
+    setIsCheckoutModalOpen,
+    actions,
+  } = useListingContext();
 
   if (isLoading) {
     return (
@@ -34,12 +46,40 @@ export default function ListingContainer() {
     <div className="container mx-auto px-4 py-8 max-w-2xl">
       <ListingNavigation userRole={userRole} />
 
-      <WithListingState
-        listing={listing}
-        userRole={userRole}
+      <WithListingState listing={listing} userRole={userRole} />
+
+      {/* Modals */}
+      <CollectionModal
+        isOpen={isCollectionModalOpen}
+        onClose={() => setIsCollectionModalOpen(false)}
+        onCollect={actions.handleCollect}
+        isLoading={actions.isCollectLoading}
+      />
+
+      <ListItemModal
+        isOpen={isListItemModalOpen}
+        onClose={() => setIsListItemModalOpen(false)}
+        tagId={listingId}
+      />
+
+      <CheckoutModal
+        isOpen={isCheckoutModalOpen}
+        onClose={() => setIsCheckoutModalOpen(false)}
         listingId={listingId}
-        actions={actions}
       />
     </div>
+  );
+}
+
+// Main container component that provides the context
+export default function ListingContainer() {
+  const { id } = useParams();
+  const listingId = typeof id === "string" ? parseInt(id) : 0;
+  const actions = useListingActions(listingId);
+
+  return (
+    <ListingProvider actions={actions}>
+      <ListingContent />
+    </ListingProvider>
   );
 }

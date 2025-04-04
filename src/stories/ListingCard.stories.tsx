@@ -6,7 +6,6 @@ import {
   recalledListing,
   abandonedListing,
   soldListing,
-  vacantTag,
 } from "./mockData/listingMocks";
 import { LISTING_ROLES, ListingRole } from "@src/types/roles";
 import { useState } from "react";
@@ -17,6 +16,7 @@ import {
   SoldItemListing,
   VacantTag,
 } from "@src/api/listingsApi";
+import { getStatusMessage } from "@src/app/listing/[id]/utils/statusMessageUtils";
 
 const meta: Meta<typeof ListingCard> = {
   title: "Listings/ListingCard",
@@ -66,6 +66,10 @@ function ListingCardWithRole({
   const listingWithMemberState =
     "is_member" in listing ? { ...listing, is_member: isMember } : listing;
 
+  // Use the utility function to get the status message if not provided
+  const message =
+    statusMessage || getStatusMessage(listingWithMemberState, userRole);
+
   return (
     <div className="space-y-4">
       <div className="flex gap-2">
@@ -93,9 +97,9 @@ function ListingCardWithRole({
       </div>
 
       <ListingCard
-        listing={listingWithMemberState}
+        listing={listingWithMemberState as ItemListing}
         statusBadge={statusBadge}
-        statusMessage={statusMessage}
+        statusMessage={message}
         footerContent={
           <ListingActions
             listing={listingWithMemberState}
@@ -144,7 +148,6 @@ export const Recalled: Story = {
         label: "Recalled",
         variant: "destructive",
       }}
-      statusMessage={`This item has been recalled due to: ${recalledListing.reason.reason}`}
     />
   ),
 };
@@ -159,7 +162,6 @@ export const Abandoned: Story = {
         label: "Abandoned",
         variant: "destructive",
       }}
-      statusMessage={`This item has been abandoned due to: ${abandonedListing.reason.reason}`}
     />
   ),
 };
@@ -174,22 +176,6 @@ export const Sold: Story = {
         label: "Sold",
         variant: "secondary",
       }}
-      statusMessage={`This item was sold on ${new Date(soldListing.sold_at).toLocaleDateString()}`}
-    />
-  ),
-};
-
-export const Vacant: Story = {
-  render: (args) => (
-    <ListingCardWithRole
-      {...args}
-      listing={vacantTag}
-      defaultRole={LISTING_ROLES.VIEWER}
-      statusBadge={{
-        label: "Available for Listing",
-        variant: "outline",
-      }}
-      statusMessage="This tag is currently vacant and available for listing an item"
     />
   ),
 };

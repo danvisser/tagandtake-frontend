@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import ContactForm from "@src/components/ContactForm";
+import ContactForm from "@src/app/contact/components/ContactForm";
 import {
   sendContactForm,
   ContactFormData,
