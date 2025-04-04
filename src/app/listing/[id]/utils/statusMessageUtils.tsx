@@ -38,7 +38,14 @@ export function getStatusMessage(
 
   // Active listing
   if (item.status === ItemStatus.LISTED) {
-    return null; // Active listings don't have status messages
+    if (userRole === LISTING_ROLES.VIEWER) {
+      return {
+        icon: <AlertCircle className="h-5 w-5 text-destructive/50" />,
+        mainText:
+          "Please note: This is a second-hand item sold by an individual seller. All sales are non-refundable.",
+      };
+    }
+    return null;
   }
 
   // Recalled listing

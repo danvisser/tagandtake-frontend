@@ -1,6 +1,6 @@
 "use client";
 
-import { ListingRole } from "@src/types/roles";
+import { ListingRole, LISTING_ROLES } from "@src/types/roles";
 import { ItemListing } from "@src/api/listingsApi";
 import ListingCard from "@src/app/listing/[id]/components/shared/ListingCard";
 import ListingActions from "@src/app/listing/[id]/components/shared/ListingActions";
@@ -30,10 +30,14 @@ export default function ActiveListing({
   return (
     <ListingCard
       listing={listing}
-      statusBadge={{
-        label: "Available",
-        variant: "default",
-      }}
+      statusBadge={
+        userRole === LISTING_ROLES.VIEWER
+          ? undefined
+          : {
+              label: "Available",
+              variant: "default",
+            }
+      }
       statusMessage={statusMessage}
       footerContent={
         <ListingActions

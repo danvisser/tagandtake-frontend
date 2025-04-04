@@ -35,6 +35,7 @@ import {
   AbandonedItemListing,
   SoldItemListing,
 } from "@src/api/listingsApi";
+import { Info } from "lucide-react";
 
 // Define the StatusMessageContent interface
 interface StatusMessageContent {
@@ -151,98 +152,130 @@ export default function ListingCard({
           </div>
         </div>
 
-        {/* System-set content */}
-        <div className="space-y-3 mb-8 text-sm border-b border-gray-300 pb-6">
-          <HoverCard>
-            <div className="flex items-center gap-2">
-              <span className="font-medium">Condition:</span>
-              <HoverCardTrigger className="cursor-pointer">
-                <span className="text-muted-foreground">{condition}</span>
-              </HoverCardTrigger>
-            </div>
-            {conditionDescription && (
-              <HoverCardContent className="w-80">
-                <div className="space-y-2">
-                  <h4 className="text-sm font-semibold">{condition}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {conditionDescription}
-                  </p>
-                </div>
-              </HoverCardContent>
-            )}
-          </HoverCard>
-
-          <HoverCard>
-            <div className="flex items-center gap-2">
-              <span className="font-medium">Category:</span>
-              <HoverCardTrigger className="cursor-pointer">
-                <span className="text-muted-foreground">{category}</span>
-              </HoverCardTrigger>
-            </div>
-            {categoryDescription && (
-              <HoverCardContent className="w-80">
-                <div className="space-y-2">
-                  <h4 className="text-sm font-semibold">{category}</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {categoryDescription}
-                  </p>
-                </div>
-              </HoverCardContent>
-            )}
-          </HoverCard>
-        </div>
-
-        {/* User-set content */}
-        <div className="space-y-6">
-          {size && (
-            <div className="flex items-center gap-2 text-sm">
-              <span className="font-medium">Size:</span>
-              <span className="text-muted-foreground">{size}</span>
-            </div>
-          )}
-
+        {/* Clean, beautiful item details */}
+        <div className="mb-8">
+          {/* Description with refined typography */}
           {description && (
-            <div className="text-sm leading-relaxed text-muted-foreground">
-              {description}
+            <div className="mb-8 space-y-1.5">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                Description
+              </p>
+              <p className="text-base leading-relaxed text-foreground">
+                {description}
+              </p>
             </div>
           )}
 
-          <div className="pt-2">
-            <div className="text-2xl font-medium">
-              {formatCurrency(item_price)}
+          {/* Item details in a clean, elegant layout */}
+          <div className="space-y-4 mb-6">
+            {size && (
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Size</span>
+                <span className="font-medium">{size}</span>
+              </div>
+            )}
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">Condition</span>
+              <div className="flex items-center gap-2">
+                <span className="font-medium">{condition}</span>
+                {conditionDescription && (
+                  <HoverCard>
+                    <HoverCardTrigger className="cursor-default">
+                      <Info className="w-4 h-4 text-muted-foreground" />
+                    </HoverCardTrigger>
+                    <HoverCardContent className="w-80">
+                      <div className="space-y-2">
+                        <h4 className="text-sm font-semibold">{condition}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          {conditionDescription}
+                        </p>
+                      </div>
+                    </HoverCardContent>
+                  </HoverCard>
+                )}
+              </div>
             </div>
-            <div className="text-sm text-muted-foreground">
-              {formatCurrency(listing_price)} incl. fees
+
+            <div className="flex items-center justify-between">
+              <span className="text-muted-foreground">Category</span>
+              <div className="flex items-center gap-2">
+                <span className="font-medium">{category}</span>
+                {categoryDescription && (
+                  <HoverCard>
+                    <HoverCardTrigger className="cursor-default">
+                      <Info className="w-4 h-4 text-muted-foreground" />
+                    </HoverCardTrigger>
+                    <HoverCardContent className="w-80">
+                      <div className="space-y-2">
+                        <h4 className="text-sm font-semibold">{category}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          {categoryDescription}
+                        </p>
+                      </div>
+                    </HoverCardContent>
+                  </HoverCard>
+                )}
+              </div>
             </div>
           </div>
 
-          {statusMessage && (
-            <div className="p-4 bg-gray-50 rounded-lg text-sm border border-gray-100 shadow-sm">
-              {typeof statusMessage === "object" && "icon" in statusMessage ? (
-                <div className="flex items-start gap-2">
-                  <div className="mt-0.5 flex-shrink-0">
-                    {statusMessage.icon}
-                  </div>
-                  <div>
-                    <p className="font-medium">{statusMessage.mainText}</p>
-                    {statusMessage.secondaryText && (
-                      <p className="text-sm text-muted-foreground">
-                        {statusMessage.secondaryText}
-                      </p>
-                    )}
-                    {statusMessage.additionalInfo && (
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {statusMessage.additionalInfo}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                statusMessage
-              )}
+          {/* Subtle separator */}
+          <div className="h-px bg-gray-100 mb-6"></div>
+
+          {/* Simplified price information */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-base text-muted-foreground">
+                {formatCurrency(item_price)}
+              </span>
             </div>
-          )}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-medium">
+                  {formatCurrency(listing_price)}
+                </span>
+                <HoverCard>
+                  <HoverCardTrigger className="cursor-default">
+                    <Info className="w-4 h-4 text-muted-foreground" />
+                  </HoverCardTrigger>
+                  <HoverCardContent className="w-80">
+                    <div className="space-y-2">
+                      <p className="text-sm text-muted-foreground">
+                        A service fee of 10% of the item price plus £1 helps us
+                        provide this service.
+                      </p>
+                    </div>
+                  </HoverCardContent>
+                </HoverCard>
+              </div>
+            </div>
+          </div>
         </div>
+
+        {statusMessage && (
+          <div className="p-4 bg-gray-50 rounded-lg text-sm border border-gray-100 shadow-sm">
+            {typeof statusMessage === "object" && "icon" in statusMessage ? (
+              <div className="flex items-start gap-2">
+                <div className="mt-0.5 flex-shrink-0">{statusMessage.icon}</div>
+                <div>
+                  <p className="font-medium">{statusMessage.mainText}</p>
+                  {statusMessage.secondaryText && (
+                    <p className="text-sm text-muted-foreground">
+                      {statusMessage.secondaryText}
+                    </p>
+                  )}
+                  {statusMessage.additionalInfo && (
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {statusMessage.additionalInfo}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ) : (
+              statusMessage
+            )}
+          </div>
+        )}
       </CardContent>
 
       {footerContent && (
