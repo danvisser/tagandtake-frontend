@@ -36,13 +36,21 @@ import {
   SoldItemListing,
 } from "@src/api/listingsApi";
 
+// Define the StatusMessageContent interface
+interface StatusMessageContent {
+  icon: ReactNode;
+  mainText: string;
+  secondaryText?: string;
+  additionalInfo?: string;
+}
+
 interface ListingCardProps {
   listing:
     | ItemListing
     | RecalledItemListing
     | AbandonedItemListing
     | SoldItemListing;
-  statusMessage?: ReactNode;
+  statusMessage?: ReactNode | StatusMessageContent;
   statusBadge?: {
     label: string;
     variant?:
@@ -209,8 +217,29 @@ export default function ListingCard({
           </div>
 
           {statusMessage && (
-            <div className="p-4 bg-gray-50 rounded-lg text-sm border border-gray-100">
-              {statusMessage}
+            <div className="p-4 bg-gray-50 rounded-lg text-sm border border-gray-100 shadow-sm">
+              {typeof statusMessage === "object" && "icon" in statusMessage ? (
+                <div className="flex items-start gap-2">
+                  <div className="mt-0.5 flex-shrink-0">
+                    {statusMessage.icon}
+                  </div>
+                  <div>
+                    <p className="font-medium">{statusMessage.mainText}</p>
+                    {statusMessage.secondaryText && (
+                      <p className="text-sm text-muted-foreground">
+                        {statusMessage.secondaryText}
+                      </p>
+                    )}
+                    {statusMessage.additionalInfo && (
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {statusMessage.additionalInfo}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                statusMessage
+              )}
             </div>
           )}
         </div>

@@ -91,7 +91,7 @@ export default function VacantTagCard({
           <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
             <CalendarDays className="h-5 w-5 text-primary mt-0.5" />
             <div>
-              <h3 className="font-medium">Minimum Listing Period</h3>
+              <h3 className="font-medium">Guaranteed Display Period</h3>
               <p className="text-sm text-muted-foreground">
                 {min_listing_days} {min_listing_days === 1 ? "day" : "days"}
               </p>
@@ -211,22 +211,23 @@ export default function VacantTagCard({
             <li className="flex items-start gap-2">
               <CheckCircle2 className="h-4 w-4 text-primary/70 mt-0.5 flex-shrink-0" />
               <span>
-                Items will be displayed for at least {min_listing_days}{" "}
-                {min_listing_days === 1 ? "day" : "days"} - after which the
-                store has the right to recall.
+                Your item will be displayed for at least {min_listing_days}{" "}
+                {min_listing_days === 1 ? "day" : "days"} before the store may
+                rotate its stock.
               </span>
             </li>
             <li className="flex items-start gap-2">
               <CheckCircle2 className="h-4 w-4 text-primary/70 mt-0.5 flex-shrink-0" />
               <span>
-                Items can be collected at any time by visiting the store.
+                You can collect your item at any time by visiting the store.
               </span>
             </li>
             <li className="flex items-start gap-2">
               <CheckCircle2 className="h-4 w-4 text-primary/70 mt-0.5 flex-shrink-0" />
               <span>
-                Items not collected within 10 days after recall will be
-                considered abandoned.
+                If you don&apos;t collect your item within 10 days after a
+                recall, it will be considered a donation to charity. We&apos;ll
+                send you daily reminders to help you collect it on time.
               </span>
             </li>
           </ul>

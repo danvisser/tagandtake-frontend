@@ -9,6 +9,15 @@ import {
 } from "@src/api/listingsApi";
 import { formatDate } from "./listingHelpers";
 import { ItemStatus } from "@src/api/itemsApi";
+import { AlertCircle, CheckCircle, HelpCircle, XCircle } from "lucide-react";
+
+// Define a consistent interface for all status messages
+interface StatusMessageContent {
+  icon: React.ReactNode;
+  mainText: string;
+  secondaryText?: string;
+  additionalInfo?: string;
+}
 
 export function getStatusMessage(
   listing:
@@ -18,7 +27,7 @@ export function getStatusMessage(
     | SoldItemListing
     | VacantTag,
   userRole: ListingRole | null
-) {
+): StatusMessageContent | null {
   // Handle vacant tag
   if ("is_member" in listing) {
     return null; // Vacant tags don't have status messages
@@ -37,41 +46,29 @@ export function getStatusMessage(
     const recalledListing = listing as RecalledItemListing;
 
     if (userRole === LISTING_ROLES.OWNER) {
-      return (
-        <>
-          <span>
-            Please collect by {formatDate(recalledListing.collection_deadline)}
-          </span>
-          <br />
-          <span className="mt-2 block text-muted-foreground">
-            This item has been recalled due to: {recalledListing.reason.reason}
-            <br />
-            The item was recalled on {formatDate(recalledListing.recalled_at)}
-            <br />
-            Please collect by {formatDate(recalledListing.collection_deadline)}
-          </span>
-        </>
-      );
+      return {
+        icon: <AlertCircle className="h-5 w-5 text-amber-500" />,
+        mainText: "Your item has been recalled",
+        secondaryText: `Please collect by ${formatDate(recalledListing.collection_deadline)}`,
+        additionalInfo: `Reason: ${recalledListing.reason.reason}`,
+      };
     }
 
     if (userRole === LISTING_ROLES.HOST) {
-      return (
-        <>
-          <span>
-            This item has been recalled due to: {recalledListing.reason.reason}
-          </span>
-          <br />
-          <span className="mt-2 block text-muted-foreground">
-            The item was recalled on {formatDate(recalledListing.recalled_at)}
-            <br />
-            The item must be collected by{" "}
-            {formatDate(recalledListing.collection_deadline)}
-          </span>
-        </>
-      );
+      return {
+        icon: <AlertCircle className="h-5 w-5 text-amber-500" />,
+        mainText: "Item recalled",
+        secondaryText: `Must be collected by ${formatDate(recalledListing.collection_deadline)}`,
+        additionalInfo: `Reason: ${recalledListing.reason.reason}`,
+      };
     }
 
-    return `This item has been recalled due to: ${recalledListing.reason.reason}`;
+    // For viewers
+    return {
+      icon: <AlertCircle className="h-5 w-5 text-amber-500" />,
+      mainText: "This item has been recalled",
+      secondaryText: "This item is no longer available for purchase",
+    };
   }
 
   // Abandoned listing
@@ -79,26 +76,20 @@ export function getStatusMessage(
     const abandonedListing = listing as AbandonedItemListing;
 
     if (userRole === LISTING_ROLES.HOST) {
-      return (
-        <span className="block text-muted-foreground">
-          Recall reason: {abandonedListing.reason.reason}
-          <br />
-          <span className="mt-2 block">
-            Abandoned on: {formatDate(abandonedListing.abandoned_at)}
-          </span>
-        </span>
-      );
+      return {
+        icon: <XCircle className="h-5 w-5 text-red-500" />,
+        mainText: "Item abandoned",
+        secondaryText: "Please remove this tag",
+        additionalInfo: `Reason: ${abandonedListing.reason.reason}`,
+      };
     }
 
-    return (
-      <>
-        <span>Please ask a member of staff to remove the tag</span>
-        <br />
-        <span className="mt-2 block text-muted-foreground">
-          The item was abandoned on {formatDate(abandonedListing.abandoned_at)}
-        </span>
-      </>
-    );
+    // For viewers and owners
+    return {
+      icon: <HelpCircle className="h-5 w-5 text-blue-500" />,
+      mainText: "Please take this tag to a member of staff",
+      secondaryText: "This item is no longer available",
+    };
   }
 
   // Sold listing
@@ -106,28 +97,26 @@ export function getStatusMessage(
     const soldListing = listing as SoldItemListing;
 
     if (userRole === LISTING_ROLES.HOST) {
-      return (
-        <>
-          <span>Please remove the tag</span>
-          <br />
-          <span className="mt-2 block text-muted-foreground">
-            This item was sold on {formatDate(soldListing.sold_at)}
-          </span>
-        </>
-      );
-    } else if (userRole === LISTING_ROLES.VIEWER) {
-      return (
-        <>
-          <span>Please ask a member of staff to remove the tag</span>
-          <br />
-          <span className="mt-2 block text-muted-foreground">
-            This item was sold on {formatDate(soldListing.sold_at)}
-          </span>
-        </>
-      );
+      return {
+        icon: <CheckCircle className="h-5 w-5 text-green-500" />,
+        mainText: "Item sold",
+        secondaryText: "Please remove this tag",
+        additionalInfo: `Sold on: ${formatDate(soldListing.sold_at)}`,
+      };
+    } else if (userRole === LISTING_ROLES.OWNER) {
+      return {
+        icon: <CheckCircle className="h-5 w-5 text-green-500" />,
+        mainText: "Your item has been sold",
+        secondaryText: `Sold on: ${formatDate(soldListing.sold_at)}`,
+      };
     }
 
-    return `This item was sold on ${formatDate(soldListing.sold_at)}`;
+    // For viewers
+    return {
+      icon: <HelpCircle className="h-5 w-5 text-blue-500" />,
+      mainText: "Please take this tag to a member of staff",
+      secondaryText: "This item is no longer available",
+    };
   }
 
   return null;
