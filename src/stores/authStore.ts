@@ -37,7 +37,9 @@ export const useAuthStore = create<AuthState>()(
           isAuthenticated: !!role,
           initializationStatus: "completed",
         });
-        window.dispatchEvent(new Event("storage"));
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("storage"));
+        }
       },
 
       initializeAuth: async () => {
@@ -86,7 +88,9 @@ export const useAuthStore = create<AuthState>()(
             error: null,
           });
 
-          window.dispatchEvent(new Event("storage"));
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(new Event("storage"));
+          }
           return { success: true, role: response.user.role };
         } catch (error) {
           console.error("Login error:", error);
@@ -114,7 +118,9 @@ export const useAuthStore = create<AuthState>()(
             initializationStatus: "idle",
             error: null,
           });
-          window.dispatchEvent(new Event("storage"));
+          if (typeof window !== "undefined") {
+            window.dispatchEvent(new Event("storage"));
+          }
         } catch (error) {
           console.error("Logout error:", error);
           set({
@@ -136,13 +142,17 @@ export const useAuthStore = create<AuthState>()(
 );
 
 // Add the storage event listener for cross-tab sync
-window.addEventListener("storage", () => {
-  const storedState = JSON.parse(localStorage.getItem("auth-storage") || "{}");
-  if (storedState.state) {
-    useAuthStore.setState({
-      role: storedState.state.role,
-      isAuthenticated: storedState.state.isAuthenticated,
-      accessToken: storedState.state.accessToken,
-    });
-  }
-});
+if (typeof window !== "undefined") {
+  window.addEventListener("storage", () => {
+    const storedState = JSON.parse(
+      localStorage.getItem("auth-storage") || "{}"
+    );
+    if (storedState.state) {
+      useAuthStore.setState({
+        role: storedState.state.role,
+        isAuthenticated: storedState.state.isAuthenticated,
+        accessToken: storedState.state.accessToken,
+      });
+    }
+  });
+}
