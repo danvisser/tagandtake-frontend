@@ -8,11 +8,9 @@ export interface ActionResult {
 
 // Define the type for the actions
 export interface ListingActions {
-  handleCheckout: () => Promise<ActionResult>;
   handleRemoveTagFromAbandoned: () => Promise<ActionResult>;
   handleRemoveTagFromSold: () => Promise<ActionResult>;
   handleCollect: (pin: string) => Promise<ActionResult>;
-  isCheckoutLoading: boolean;
   isRemoveTagLoading: boolean;
   isCollectLoading: boolean;
 }
@@ -24,8 +22,6 @@ export interface ListingContextType {
   setIsCollectionModalOpen: (isOpen: boolean) => void;
   isListItemModalOpen: boolean;
   setIsListItemModalOpen: (isOpen: boolean) => void;
-  isCheckoutModalOpen: boolean;
-  setIsCheckoutModalOpen: (isOpen: boolean) => void;
   isRemoveTagFromAbandonedModalOpen: boolean;
   setIsRemoveTagFromAbandonedModalOpen: (isOpen: boolean) => void;
   isRemoveTagFromSoldModalOpen: boolean;
@@ -34,15 +30,11 @@ export interface ListingContextType {
   setIsCollectionSuccessModalOpen: (isOpen: boolean) => void;
   isRemoveTagSuccessModalOpen: boolean;
   setIsRemoveTagSuccessModalOpen: (isOpen: boolean) => void;
-  isConfirmPurchaseSuccessModalOpen: boolean;
-  setIsConfirmPurchaseSuccessModalOpen: (isOpen: boolean) => void;
   // Error states
   collectionError: string | null;
   setCollectionError: (error: string | null) => void;
   removeTagError: string | null;
   setRemoveTagError: (error: string | null) => void;
-  checkoutError: string | null;
-  setCheckoutError: (error: string | null) => void;
   // Actions
   actions: ListingActions;
 }
@@ -61,7 +53,6 @@ export function ListingProvider({
   // Modal states
   const [isCollectionModalOpen, setIsCollectionModalOpen] = useState(false);
   const [isListItemModalOpen, setIsListItemModalOpen] = useState(false);
-  const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
   const [
     isRemoveTagFromAbandonedModalOpen,
     setIsRemoveTagFromAbandonedModalOpen,
@@ -72,13 +63,10 @@ export function ListingProvider({
     useState(false);
   const [isRemoveTagSuccessModalOpen, setIsRemoveTagSuccessModalOpen] =
     useState(false);
-  const [isConfirmPurchaseSuccessModalOpen, setIsConfirmPurchaseSuccessModalOpen] =
-    useState(false);
 
   // Error states
   const [collectionError, setCollectionError] = useState<string | null>(null);
   const [removeTagError, setRemoveTagError] = useState<string | null>(null);
-  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   const value = {
     // Modal states
@@ -86,8 +74,6 @@ export function ListingProvider({
     setIsCollectionModalOpen,
     isListItemModalOpen,
     setIsListItemModalOpen,
-    isCheckoutModalOpen,
-    setIsCheckoutModalOpen,
     isRemoveTagFromAbandonedModalOpen,
     setIsRemoveTagFromAbandonedModalOpen,
     isRemoveTagFromSoldModalOpen,
@@ -96,15 +82,11 @@ export function ListingProvider({
     setIsCollectionSuccessModalOpen,
     isRemoveTagSuccessModalOpen,
     setIsRemoveTagSuccessModalOpen,
-    isConfirmPurchaseSuccessModalOpen,
-    setIsConfirmPurchaseSuccessModalOpen,
     // Error states
     collectionError,
     setCollectionError,
     removeTagError,
     setRemoveTagError,
-    checkoutError,
-    setCheckoutError,
     // Actions
     actions,
   };

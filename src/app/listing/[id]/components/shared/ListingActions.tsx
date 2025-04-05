@@ -18,6 +18,7 @@ import {
   isItemListing,
 } from "@src/app/listing/[id]/utils/listingHelpers";
 import { useListingContext } from "@src/app/listing/[id]/context/ListingContext";
+import StripeCheckoutButton from "@src/app/listing/[id]/components/StripeCheckoutButton";
 
 interface ListingActionsProps {
   listing:
@@ -28,10 +29,8 @@ interface ListingActionsProps {
     | VacantTag
     | null;
   userRole: ListingRole | null;
-  onCheckout?: () => void;
   onOpenCollectionModal?: () => void;
   onOpenListItemModal?: () => void;
-  isCheckoutLoading?: boolean;
   isRemoveTagLoading?: boolean;
   isCollectLoading?: boolean;
 }
@@ -39,10 +38,8 @@ interface ListingActionsProps {
 export default function ListingActions({
   listing,
   userRole,
-  onCheckout,
   onOpenCollectionModal,
   onOpenListItemModal,
-  isCheckoutLoading,
   isRemoveTagLoading,
   isCollectLoading,
 }: ListingActionsProps) {
@@ -89,7 +86,7 @@ export default function ListingActions({
             }}
             className="w-full"
           >
-            Login to List an Item
+            Login to list an item
           </Button>
           <Button
             onClick={() => {
@@ -114,18 +111,12 @@ export default function ListingActions({
     if (listing.item_details?.status === ItemStatus.LISTED) {
       if (userRole === LISTING_ROLES.VIEWER) {
         return (
-          <Button
-            onClick={onCheckout}
-            disabled={isCheckoutLoading}
-            variant="secondary-inverse"
-            className="w-full"
-          >
-            {isCheckoutLoading ? (
-              <LoadingSpinner size="sm" text="Processing..." />
-            ) : (
-              "Buy Now"
-            )}
-          </Button>
+          <StripeCheckoutButton
+            tagId={listing.tag}
+            buttonText="Buy Now"
+            buttonVariant="secondary-inverse"
+            buttonClassName="w-full"
+          />
         );
       }
 

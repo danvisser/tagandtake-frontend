@@ -12,7 +12,6 @@ import {
 } from "@src/app/listing/[id]/context/ListingContext";
 import CollectionModal from "@src/app/listing/[id]/components/modals/CollectionModal";
 import ListItemModal from "@src/app/listing/[id]/components/modals/ListItemModal";
-import CheckoutModal from "@src/app/listing/[id]/components/modals/CheckoutModal";
 import SuccessModal from "@src/app/listing/[id]/components/modals/SuccessModal";
 import RemoveTagConfirmationModal from "@src/app/listing/[id]/components/modals/RemoveTagConfirmationModal";
 import TagNotFound from "@src/app/listing/[id]/components/states/TagNotFound";
@@ -27,8 +26,6 @@ function ListingContent() {
     setIsCollectionModalOpen,
     isListItemModalOpen,
     setIsListItemModalOpen,
-    isCheckoutModalOpen,
-    setIsCheckoutModalOpen,
     isRemoveTagFromAbandonedModalOpen,
     setIsRemoveTagFromAbandonedModalOpen,
     isRemoveTagFromSoldModalOpen,
@@ -37,17 +34,15 @@ function ListingContent() {
     setIsCollectionSuccessModalOpen,
     isRemoveTagSuccessModalOpen,
     setIsRemoveTagSuccessModalOpen,
-    isConfirmPurchaseSuccessModalOpen,
-    setIsConfirmPurchaseSuccessModalOpen,
     // Error states
     collectionError,
     setCollectionError,
     removeTagError,
     setRemoveTagError,
-    checkoutError,
-    setCheckoutError,
-    actions,
   } = useListingContext();
+
+  // Use the actions from the context
+  const actions = useListingContext().actions;
 
   // Handler for confirming collection
   const handleCollectConfirm = async (pin: string) => {
@@ -103,7 +98,10 @@ function ListingContent() {
 
       if (result.success) {
         setIsRemoveTagFromSoldModalOpen(false);
-        setIsConfirmPurchaseSuccessModalOpen(true);
+        // Redirect to the return page with success parameter
+        if (typeof window !== "undefined") {
+          window.location.href = `/listing/${id}/return?payment=success`;
+        }
       } else {
         // Set the error in the context
         setRemoveTagError(result.error);
@@ -148,16 +146,6 @@ function ListingContent() {
         isOpen={isListItemModalOpen}
         onClose={() => setIsListItemModalOpen(false)}
         tagId={listingId}
-      />
-
-      <CheckoutModal
-        isOpen={isCheckoutModalOpen}
-        onClose={() => {
-          setIsCheckoutModalOpen(false);
-          setCheckoutError(null); // Clear error when closing
-        }}
-        listingId={listingId}
-        error={checkoutError}
       />
 
       {/* Confirmation Modals */}
@@ -209,23 +197,16 @@ function ListingContent() {
         buttonText="Done"
         shouldRefresh={true}
       />
-
-      <SuccessModal
-        isOpen={isConfirmPurchaseSuccessModalOpen}
-        onClose={() => setIsConfirmPurchaseSuccessModalOpen(false)}
-        title="Purchase Confirmed"
-        description="The purchase has been confirmed - please remove the tag."
-        buttonText="Done"
-        shouldRefresh={true}
-      />
     </div>
   );
 }
 
-// Main container component that provides the context
+// Outer component that provides the context
 export default function ListingContainer() {
   const { id } = useParams();
   const listingId = typeof id === "string" ? parseInt(id) : 0;
+
+  // Create actions without context values for the provider
   const actions = useListingActions(listingId);
 
   return (

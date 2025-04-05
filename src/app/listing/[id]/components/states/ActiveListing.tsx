@@ -9,15 +9,11 @@ import { getStatusMessage } from "@src/app/listing/[id]/utils/statusMessageUtils
 interface ActiveListingProps {
   listing: ItemListing;
   userRole: ListingRole | null;
-  onCheckout: () => void;
-  isCheckoutLoading: boolean;
 }
 
 export default function ActiveListing({
   listing,
   userRole,
-  onCheckout,
-  isCheckoutLoading,
 }: ActiveListingProps) {
   const item = listing.item_details;
 
@@ -39,14 +35,7 @@ export default function ActiveListing({
             }
       }
       statusMessage={statusMessage}
-      footerContent={
-        <ListingActions
-          listing={listing}
-          userRole={userRole}
-          onCheckout={onCheckout}
-          isCheckoutLoading={isCheckoutLoading}
-        />
-      }
+      footerContent={<ListingActions listing={listing} userRole={userRole} />}
     />
   );
 }

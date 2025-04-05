@@ -20,26 +20,8 @@ interface ErrorResponse {
 
 export function useListingActions(listingId: number): ListingActions {
   const router = useRouter();
-  const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
   const [isRemoveTagLoading, setIsRemoveTagLoading] = useState(false);
   const [isCollectLoading, setIsCollectLoading] = useState(false);
-
-  const handleCheckout = async (): Promise<ActionResult> => {
-    try {
-      setIsCheckoutLoading(true);
-      // TODO: Implement checkout logic
-      return { success: true, error: null };
-    } catch (error) {
-      console.error("Error during checkout:", error);
-      return {
-        success: false,
-        error:
-          error instanceof Error ? error.message : "Failed to process checkout",
-      };
-    } finally {
-      setIsCheckoutLoading(false);
-    }
-  };
 
   const handleRemoveTagFromAbandoned = async (): Promise<ActionResult> => {
     try {
@@ -144,11 +126,9 @@ export function useListingActions(listingId: number): ListingActions {
   };
 
   return {
-    handleCheckout,
     handleRemoveTagFromAbandoned,
     handleRemoveTagFromSold,
     handleCollect,
-    isCheckoutLoading,
     isRemoveTagLoading,
     isCollectLoading,
   };

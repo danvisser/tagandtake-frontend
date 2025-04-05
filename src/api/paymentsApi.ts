@@ -154,17 +154,20 @@ export const createPayoutsSession = async (): Promise<{
 
 // Create checkout session for an item
 export const createCheckoutSession = async (
-  listingId: number
+  tagId: number
 ): Promise<{
   success: boolean;
   data?: CheckoutSession;
   error?: string;
 }> => {
   try {
+
     const { data } = await fetchClient({
       method: "POST",
       url: API_ROUTES.PAYMENTS.CHECKOUT_ITEM,
-      data: { listing_id: listingId },
+      data: {
+        tag_id: tagId,
+      },
     });
 
     return {

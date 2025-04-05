@@ -33,12 +33,8 @@ export default function WithListingState({
   listing,
   userRole,
 }: WithListingStateProps) {
-  const {
-    setIsCollectionModalOpen,
-    setIsListItemModalOpen,
-    setIsCheckoutModalOpen,
-    actions,
-  } = useListingContext();
+  const { setIsCollectionModalOpen, setIsListItemModalOpen, actions } =
+    useListingContext();
 
   if (!listing) {
     return <TagNotFound />;
@@ -59,14 +55,7 @@ export default function WithListingState({
   if (listing.item_details?.status === ItemStatus.LISTED) {
     const activeListing = listing as ItemListing;
 
-    return (
-      <ActiveListing
-        listing={activeListing}
-        userRole={userRole}
-        onCheckout={() => setIsCheckoutModalOpen(true)}
-        isCheckoutLoading={actions.isCheckoutLoading}
-      />
-    );
+    return <ActiveListing listing={activeListing} userRole={userRole} />;
   }
 
   // Handle recalled listing

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,94 +9,121 @@ import {
   DialogTitle,
 } from "@src/components/ui/dialog";
 import { Button } from "@src/components/ui/button";
+import { Loader2 } from "lucide-react";
 import { createCheckoutSession } from "@src/api/paymentsApi";
+import { useParams, useSearchParams } from "next/navigation";
+import {
+  EmbeddedCheckoutProvider,
+  EmbeddedCheckout,
+} from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import LoadingSpinner from "@src/components/LoadingSpinner";
 
 // Initialize Stripe
 const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 );
 
 interface CheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
-  listingId: number;
-  error?: string | null;
+  itemName: string;
+  price: string;
 }
 
 export default function CheckoutModal({
   isOpen,
   onClose,
-  listingId,
-  error,
+  itemName,
+  price,
 }: CheckoutModalProps) {
+  const params = useParams();
+  const searchParams = useSearchParams();
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [localError, setLocalError] = useState("");
+  const [localError, setLocalError] = useState<string | null>(null);
+
+  // Check for payment success in URL
+  useEffect(() => {
+    const paymentStatus = searchParams.get("payment");
+    if (paymentStatus === "success") {
+      // Close the checkout modal
+      onClose();
+    }
+  }, [searchParams, onClose]);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (isOpen && !clientSecret) {
+      handleInitCheckout();
+    }
+  }, [isOpen]);
 
-    const initiateCheckout = async () => {
+  const handleInitCheckout = async () => {
+    try {
       setIsLoading(true);
-      setLocalError("");
-
-      try {
-        const stripe = await stripePromise;
-        if (!stripe) {
-          throw new Error("Failed to load Stripe");
-        }
-
-        const response = await createCheckoutSession(listingId);
-        if (!response.success) {
-          throw new Error(
-            response.error || "Failed to create checkout session"
-          );
-        }
-
-        // Redirect to Stripe Checkout
-        const { error } = await stripe.redirectToCheckout({
-          sessionId: response.data?.id || "",
-        });
-
-        if (error) {
-          throw new Error(error.message || "Failed to redirect to checkout");
-        }
-      } catch (err) {
-        setLocalError(
-          err instanceof Error ? err.message : "An unknown error occurred"
-        );
-        setIsLoading(false);
+      setLocalError(null);
+      const response = await createCheckoutSession(Number(params.id));
+      if (!response.success || !response.data?.client_secret) {
+        throw new Error(response.error || "Failed to create checkout session");
       }
-    };
+      setClientSecret(response.data.client_secret);
+    } catch (error) {
+      console.error("Error creating checkout session:", error);
+      setLocalError("Failed to initialize checkout. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    initiateCheckout();
-  }, [isOpen, listingId]);
+  const handleClose = () => {
+    setClientSecret(null);
+    setLocalError(null);
+    onClose();
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Checkout</DialogTitle>
-          <DialogDescription>
-            You&apos;re being redirected to our secure payment processor.
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="w-[95%] max-w-[800px] h-[90vh] max-h-[800px] mx-auto p-0 overflow-hidden flex flex-col">
+        <DialogHeader className="p-6 pb-2">
+          <DialogTitle className="text-xl font-medium">
+            Complete Your Purchase
+          </DialogTitle>
+          <DialogDescription className="text-sm mt-2">
+            {itemName} - {price}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="py-8 flex flex-col items-center justify-center">
-          {isLoading ? (
-            <>
-              <LoadingSpinner size="md" text="Preparing your checkout..." />
-            </>
-          ) : localError || error ? (
-            <>
-              <div className="text-destructive/50 mb-4">
-                {localError || error}
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground mt-2">
+              Preparing your checkout...
+            </p>
+          </div>
+        ) : localError ? (
+          <div className="p-6">
+            <p className="text-sm text-destructive">{localError}</p>
+            <Button
+              onClick={handleInitCheckout}
+              className="w-full mt-4"
+              variant="outline"
+            >
+              Try Again
+            </Button>
+          </div>
+        ) : clientSecret ? (
+          <div className="flex-1 w-full overflow-hidden">
+            <EmbeddedCheckoutProvider
+              stripe={stripePromise}
+              options={{
+                clientSecret,
+              }}
+            >
+              <div className="h-full w-full overflow-auto">
+                <EmbeddedCheckout />
               </div>
-              <Button onClick={onClose}>Close</Button>
-            </>
-          ) : null}
-        </div>
+            </EmbeddedCheckoutProvider>
+          </div>
+        ) : null}
       </DialogContent>
     </Dialog>
   );
