@@ -32,7 +32,7 @@ export default function RecalledListing({
       listing={listing}
       statusBadge={{
         label: "Recalled",
-        variant: "destructive",
+        variant: "destructive-inverse",
       }}
       statusMessage={statusMessage}
       footerContent={

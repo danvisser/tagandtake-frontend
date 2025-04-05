@@ -169,13 +169,12 @@ export default function ListingActions({
           <Button
             onClick={onOpenCollectionModal}
             disabled={isCollectLoading}
-            variant="outline"
             className="w-full"
           >
             {isCollectLoading ? (
               <LoadingSpinner size="sm" text="Processing..." />
             ) : (
-              "Collect Item"
+              "Confirm Collection"
             )}
           </Button>
         );
@@ -205,7 +204,7 @@ export default function ListingActions({
             {isRemoveTagLoading ? (
               <LoadingSpinner size="sm" text="Processing..." />
             ) : (
-              "Remove Tag"
+              "Delist Item"
             )}
           </Button>
         );

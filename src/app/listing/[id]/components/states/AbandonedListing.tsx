@@ -31,7 +31,7 @@ export default function AbandonedListing({
       listing={listing}
       statusBadge={{
         label: userRole === LISTING_ROLES.HOST ? "Abandoned" : "Unavailable",
-        variant: "destructive-inverse",
+        variant: "destructive",
       }}
       statusMessage={statusMessage}
       footerContent={
