@@ -10,18 +10,16 @@ import {
 } from "@src/components/ui/dialog";
 import { Button } from "@src/components/ui/button";
 import LoadingSpinner from "@src/components/LoadingSpinner";
-import { cn } from "@src/lib/utils";
 
 interface RemoveTagConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: () => Promise<void>;
   title: string;
   description: string;
   confirmButtonText: string;
-  cancelButtonText?: string;
   isLoading: boolean;
-  variant?: "abandoned" | "sold";
+  variant: "abandoned" | "sold";
 }
 
 export default function RemoveTagConfirmationModal({
@@ -31,33 +29,28 @@ export default function RemoveTagConfirmationModal({
   title,
   description,
   confirmButtonText,
-  cancelButtonText = "Cancel",
   isLoading,
-  variant = "abandoned",
+  variant,
 }: RemoveTagConfirmationModalProps) {
+  const handleConfirm = async () => {
+    try {
+      await onConfirm();
+    } catch (error) {
+      console.error(`Error removing tag from ${variant} listing:`, error);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent
-        className={cn(
-          "w-[90%] max-w-[425px] mx-auto p-4 sm:p-6",
-          variant === "abandoned" ? "border-destructive" : "border-primary"
-        )}
-      >
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle
-            className={cn(
-              "text-xl font-medium",
-              variant === "abandoned" ? "text-destructive" : "text-primary"
-            )}
-          >
-            {title}
-          </DialogTitle>
+          <DialogTitle className="text-xl font-medium">{title}</DialogTitle>
           <DialogDescription className="text-sm mt-2">
             {description}
           </DialogDescription>
         </DialogHeader>
 
-        <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0 mt-4">
+        <DialogFooter className="gap-2 sm:gap-0">
           <Button
             type="button"
             variant="outline"
@@ -65,13 +58,12 @@ export default function RemoveTagConfirmationModal({
             disabled={isLoading}
             className="w-full sm:w-auto"
           >
-            {cancelButtonText}
+            Cancel
           </Button>
           <Button
             type="button"
-            onClick={onConfirm}
+            onClick={handleConfirm}
             disabled={isLoading}
-            variant={variant === "abandoned" ? "destructive" : "default"}
             className="w-full sm:w-auto"
           >
             {isLoading ? (

@@ -64,13 +64,13 @@ export default function CollectionModal({
                   setError("");
                 }}
                 placeholder="Enter PIN"
-                className={error ? "border-red-500" : ""}
+                className={error ? "border-destructive/50" : ""}
               />
-              {error && <p className="text-sm text-red-500">{error}</p>}
+              {error && <p className="text-sm text-destructive/50">{error}</p>}
             </div>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="gap-4">
             <Button
               type="button"
               variant="outline"
