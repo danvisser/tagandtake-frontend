@@ -80,11 +80,22 @@ export default function ListingActions({
     if (userRole === LISTING_ROLES.VIEWER) {
       return (
         <div className="flex flex-col gap-4 w-full">
-          <Button onClick={() => router.push(Routes.LOGIN)} className="w-full">
+          <Button
+            onClick={() => {
+              // Store the current path as the return path
+              sessionStorage.setItem("returnPath", window.location.pathname);
+              router.push(Routes.LOGIN);
+            }}
+            className="w-full"
+          >
             Login to List an Item
           </Button>
           <Button
-            onClick={() => router.push(Routes.SIGNUP.MEMBER)}
+            onClick={() => {
+              // Store the current path as the return path
+              sessionStorage.setItem("returnPath", window.location.pathname);
+              router.push(Routes.SIGNUP.MEMBER);
+            }}
             variant="outline"
             className="w-full"
           >
@@ -93,7 +104,7 @@ export default function ListingActions({
         </div>
       );
     }
-    
+
     return null;
   }
 
@@ -153,6 +164,7 @@ export default function ListingActions({
           <Button
             onClick={onOpenCollectionModal}
             disabled={isCollectLoading}
+            variant="outline"
             className="w-full"
           >
             {isCollectLoading ? (

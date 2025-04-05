@@ -34,14 +34,20 @@ export function canCheckout(listingRole: ListingRole | null): boolean {
 }
 
 /**
- * Formats a date string to a human-readable format
+ * Formats a date string to a human-readable format like "2pm on 4 July" or "2pm on 4 July 2022" if not current year
  */
 export function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const date = new Date(dateString);
+  const hours = date.getHours();
+  const ampm = hours >= 12 ? "pm" : "am";
+  const hour12 = hours % 12 || 12;
+
+  // Only include the year if it's different from the current year
+  const currentYear = new Date().getFullYear();
+  const dateYear = date.getFullYear();
+  const yearString = dateYear !== currentYear ? ` ${dateYear}` : "";
+
+  return `${hour12}${ampm} on ${date.getDate()} ${date.toLocaleString("en-GB", { month: "long" })}${yearString}`;
 }
 
 /**

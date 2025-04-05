@@ -38,7 +38,14 @@ export default function PermissionGate({
 
               <Button
                 className="w-full mt-4"
-                onClick={() => router.push(Routes.LOGIN)}
+                onClick={() => {
+                  // Store the current path as the return path
+                  sessionStorage.setItem(
+                    "returnPath",
+                    window.location.pathname
+                  );
+                  router.push(Routes.LOGIN);
+                }}
               >
                 <LogIn className="w-4 h-4 mr-2" /> Sign in
               </Button>

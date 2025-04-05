@@ -40,9 +40,9 @@ export function getStatusMessage(
   if (item.status === ItemStatus.LISTED) {
     if (userRole === LISTING_ROLES.VIEWER) {
       return {
-        icon: <AlertCircle className="h-5 w-5 text-destructive/50" />,
+        icon: null,
         mainText:
-          "Please note: This is a second-hand item sold by an individual seller. All sales are non-refundable.",
+          "Please note: All sales are non-refundable.",
       };
     }
     return null;
@@ -54,16 +54,16 @@ export function getStatusMessage(
 
     if (userRole === LISTING_ROLES.OWNER) {
       return {
-        icon: <AlertCircle className="h-5 w-5 text-amber-500" />,
-        mainText: "Your item has been recalled",
-        secondaryText: `Please collect by ${formatDate(recalledListing.collection_deadline)}`,
-        additionalInfo: `Reason: ${recalledListing.reason.reason}`,
+        icon: <AlertCircle className="h-5 w-5 text-destructive/50" />,
+        mainText: `Collection pin: ${recalledListing.collection_pin}`,
+        secondaryText: `Please take this tag to a member of staff to confirm collection`,
       };
     }
 
+
     if (userRole === LISTING_ROLES.HOST) {
       return {
-        icon: <AlertCircle className="h-5 w-5 text-amber-500" />,
+        icon: <AlertCircle className="h-5 w-5 text-destructive/50" />,
         mainText: "Item recalled",
         secondaryText: `Must be collected by ${formatDate(recalledListing.collection_deadline)}`,
         additionalInfo: `Reason: ${recalledListing.reason.reason}`,
@@ -72,28 +72,35 @@ export function getStatusMessage(
 
     // For viewers
     return {
-      icon: <AlertCircle className="h-5 w-5 text-amber-500" />,
-      mainText: "This item has been recalled",
-      secondaryText: "This item is no longer available for purchase",
+      icon: <AlertCircle className="h-5 w-5 text-destructive/50" />,
+      mainText: "This item is no longer available",
+      secondaryText: "The store has removed this item from sale",
     };
   }
 
   // Abandoned listing
   if (item.status === ItemStatus.ABANDONED) {
-    const abandonedListing = listing as AbandonedItemListing;
 
     if (userRole === LISTING_ROLES.HOST) {
       return {
-        icon: <XCircle className="h-5 w-5 text-red-500" />,
+        icon: <XCircle className="h-5 w-5 text-destructive/50" />,
         mainText: "Item abandoned",
         secondaryText: "Please remove this tag",
-        additionalInfo: `Reason: ${abandonedListing.reason.reason}`,
       };
     }
 
-    // For viewers and owners
+    // For viewers
+    if (userRole === LISTING_ROLES.OWNER) {
+      return {
+        icon: <HelpCircle className="h-5 w-5 text-destructive/50" />,
+        mainText: "Please take this tag to a member of staff to remove the tag",
+        secondaryText: "Your item may be reclaimed at the store's discretion",
+      };
+    }
+
+    // For viewers 
     return {
-      icon: <HelpCircle className="h-5 w-5 text-blue-500" />,
+      icon: <HelpCircle className="h-5 w-5 text-destructive/50" />,
       mainText: "Please take this tag to a member of staff",
       secondaryText: "This item is no longer available",
     };
@@ -105,24 +112,22 @@ export function getStatusMessage(
 
     if (userRole === LISTING_ROLES.HOST) {
       return {
-        icon: <CheckCircle className="h-5 w-5 text-green-500" />,
+        icon: <CheckCircle className="h-5 w-5 text-primary" />,
         mainText: "Item sold",
         secondaryText: "Please remove this tag",
         additionalInfo: `Sold on: ${formatDate(soldListing.sold_at)}`,
       };
     } else if (userRole === LISTING_ROLES.OWNER) {
       return {
-        icon: <CheckCircle className="h-5 w-5 text-green-500" />,
+        icon: <CheckCircle className="h-5 w-5 text-primary" />,
         mainText: "Your item has been sold",
         secondaryText: `Sold on: ${formatDate(soldListing.sold_at)}`,
       };
     }
-
     // For viewers
     return {
-      icon: <HelpCircle className="h-5 w-5 text-blue-500" />,
-      mainText: "Please take this tag to a member of staff",
-      secondaryText: "This item is no longer available",
+      icon: <HelpCircle className="h-5 w-5 text-destructive/50" />,
+      mainText: "Please take item to a member of staff to remove the tag",
     };
   }
 
