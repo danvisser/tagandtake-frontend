@@ -7,6 +7,14 @@ interface ListingContextType {
   setIsListItemModalOpen: (isOpen: boolean) => void;
   isCheckoutModalOpen: boolean;
   setIsCheckoutModalOpen: (isOpen: boolean) => void;
+  isRemoveTagFromAbandonedModalOpen: boolean;
+  setIsRemoveTagFromAbandonedModalOpen: (isOpen: boolean) => void;
+  isRemoveTagFromSoldModalOpen: boolean;
+  setIsRemoveTagFromSoldModalOpen: (isOpen: boolean) => void;
+  isCollectionSuccessModalOpen: boolean;
+  setIsCollectionSuccessModalOpen: (isOpen: boolean) => void;
+  isRemoveTagSuccessModalOpen: boolean;
+  setIsRemoveTagSuccessModalOpen: (isOpen: boolean) => void;
   actions: {
     handleCheckout: () => void;
     handleRemoveTagFromAbandoned: () => void;
@@ -30,6 +38,16 @@ export function ListingProvider({
   const [isCollectionModalOpen, setIsCollectionModalOpen] = useState(false);
   const [isListItemModalOpen, setIsListItemModalOpen] = useState(false);
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
+  const [
+    isRemoveTagFromAbandonedModalOpen,
+    setIsRemoveTagFromAbandonedModalOpen,
+  ] = useState(false);
+  const [isRemoveTagFromSoldModalOpen, setIsRemoveTagFromSoldModalOpen] =
+    useState(false);
+  const [isCollectionSuccessModalOpen, setIsCollectionSuccessModalOpen] =
+    useState(false);
+  const [isRemoveTagSuccessModalOpen, setIsRemoveTagSuccessModalOpen] =
+    useState(false);
 
   return (
     <ListingContext.Provider
@@ -40,6 +58,14 @@ export function ListingProvider({
         setIsListItemModalOpen,
         isCheckoutModalOpen,
         setIsCheckoutModalOpen,
+        isRemoveTagFromAbandonedModalOpen,
+        setIsRemoveTagFromAbandonedModalOpen,
+        isRemoveTagFromSoldModalOpen,
+        setIsRemoveTagFromSoldModalOpen,
+        isCollectionSuccessModalOpen,
+        setIsCollectionSuccessModalOpen,
+        isRemoveTagSuccessModalOpen,
+        setIsRemoveTagSuccessModalOpen,
         actions,
       }}
     >

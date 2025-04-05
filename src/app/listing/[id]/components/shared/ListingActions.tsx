@@ -17,6 +17,7 @@ import {
   isVacantTag,
   isItemListing,
 } from "@src/app/listing/[id]/utils/listingHelpers";
+import { useListingContext } from "@src/app/listing/[id]/context/ListingContext";
 
 interface ListingActionsProps {
   listing:
@@ -28,8 +29,6 @@ interface ListingActionsProps {
     | null;
   userRole: ListingRole | null;
   onCheckout?: () => void;
-  onRemoveTagFromAbandoned?: () => void;
-  onRemoveTagFromSold?: () => void;
   onOpenCollectionModal?: () => void;
   onOpenListItemModal?: () => void;
   isCheckoutLoading?: boolean;
@@ -41,8 +40,6 @@ export default function ListingActions({
   listing,
   userRole,
   onCheckout,
-  onRemoveTagFromAbandoned,
-  onRemoveTagFromSold,
   onOpenCollectionModal,
   onOpenListItemModal,
   isCheckoutLoading,
@@ -50,6 +47,10 @@ export default function ListingActions({
   isCollectLoading,
 }: ListingActionsProps) {
   const router = useRouter();
+  const {
+    setIsRemoveTagFromAbandonedModalOpen,
+    setIsRemoveTagFromSoldModalOpen,
+  } = useListingContext();
 
   if (!listing) {
     return null;
@@ -131,9 +132,11 @@ export default function ListingActions({
       if (userRole === LISTING_ROLES.OWNER) {
         return (
           <Button
-            onClick={() =>
-              router.push(Routes.MEMBER.ITEMS.DETAILS(listing.item.toString()))
-            }
+            onClick={() => {
+              // Store the current path as the return path
+              sessionStorage.setItem("returnPath", window.location.pathname);
+              router.push(Routes.MEMBER.ITEMS.DETAILS(listing.item.toString()));
+            }}
             variant="outline"
             className="w-full"
           >
@@ -145,9 +148,11 @@ export default function ListingActions({
       if (userRole === LISTING_ROLES.HOST) {
         return (
           <Button
-            onClick={() =>
-              router.push(Routes.STORE.LISTINGS.MANAGE(listing.id.toString()))
-            }
+            onClick={() => {
+              // Store the current path as the return path
+              sessionStorage.setItem("returnPath", window.location.pathname);
+              router.push(Routes.STORE.LISTINGS.MANAGE(listing.id.toString()));
+            }}
             variant="outline"
             className="w-full"
           >
@@ -192,7 +197,7 @@ export default function ListingActions({
       if (userRole === LISTING_ROLES.HOST && !abandonedListing.tag_removed) {
         return (
           <Button
-            onClick={onRemoveTagFromAbandoned}
+            onClick={() => setIsRemoveTagFromAbandonedModalOpen(true)}
             disabled={isRemoveTagLoading}
             className="w-full"
             variant="destructive"
@@ -214,14 +219,14 @@ export default function ListingActions({
       if (userRole === LISTING_ROLES.HOST && !soldListing.tag_removed) {
         return (
           <Button
-            onClick={onRemoveTagFromSold}
+            onClick={() => setIsRemoveTagFromSoldModalOpen(true)}
             disabled={isRemoveTagLoading}
             className="w-full"
           >
             {isRemoveTagLoading ? (
               <LoadingSpinner size="sm" text="Processing..." />
             ) : (
-              "Remove Tag"
+              "Confirm Sale"
             )}
           </Button>
         );

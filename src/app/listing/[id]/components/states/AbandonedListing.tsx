@@ -10,14 +10,12 @@ import { LISTING_ROLES } from "@src/types/roles";
 interface AbandonedListingProps {
   listing: AbandonedItemListing;
   userRole: ListingRole | null;
-  onRemoveTag: () => void;
   isRemoveTagLoading: boolean;
 }
 
 export default function AbandonedListing({
   listing,
   userRole,
-  onRemoveTag,
   isRemoveTagLoading,
 }: AbandonedListingProps) {
   const item = listing.item_details;
@@ -40,7 +38,6 @@ export default function AbandonedListing({
         <ListingActions
           listing={listing}
           userRole={userRole}
-          onRemoveTagFromAbandoned={onRemoveTag}
           isRemoveTagLoading={isRemoveTagLoading}
         />
       }

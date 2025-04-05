@@ -9,14 +9,12 @@ import { getStatusMessage } from "@src/app/listing/[id]/utils/statusMessageUtils
 interface SoldListingProps {
   listing: SoldItemListing;
   userRole: ListingRole | null;
-  onRemoveTag: () => void;
   isRemoveTagLoading: boolean;
 }
 
 export default function SoldListing({
   listing,
   userRole,
-  onRemoveTag,
   isRemoveTagLoading,
 }: SoldListingProps) {
   const item = listing.item_details;
@@ -39,7 +37,6 @@ export default function SoldListing({
         <ListingActions
           listing={listing}
           userRole={userRole}
-          onRemoveTagFromSold={onRemoveTag}
           isRemoveTagLoading={isRemoveTagLoading}
         />
       }

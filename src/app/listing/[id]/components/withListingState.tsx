@@ -91,7 +91,6 @@ export default function WithListingState({
       <AbandonedListing
         listing={abandonedListing}
         userRole={userRole}
-        onRemoveTag={actions.handleRemoveTagFromAbandoned}
         isRemoveTagLoading={actions.isRemoveTagLoading}
       />
     );
@@ -105,7 +104,6 @@ export default function WithListingState({
       <SoldListing
         listing={soldListing}
         userRole={userRole}
-        onRemoveTag={actions.handleRemoveTagFromSold}
         isRemoveTagLoading={actions.isRemoveTagLoading}
       />
     );

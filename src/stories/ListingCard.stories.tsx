@@ -105,12 +105,6 @@ function ListingCardWithRole({
             listing={listing}
             userRole={userRole}
             onCheckout={() => console.log("Checkout clicked")}
-            onRemoveTagFromAbandoned={() =>
-              console.log("Remove tag from abandoned clicked")
-            }
-            onRemoveTagFromSold={() =>
-              console.log("Remove tag from sold clicked")
-            }
             onOpenCollectionModal={() =>
               console.log("Open collection modal clicked")
             }
