@@ -37,39 +37,80 @@ function ListingContent() {
     setIsCollectionSuccessModalOpen,
     isRemoveTagSuccessModalOpen,
     setIsRemoveTagSuccessModalOpen,
+    isConfirmPurchaseSuccessModalOpen,
+    setIsConfirmPurchaseSuccessModalOpen,
+    // Error states
+    collectionError,
+    setCollectionError,
+    removeTagError,
+    setRemoveTagError,
+    checkoutError,
+    setCheckoutError,
     actions,
   } = useListingContext();
 
   // Handler for confirming collection
   const handleCollectConfirm = async (pin: string) => {
     try {
-      await actions.handleCollect(pin);
-      setIsCollectionModalOpen(false);
-      setIsCollectionSuccessModalOpen(true);
+      // Clear any previous errors
+      setCollectionError(null);
+
+      const result = await actions.handleCollect(pin);
+
+      if (result.success) {
+        setIsCollectionModalOpen(false);
+        setIsCollectionSuccessModalOpen(true);
+      } else {
+        // Set the error in the context
+        setCollectionError(result.error);
+      }
     } catch (error) {
       console.error("Error collecting item:", error);
+      setCollectionError(
+        "An unexpected error occurred while collecting the item."
+      );
     }
   };
 
   // Handler for confirming tag removal from abandoned listing
   const handleRemoveTagFromAbandonedConfirm = async () => {
     try {
-      await actions.handleRemoveTagFromAbandoned();
-      setIsRemoveTagFromAbandonedModalOpen(false);
-      setIsRemoveTagSuccessModalOpen(true);
+      // Clear any previous errors
+      setRemoveTagError(null);
+
+      const result = await actions.handleRemoveTagFromAbandoned();
+
+      if (result.success) {
+        setIsRemoveTagFromAbandonedModalOpen(false);
+        setIsRemoveTagSuccessModalOpen(true);
+      } else {
+        // Set the error in the context
+        setRemoveTagError(result.error);
+      }
     } catch (error) {
       console.error("Error removing tag from abandoned listing:", error);
+      setRemoveTagError("An unexpected error occurred while removing the tag.");
     }
   };
 
   // Handler for confirming tag removal from sold listing
   const handleRemoveTagFromSoldConfirm = async () => {
     try {
-      await actions.handleRemoveTagFromSold();
-      setIsRemoveTagFromSoldModalOpen(false);
-      setIsRemoveTagSuccessModalOpen(true);
+      // Clear any previous errors
+      setRemoveTagError(null);
+
+      const result = await actions.handleRemoveTagFromSold();
+
+      if (result.success) {
+        setIsRemoveTagFromSoldModalOpen(false);
+        setIsConfirmPurchaseSuccessModalOpen(true);
+      } else {
+        // Set the error in the context
+        setRemoveTagError(result.error);
+      }
     } catch (error) {
       console.error("Error removing tag from sold listing:", error);
+      setRemoveTagError("An unexpected error occurred while removing the tag.");
     }
   };
 
@@ -94,9 +135,13 @@ function ListingContent() {
       {/* Modals */}
       <CollectionModal
         isOpen={isCollectionModalOpen}
-        onClose={() => setIsCollectionModalOpen(false)}
+        onClose={() => {
+          setIsCollectionModalOpen(false);
+          setCollectionError(null); // Clear error when closing
+        }}
         onCollect={handleCollectConfirm}
         isLoading={actions.isCollectLoading}
+        error={collectionError}
       />
 
       <ListItemModal
@@ -107,31 +152,43 @@ function ListingContent() {
 
       <CheckoutModal
         isOpen={isCheckoutModalOpen}
-        onClose={() => setIsCheckoutModalOpen(false)}
+        onClose={() => {
+          setIsCheckoutModalOpen(false);
+          setCheckoutError(null); // Clear error when closing
+        }}
         listingId={listingId}
+        error={checkoutError}
       />
 
       {/* Confirmation Modals */}
       <RemoveTagConfirmationModal
         isOpen={isRemoveTagFromAbandonedModalOpen}
-        onClose={() => setIsRemoveTagFromAbandonedModalOpen(false)}
+        onClose={() => {
+          setIsRemoveTagFromAbandonedModalOpen(false);
+          setRemoveTagError(null); // Clear error when closing
+        }}
         onConfirm={handleRemoveTagFromAbandonedConfirm}
-        title="Remove Tag from Abandoned Listing"
-        description="Are you sure you want to remove this tag from the abandoned listing? This will free up the tag for future use."
+        title="Remove Tag"
+        description="The seller has failed to collect the item. Remove the tag to free it up for future use."
         confirmButtonText="Remove Tag"
         isLoading={actions.isRemoveTagLoading}
         variant="abandoned"
+        error={removeTagError}
       />
 
       <RemoveTagConfirmationModal
         isOpen={isRemoveTagFromSoldModalOpen}
-        onClose={() => setIsRemoveTagFromSoldModalOpen(false)}
+        onClose={() => {
+          setIsRemoveTagFromSoldModalOpen(false);
+          setRemoveTagError(null); // Clear error when closing
+        }}
         onConfirm={handleRemoveTagFromSoldConfirm}
-        title="Remove Tag from Sold Listing"
-        description=""
-        confirmButtonText="Remove Tag"
+        title="Confirm Purchase"
+        description="Please ensure the buyer can prove their purchase before confirming."
+        confirmButtonText="Confirm Purchase"
         isLoading={actions.isRemoveTagLoading}
         variant="sold"
+        error={removeTagError}
       />
 
       {/* Success Modals */}
@@ -139,7 +196,7 @@ function ListingContent() {
         isOpen={isCollectionSuccessModalOpen}
         onClose={() => setIsCollectionSuccessModalOpen(false)}
         title="Item Collected Successfully"
-        description="The item has been successfully collected."
+        description="The item has been successfully collected - please remove the tag."
         buttonText="Done"
         shouldRefresh={true}
       />
@@ -149,6 +206,15 @@ function ListingContent() {
         onClose={() => setIsRemoveTagSuccessModalOpen(false)}
         title="Tag Removed Successfully"
         description="The tag has been successfully removed from the listing."
+        buttonText="Done"
+        shouldRefresh={true}
+      />
+
+      <SuccessModal
+        isOpen={isConfirmPurchaseSuccessModalOpen}
+        onClose={() => setIsConfirmPurchaseSuccessModalOpen(false)}
+        title="Purchase Confirmed"
+        description="The purchase has been confirmed - please remove the tag."
         buttonText="Done"
         shouldRefresh={true}
       />

@@ -20,6 +20,7 @@ interface RemoveTagConfirmationModalProps {
   confirmButtonText: string;
   isLoading: boolean;
   variant: "abandoned" | "sold";
+  error?: string | null;
 }
 
 export default function RemoveTagConfirmationModal({
@@ -31,6 +32,7 @@ export default function RemoveTagConfirmationModal({
   confirmButtonText,
   isLoading,
   variant,
+  error,
 }: RemoveTagConfirmationModalProps) {
   const handleConfirm = async () => {
     try {
@@ -49,6 +51,12 @@ export default function RemoveTagConfirmationModal({
             {description}
           </DialogDescription>
         </DialogHeader>
+
+        {error && (
+          <div className="py-2">
+            <p className="text-sm text-destructive/50">{error}</p>
+          </div>
+        )}
 
         <DialogFooter className="gap-2 sm:gap-0">
           <Button

@@ -22,22 +22,24 @@ interface CheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
   listingId: number;
+  error?: string | null;
 }
 
 export default function CheckoutModal({
   isOpen,
   onClose,
   listingId,
+  error,
 }: CheckoutModalProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [localError, setLocalError] = useState("");
 
   useEffect(() => {
     if (!isOpen) return;
 
     const initiateCheckout = async () => {
       setIsLoading(true);
-      setError("");
+      setLocalError("");
 
       try {
         const stripe = await stripePromise;
@@ -61,7 +63,7 @@ export default function CheckoutModal({
           throw new Error(error.message || "Failed to redirect to checkout");
         }
       } catch (err) {
-        setError(
+        setLocalError(
           err instanceof Error ? err.message : "An unknown error occurred"
         );
         setIsLoading(false);
@@ -86,9 +88,11 @@ export default function CheckoutModal({
             <>
               <LoadingSpinner size="md" text="Preparing your checkout..." />
             </>
-          ) : error ? (
+          ) : localError || error ? (
             <>
-              <div className="text-red-500 mb-4">{error}</div>
+              <div className="text-destructive/50 mb-4">
+                {localError || error}
+              </div>
               <Button onClick={onClose}>Close</Button>
             </>
           ) : null}

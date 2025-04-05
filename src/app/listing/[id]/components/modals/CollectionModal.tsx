@@ -4,14 +4,12 @@ import { useState } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@src/components/ui/dialog";
 import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
-import { Label } from "@src/components/ui/label";
 import LoadingSpinner from "@src/components/LoadingSpinner";
 
 interface CollectionModalProps {
@@ -19,6 +17,7 @@ interface CollectionModalProps {
   onClose: () => void;
   onCollect: (pin: string) => void;
   isLoading: boolean;
+  error?: string | null;
 }
 
 export default function CollectionModal({
@@ -26,15 +25,16 @@ export default function CollectionModal({
   onClose,
   onCollect,
   isLoading,
+  error,
 }: CollectionModalProps) {
   const [collectionPin, setCollectionPin] = useState("");
-  const [error, setError] = useState("");
+  const [localError, setLocalError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!collectionPin.trim()) {
-      setError("Please enter a collection PIN");
+      setLocalError("Please enter a collection PIN");
       return;
     }
 
@@ -46,27 +46,25 @@ export default function CollectionModal({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Collect Item</DialogTitle>
-          <DialogDescription>
-            Enter the collection PIN provided by the item owner to complete the
-            collection process.
-          </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
-              <Label htmlFor="collection-pin">Collection PIN</Label>
               <Input
                 id="collection-pin"
                 value={collectionPin}
                 onChange={(e) => {
                   setCollectionPin(e.target.value);
-                  setError("");
+                  setLocalError("");
                 }}
                 placeholder="Enter PIN"
-                className={error ? "border-destructive/50" : ""}
+                className={localError || error ? "border-destructive/50" : ""}
               />
-              {error && <p className="text-sm text-destructive/50">{error}</p>}
+              {localError && (
+                <p className="text-sm text-destructive">{localError}</p>
+              )}
+              {error && <p className="text-sm text-destructive">{error}</p>}
             </div>
           </div>
 

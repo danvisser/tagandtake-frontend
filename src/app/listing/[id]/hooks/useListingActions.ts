@@ -3,78 +3,141 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  ListingActions,
+  ActionResult,
+} from "@src/app/listing/[id]/context/ListingContext";
+import {
+  collectRecalledListing,
   removeTagFromAbandonedListing,
   removeTagFromSoldListing,
-  collectRecalledListing,
 } from "@src/api/listingsApi";
 
-export function useListingActions(listingId: number) {
+// Define the error response type
+interface ErrorResponse {
+  detail?: string;
+  [key: string]: string | undefined;
+}
+
+export function useListingActions(listingId: number): ListingActions {
   const router = useRouter();
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
   const [isRemoveTagLoading, setIsRemoveTagLoading] = useState(false);
   const [isCollectLoading, setIsCollectLoading] = useState(false);
 
-  // Handle checkout
-  const handleCheckout = async () => {
-    setIsCheckoutLoading(true);
+  const handleCheckout = async (): Promise<ActionResult> => {
     try {
-      // Redirect to checkout page
-    } catch (err) {
-      console.error("Checkout error:", err);
+      setIsCheckoutLoading(true);
+      // TODO: Implement checkout logic
+      return { success: true, error: null };
+    } catch (error) {
+      console.error("Error during checkout:", error);
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : "Failed to process checkout",
+      };
     } finally {
       setIsCheckoutLoading(false);
     }
   };
 
-  // Handle remove tag from abandoned listing
-  const handleRemoveTagFromAbandoned = async () => {
-    setIsRemoveTagLoading(true);
+  const handleRemoveTagFromAbandoned = async (): Promise<ActionResult> => {
     try {
+      setIsRemoveTagLoading(true);
       const response = await removeTagFromAbandonedListing(listingId);
+
       if (response.success) {
         // Refresh the page to show updated state
         router.refresh();
+        return { success: true, error: null };
       } else {
         console.error("Failed to remove tag:", response.error);
+        return {
+          success: false,
+          error:
+            response.error || "Failed to remove tag from abandoned listing",
+        };
       }
-    } catch (err) {
-      console.error("Remove tag error:", err);
+    } catch (error) {
+      console.error("Error removing tag from abandoned listing:", error);
+      return {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to remove tag from abandoned listing",
+      };
     } finally {
       setIsRemoveTagLoading(false);
     }
   };
 
-  // Handle remove tag from sold listing
-  const handleRemoveTagFromSold = async () => {
-    setIsRemoveTagLoading(true);
+  const handleRemoveTagFromSold = async (): Promise<ActionResult> => {
     try {
+      setIsRemoveTagLoading(true);
       const response = await removeTagFromSoldListing(listingId);
+
       if (response.success) {
         // Refresh the page to show updated state
         router.refresh();
+        return { success: true, error: null };
       } else {
         console.error("Failed to remove tag:", response.error);
+        return {
+          success: false,
+          error: response.error || "Failed to remove tag from sold listing",
+        };
       }
-    } catch (err) {
-      console.error("Remove tag error:", err);
+    } catch (error) {
+      console.error("Error removing tag from sold listing:", error);
+      return {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to remove tag from sold listing",
+      };
     } finally {
       setIsRemoveTagLoading(false);
     }
   };
 
-  // Handle collect recalled listing
-  const handleCollect = async (collectionPin: string) => {
-    setIsCollectLoading(true);
+  const handleCollect = async (pin: string): Promise<ActionResult> => {
     try {
-      const response = await collectRecalledListing(listingId, collectionPin);
+      setIsCollectLoading(true);
+      const response = await collectRecalledListing(listingId, pin);
+
       if (response.success) {
         // Refresh the page to show updated state
         router.refresh();
+        return { success: true, error: null };
       } else {
         console.error("Failed to collect item:", response.error);
+
+        // Handle specific error cases
+        if (
+          response.error === "Invalid PIN." ||
+          (typeof response.error === "object" &&
+            (response.error as ErrorResponse).detail === "Invalid PIN.")
+        ) {
+          return {
+            success: false,
+            error: "Invalid collection PIN. Please try again.",
+          };
+        }
+
+        return {
+          success: false,
+          error: response.error || "Failed to collect item",
+        };
       }
-    } catch (err) {
-      console.error("Collect error:", err);
+    } catch (error) {
+      console.error("Error collecting item:", error);
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : "Failed to collect item",
+      };
     } finally {
       setIsCollectLoading(false);
     }
