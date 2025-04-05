@@ -98,10 +98,7 @@ function ListingContent() {
 
       if (result.success) {
         setIsRemoveTagFromSoldModalOpen(false);
-        // Redirect to the return page with success parameter
-        if (typeof window !== "undefined") {
-          window.location.href = `/listing/${id}/return?payment=success`;
-        }
+        setIsRemoveTagSuccessModalOpen(true);
       } else {
         // Set the error in the context
         setRemoveTagError(result.error);
