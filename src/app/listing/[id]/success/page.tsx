@@ -13,8 +13,8 @@ import { usePurchaseStatus } from "./hooks/usePurchaseStatus";
 // Wrapper component for all states
 const StateWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md mx-auto">{children}</div>
+    <div className="min-h-screen flex items-center justify-center p-3 sm:p-4">
+      <div className="w-full max-w-[90%] sm:max-w-md mx-auto">{children}</div>
     </div>
   );
 };
@@ -24,10 +24,9 @@ export default function SuccessPage() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
 
-  const { purchaseData, isLoading, error, refresh } =
-  usePurchaseStatus({
-      sessionId,
-    });
+  const { purchaseData, isLoading, error, refresh } = usePurchaseStatus({
+    sessionId,
+  });
 
   const handleGoHome = () => {
     router.push(Routes.HOME);

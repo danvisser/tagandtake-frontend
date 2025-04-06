@@ -1,5 +1,5 @@
 import { Button } from "@src/components/ui/button";
-import { CheckCircle, Tag, Home } from "lucide-react";
+import { CheckCircle, Tag, Home, Mail } from "lucide-react";
 import Image from "next/image";
 import { formatCurrency } from "@src/lib/formatters";
 import { ItemPurchasedResponse } from "@src/api/paymentsApi";
@@ -9,25 +9,39 @@ interface SuccessStateProps {
   onGoHome: () => void;
 }
 
-export function SuccessState({
-  purchaseData,
-  onGoHome,
-}: SuccessStateProps) {
+export function SuccessState({ purchaseData, onGoHome }: SuccessStateProps) {
   return (
     <div className="flex flex-col items-center w-full">
-      {/* Success message */}
-      <h2 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-center">
-        Purchase Successful
-      </h2>
-      <p className="text-gray-600 mb-6 text-center">
-        Your purchase has been confirmed. You can now remove the tag from your
-        item.
-      </p>
+      {/* Clean success header */}
+      <div className="flex flex-col items-center mb-6 sm:mb-8">
+        <div className="bg-green-100 rounded-full p-2 sm:p-3 mb-3 sm:mb-4">
+          <CheckCircle className="h-6 w-6 sm:h-8 sm:w-8 text-green-600" />
+        </div>
+        <h2 className="text-xl sm:text-2xl font-semibold text-center mb-1 sm:mb-2">
+          Payment Successful
+        </h2>
+      </div>
 
-      {/* Item details - Mobile optimized */}
+      {/* Tag removal instruction - Clear call to action */}
+      <div className="w-full mb-6 sm:mb-8 bg-blue-50 rounded-lg p-4 sm:p-5 border border-blue-100">
+        <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+          <div className="bg-white rounded-full p-1.5 sm:p-2">
+            <Tag className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
+          </div>
+          <h3 className="text-base sm:text-lg font-semibold">
+            Action Required: Remove Security Tag
+          </h3>
+        </div>
+        <p className="text-sm sm:text-base text-gray-700 pl-4 sm:pl-11">
+          You must show this screen to a staff member to have your security tag
+          removed.
+        </p>
+      </div>
+
+      {/* Item details - Clean and elegant */}
       {purchaseData?.listing?.item_details && (
         <div className="w-full bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6 sm:mb-8">
-          <div className="relative h-40 sm:h-48 w-full">
+          <div className="relative h-36 sm:h-40 md:h-48 w-full">
             <Image
               src={
                 purchaseData.listing.item_details.main_image ||
@@ -41,13 +55,13 @@ export function SuccessState({
               className="object-cover"
             />
           </div>
-          <div className="p-4 sm:p-6">
-            <h3 className="text-lg sm:text-xl font-semibold mb-2">
+          <div className="p-3 sm:p-4 md:p-6">
+            <h3 className="text-base sm:text-lg md:text-xl font-semibold mb-1 sm:mb-2">
               {purchaseData.listing.item_details.name || "Item"}
             </h3>
             <div className="flex justify-between items-center">
-              <span className="text-gray-500">Price</span>
-              <span className="text-lg sm:text-xl font-bold">
+              <span className="text-sm sm:text-base text-gray-500">Price</span>
+              <span className="text-base sm:text-lg md:text-xl font-bold">
                 {formatCurrency(purchaseData.listing.listing_price || 0)}
               </span>
             </div>
@@ -55,57 +69,27 @@ export function SuccessState({
         </div>
       )}
 
-      {/* Tag removal instructions - Prominent for mobile */}
-      <div className="w-full bg-amber-50 rounded-xl p-4 sm:p-6 mb-6 sm:mb-8 border border-amber-100">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="bg-white rounded-full p-1.5">
-            <Tag className="h-5 w-5 text-amber-500" />
+      {/* Email confirmation - Subtle */}
+      <div className="w-full mb-6 sm:mb-8">
+        <div className="flex items-center gap-2 sm:gap-3 mb-1 sm:mb-2">
+          <div className="bg-gray-100 rounded-full p-1.5 sm:p-2">
+            <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-gray-500" />
           </div>
-          <h3 className="text-lg font-semibold">Remove Your Tag</h3>
+          <h3 className="text-base sm:text-lg font-semibold">Receipt Sent</h3>
         </div>
-        <p className="text-base text-gray-700 mb-3">
-          Please take your item to a store staff member to have the tag removed.
+        <p className="text-sm sm:text-base text-gray-600 pl-4 sm:pl-11">
+          We&apos;ve sent your receipt to your email confirming your purchase.
         </p>
-        <div className="flex items-start gap-3 bg-white rounded-lg p-3 border border-amber-100">
-          <div className="bg-amber-50 rounded-full p-1 mt-1">
-            <CheckCircle className="h-4 w-4 text-amber-500" />
-          </div>
-          <div>
-            <p className="font-medium">Show this screen to staff</p>
-            <p className="text-sm text-gray-600">
-              They&apos;ll remove the tag for you
-            </p>
-          </div>
-        </div>
       </div>
 
-      {/* Email confirmation */}
-      <div className="w-full bg-blue-50 rounded-xl p-4 sm:p-6 mb-6 sm:mb-8">
-        <h3 className="text-lg font-semibold mb-3">Next Steps</h3>
-        <div className="space-y-3">
-          <div className="flex items-start gap-3">
-            <div className="bg-white rounded-full p-1 mt-1">
-              <CheckCircle className="h-4 w-4 text-blue-500" />
-            </div>
-            <div>
-              <p className="font-medium">Check your email for details</p>
-              <p className="text-sm text-gray-600">
-                We&apos;ve sent you a confirmation email with your purchase
-                details.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Action buttons - Mobile optimized */}
-      <div className="flex flex-col gap-3 w-full">
+      {/* Action button */}
+      <div className="w-full">
         <Button
           variant="outline"
           onClick={onGoHome}
-          className="h-12 w-full"
+          className="h-11 sm:h-12 w-full"
         >
-          <Home className="h-4 w-4" />
+          <Home className="h-4 w-4 mr-2" />
           Return to Home
         </Button>
       </div>
