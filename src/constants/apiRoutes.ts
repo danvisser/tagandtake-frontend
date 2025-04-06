@@ -80,12 +80,14 @@ export const API_ROUTES = {
     CONDITIONS: `/items/conditions/`,
   },
   PAYMENTS: {
-    ACCOUNT_STATUS: `/payment-accounts/status/`,
-    ONBOARDING: `/payment-accounts/onboarding/`,
-    MANAGEMENT: `/payment-accounts/management/`,
-    PAYOUTS: `/payment-accounts/payouts/`,
+    ACCOUNT_STATUS: `/accounts/status/`,
+    ONBOARDING: `/accounts/onboarding/`,
+    MANAGEMENT: `/accounts/management/`,
+    PAYOUTS: `/accounts/payouts/`,
     CHECKOUT_ITEM: `/checkout/item/`,
     CHECKOUT_SUPPLIES: `/checkout/supplies/`,
+    ITEM_PURCHASED: `/checkout/purchased-item/`,
+    SUPPLY_PURCHASED: `/checkout/purchased-supply/`,
   },
   STRIPE: {
     CONNECT_WEBHOOK: `/stripe/connect-webhook/`,

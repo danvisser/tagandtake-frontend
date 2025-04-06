@@ -1,7 +1,7 @@
 import { fetchClient } from "@src/lib/fetchClient";
 import { API_ROUTES } from "@src/constants/apiRoutes";
 import axios from "axios";
-
+import { Item } from "@src/api/itemsApi";
 // Types for payment account status
 export interface AccountStatus {
   onboarded: boolean;
@@ -32,6 +32,26 @@ export interface SupplyOrderItem {
 
 export interface SuppliesCheckoutRequest {
   supplies: SupplyOrderItem[];
+}
+
+export interface ItemPurchasedRequest {
+  session_id: string;
+}
+
+export interface ItemPurchasedResponse {
+  status: string;
+  message: string;
+  item?: Item;
+}
+
+export interface SupplyPurchasedRequest {
+  session_id: string;
+}
+
+export interface SupplyPurchasedResponse {
+  status: string;
+  message: string;
+  store?: number;
 }
 
 // Get payment account status
@@ -154,20 +174,17 @@ export const createPayoutsSession = async (): Promise<{
 
 // Create checkout session for an item
 export const createCheckoutSession = async (
-  tagId: number
+  tag_id: number
 ): Promise<{
   success: boolean;
   data?: CheckoutSession;
   error?: string;
 }> => {
   try {
-
     const { data } = await fetchClient({
       method: "POST",
       url: API_ROUTES.PAYMENTS.CHECKOUT_ITEM,
-      data: {
-        tag_id: tagId,
-      },
+      data: { tag_id },
     });
 
     return {
@@ -214,6 +231,70 @@ export const createSuppliesCheckoutSession = async (
         error:
           error.response?.data?.detail ||
           "Failed to create supplies checkout session",
+      };
+    }
+    throw error;
+  }
+};
+
+export const itemPurchased = async (
+  itemPurchasedRequest: ItemPurchasedRequest
+): Promise<{
+  success: boolean;
+  data?: ItemPurchasedResponse;
+  error?: string;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "GET",
+      url: API_ROUTES.PAYMENTS.ITEM_PURCHASED,
+      params: { session_id: itemPurchasedRequest.session_id },
+    });
+
+    return {
+      success: true,
+      data,
+    };
+  } catch (error: unknown) {
+    console.error("Item purchased error:", error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.detail ||
+          "Failed to retrieve purchased details",
+      };
+    }
+    throw error;
+  }
+};
+
+export const supplyPurchased = async (
+  supplyPurchasedRequest: SupplyPurchasedRequest
+): Promise<{
+  success: boolean;
+  data?: SupplyPurchasedResponse;
+  error?: string;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "POST",
+      url: API_ROUTES.PAYMENTS.SUPPLY_PURCHASED,
+      data: supplyPurchasedRequest,
+    });
+
+    return {
+      success: true,
+      data,
+    };
+  } catch (error: unknown) {
+    console.error("Supply purchased error:", error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.detail ||
+          "Failed to retrieve purchased details",
       };
     }
     throw error;
