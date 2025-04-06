@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -42,6 +42,26 @@ export default function CheckoutModal({
   const [isLoading, setIsLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
 
+  // Define handleInitCheckout before it's used in useEffect
+  const handleInitCheckout = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      setLocalError(null);
+      const response = await createCheckoutSession(Number(params.id));
+      if (!response.success || !response.data?.client_secret) {
+        throw new Error(response.error || "Failed to create checkout session");
+      }
+      setClientSecret(response.data.client_secret);
+    } catch (error) {
+      console.error("Error creating checkout session:", error);
+      setLocalError(
+        error instanceof Error ? error.message : "Failed to initialize checkout"
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }, [params.id]);
+
   // Check for payment success in URL
   useEffect(() => {
     const paymentStatus = searchParams.get("payment");
@@ -55,24 +75,7 @@ export default function CheckoutModal({
     if (isOpen && !clientSecret) {
       handleInitCheckout();
     }
-  }, [isOpen]);
-
-  const handleInitCheckout = async () => {
-    try {
-      setIsLoading(true);
-      setLocalError(null);
-      const response = await createCheckoutSession(Number(params.id));
-      if (!response.success || !response.data?.client_secret) {
-        throw new Error(response.error || "Failed to create checkout session");
-      }
-      setClientSecret(response.data.client_secret);
-    } catch (error) {
-      console.error("Error creating checkout session:", error);
-      setLocalError("Failed to initialize checkout. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  }, [isOpen, clientSecret, handleInitCheckout]);
 
   const handleClose = () => {
     setClientSecret(null);

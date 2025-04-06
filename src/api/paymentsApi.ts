@@ -1,7 +1,30 @@
 import { fetchClient } from "@src/lib/fetchClient";
 import { API_ROUTES } from "@src/constants/apiRoutes";
 import axios from "axios";
-import { Item } from "@src/api/itemsApi";
+import { SoldItemListing } from "@src/api/listingsApi";
+
+// Create a dedicated client for this specific endpoint
+const paymentsClient = axios.create({
+  baseURL:
+    process.env.NEXT_PUBLIC_API_URL + "/" + process.env.NEXT_PUBLIC_API_VERSION,
+  headers: { "Content-Type": "application/json" },
+  validateStatus: () => true, // Accept all status codes
+});
+
+// Add auth token to requests
+if (typeof window !== "undefined") {
+  paymentsClient.interceptors.request.use(
+    (config) => {
+      const token = localStorage.getItem("auth_access_token");
+      if (token) {
+        config.headers["Authorization"] = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => Promise.reject(error)
+  );
+}
+
 // Types for payment account status
 export interface AccountStatus {
   onboarded: boolean;
@@ -36,12 +59,13 @@ export interface SuppliesCheckoutRequest {
 
 export interface ItemPurchasedRequest {
   session_id: string;
+  _t?: number; // Optional timestamp for cache busting
 }
 
 export interface ItemPurchasedResponse {
   status: string;
   message: string;
-  item?: Item;
+  listing?: SoldItemListing;
 }
 
 export interface SupplyPurchasedRequest {
@@ -245,27 +269,52 @@ export const itemPurchased = async (
   error?: string;
 }> => {
   try {
-    const { data } = await fetchClient({
+    const params: Record<string, string> = {
+      session_id: itemPurchasedRequest.session_id,
+    };
+
+    // Add timestamp if provided for cache busting
+    if (itemPurchasedRequest._t) {
+      params._t = itemPurchasedRequest._t.toString();
+    }
+
+    const response = await paymentsClient({
       method: "GET",
       url: API_ROUTES.PAYMENTS.ITEM_PURCHASED,
-      params: { session_id: itemPurchasedRequest.session_id },
+      params,
     });
 
-    return {
-      success: true,
-      data,
-    };
-  } catch (error: unknown) {
-    console.error("Item purchased error:", error);
-    if (axios.isAxiosError(error)) {
+    // Handle different status codes
+    if (
+      response.status === 200 ||
+      response.status === 202 ||
+      response.status === 404 ||
+      response.status === 410
+    ) {
+      return {
+        success: true,
+        data: response.data,
+      };
+    } else if (response.status === 400) {
+      return {
+        success: false,
+        error: "Session ID is required",
+      };
+    } else {
       return {
         success: false,
         error:
-          error.response?.data?.detail ||
+          response.data?.detail ||
+          response.data?.message ||
           "Failed to retrieve purchased details",
       };
     }
-    throw error;
+  } catch (error: unknown) {
+    console.error("Item purchased error:", error);
+    return {
+      success: false,
+      error: "An unexpected error occurred",
+    };
   }
 };
 
