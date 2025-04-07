@@ -53,6 +53,7 @@ export interface BaseListing {
 // Interface for vacant tags
 export interface VacantTag extends BaseListing {
   is_member: boolean;
+  has_capacity: boolean;
   store_conditions: StoreCondition[];
   store_categories: StoreCategory[];
 }

@@ -52,22 +52,46 @@ export default function VacantTagCard({
     store_commission,
     store_conditions,
     store_categories,
+    has_capacity,
   } = listing;
 
   // Determine if guidelines should be shown
   const showGuidelines = userRole !== LISTING_ROLES.HOST;
 
+  // Determine the header background color based on capacity
+  const headerBgClass = has_capacity
+    ? "bg-gradient-to-br from-primary/10 to-primary/5"
+    : "bg-gradient-to-br from-destructive/10 to-destructive/5";
+
+  // Determine the icon color based on capacity
+  const iconColorClass = has_capacity
+    ? "text-primary/60"
+    : "text-destructive/60";
+
+  // Determine the title color based on capacity
+  const titleColorClass = has_capacity
+    ? "text-primary/80"
+    : "text-destructive/80";
+
   return (
     <Card className="w-full overflow-hidden" variant="borderless">
       <CardHeader className="p-0">
-        <div className="relative w-full h-[200px] md:h-[300px] bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
+        <div
+          className={`relative w-full h-[200px] md:h-[300px] ${headerBgClass} flex items-center justify-center`}
+        >
           <div className="text-center p-4 md:p-8">
-            <Tag className="h-12 w-12 md:h-16 md:w-16 mx-auto text-primary/60 mb-2 md:mb-4" />
-            <h2 className="text-xl md:text-2xl font-medium text-primary/80">
-              Vacant Tag
+            <Tag
+              className={`h-12 w-12 md:h-16 md:w-16 mx-auto ${iconColorClass} mb-2 md:mb-4`}
+            />
+            <h2
+              className={`text-xl md:text-2xl font-medium ${titleColorClass}`}
+            >
+              {has_capacity ? "Vacant Tag" : "Store at Capacity"}
             </h2>
             <p className="text-muted-foreground mt-2 max-w-md mx-auto text-sm md:text-base">
-              This tag is available for listing your item
+              {has_capacity
+                ? "This tag is available for listing your item"
+                : "This store is currently not accepting new listings"}
             </p>
           </div>
         </div>

@@ -67,6 +67,11 @@ export default function ListingActions({
       );
     }
 
+    // If the store is at capacity, don't show listing buttons
+    if (!listing.has_capacity) {
+      return null;
+    }
+
     if (listing.is_member) {
       return (
         <Button onClick={onOpenListItemModal} className="w-full">
