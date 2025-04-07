@@ -10,13 +10,13 @@ import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
 import { Label } from "@src/components/ui/label";
 import { Textarea } from "@src/components/ui/textarea";
+import { Badge } from "@src/components/ui/badge";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@src/components/ui/select";
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@src/components/ui/accordion";
 import {
   Card,
   CardContent,
@@ -33,7 +33,7 @@ import {
   DialogTitle,
 } from "@src/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@src/components/ui/alert";
-import { AlertCircle, CheckCircle, XCircle } from "lucide-react";
+import { AlertCircle, CheckCircle, XCircle, Info, Tag } from "lucide-react";
 
 export default function ItemsNewPage() {
   const router = useRouter();
@@ -211,6 +211,16 @@ export default function ItemsNewPage() {
     };
   }, [imageUrls]);
 
+  // Get selected condition description
+  const selectedCondition = condition
+    ? itemConditions.find((c) => c.id.toString() === condition)
+    : null;
+
+  // Get selected category description
+  const selectedCategory = category
+    ? itemCategories.find((c) => c.id.toString() === category)
+    : null;
+
   return (
     <div className="container mx-auto py-8 px-4">
       <Card className="max-w-3xl mx-auto">
@@ -281,23 +291,57 @@ export default function ItemsNewPage() {
             {/* Condition */}
             <div className="space-y-2">
               <Label htmlFor="condition">Condition *</Label>
-              <Select value={condition} onValueChange={setCondition}>
-                <SelectTrigger
-                  className={errors.condition ? "border-red-500" : ""}
-                >
-                  <SelectValue placeholder="Select condition" />
-                </SelectTrigger>
-                <SelectContent>
-                  {itemConditions.map((condition) => (
-                    <SelectItem
-                      key={condition.id}
-                      value={condition.id.toString()}
-                    >
-                      {condition.condition}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="condition">
+                  <AccordionTrigger className="text-base">
+                    <div className="flex items-center gap-2">
+                      <Info className="h-4 w-4" />
+                      <span>
+                        {condition
+                          ? itemConditions.find(
+                              (c) => c.id.toString() === condition
+                            )?.condition
+                          : "Select condition"}
+                      </span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="pt-2">
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Select the condition of your item:
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {itemConditions.map((itemCondition) => (
+                          <Badge
+                            key={itemCondition.id}
+                            variant={
+                              condition === itemCondition.id.toString()
+                                ? "default"
+                                : "secondary"
+                            }
+                            className="px-3 py-1 cursor-pointer"
+                            onClick={() => {
+                              // Toggle selection - if already selected, deselect it
+                              if (condition === itemCondition.id.toString()) {
+                                setCondition("");
+                              } else {
+                                setCondition(itemCondition.id.toString());
+                              }
+                            }}
+                          >
+                            {itemCondition.condition}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+              {selectedCondition && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  {selectedCondition.description}
+                </p>
+              )}
               {errors.condition && (
                 <p className="text-sm text-red-500">{errors.condition[0]}</p>
               )}
@@ -306,23 +350,57 @@ export default function ItemsNewPage() {
             {/* Category */}
             <div className="space-y-2">
               <Label htmlFor="category">Category *</Label>
-              <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger
-                  className={errors.category ? "border-red-500" : ""}
-                >
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {itemCategories.map((category) => (
-                    <SelectItem
-                      key={category.id}
-                      value={category.id.toString()}
-                    >
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="category">
+                  <AccordionTrigger className="text-base">
+                    <div className="flex items-center gap-2">
+                      <Tag className="h-4 w-4" />
+                      <span>
+                        {category
+                          ? itemCategories.find(
+                              (c) => c.id.toString() === category
+                            )?.name
+                          : "Select category"}
+                      </span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="pt-2">
+                      <p className="text-sm text-muted-foreground mb-3">
+                        Select the category of your item:
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {itemCategories.map((itemCategory) => (
+                          <Badge
+                            key={itemCategory.id}
+                            variant={
+                              category === itemCategory.id.toString()
+                                ? "default"
+                                : "secondary"
+                            }
+                            className="px-3 py-1 cursor-pointer"
+                            onClick={() => {
+                              // Toggle selection - if already selected, deselect it
+                              if (category === itemCategory.id.toString()) {
+                                setCategory("");
+                              } else {
+                                setCategory(itemCategory.id.toString());
+                              }
+                            }}
+                          >
+                            {itemCategory.name}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+              {selectedCategory && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  {selectedCategory.description}
+                </p>
+              )}
               {errors.category && (
                 <p className="text-sm text-red-500">{errors.category[0]}</p>
               )}
