@@ -17,6 +17,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@src/components/ui/accordion";
+import { Checkbox } from "@src/components/ui/checkbox";
 import {
   Card,
   CardContent,
@@ -33,12 +34,25 @@ import {
   DialogTitle,
 } from "@src/components/ui/dialog";
 import { Alert, AlertDescription, AlertTitle } from "@src/components/ui/alert";
-import { AlertCircle, CheckCircle, XCircle, Info, Tag } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle,
+  XCircle,
+  Info,
+  Tag,
+  Store,
+  Percent,
+  FileText,
+} from "lucide-react";
+import TermsAndConditionsModal from "@src/app/listing/[id]/components/modals/TermsAndConditionsModal";
 
 export default function ItemsNewPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tagId = searchParams.get("tag_id");
+  const storeName = searchParams.get("store_name");
+  const storeCommission = searchParams.get("commission");
+  const isFromListing = !!tagId;
 
   // Form state
   const [name, setName] = useState("");
@@ -55,6 +69,10 @@ export default function ItemsNewPage() {
   const [successMessage, setSuccessMessage] = useState("");
   const [createdItemId, setCreatedItemId] = useState<number | null>(null);
   const [listingError, setListingError] = useState<string | null>(null);
+
+  // Terms and conditions state
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
 
   // Handle image upload
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -115,6 +133,12 @@ export default function ItemsNewPage() {
 
     if (images.length === 0) {
       newErrors.images = ["At least one image is required"];
+    }
+
+    if (isFromListing && !termsAccepted) {
+      newErrors.terms = [
+        "You must accept the terms and conditions to list your item",
+      ];
     }
 
     setErrors(newErrors);
@@ -223,11 +247,42 @@ export default function ItemsNewPage() {
 
   return (
     <div className="container mx-auto py-8 px-4">
+      {isFromListing && (
+        <Card className="max-w-3xl mx-auto mb-6 bg-muted/50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Store className="h-5 w-5" />
+              Listing in {storeName || "Store"}
+            </CardTitle>
+            <CardDescription>
+              You are creating an item to list in this store
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex items-center gap-2">
+                <Store className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium">Store:</span>
+                <span className="text-sm">{storeName || "Unknown Store"}</span>
+              </div>
+              {storeCommission && (
+                <div className="flex items-center gap-2">
+                  <Percent className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">Commission:</span>
+                  <span className="text-sm">{storeCommission}%</span>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <Card className="max-w-3xl mx-auto">
         <CardHeader>
           <CardTitle>Add New Item</CardTitle>
           <CardDescription>
             Fill in the details below to add a new item to your wardrobe
+            {isFromListing && " and list it in the store"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -473,6 +528,63 @@ export default function ItemsNewPage() {
               )}
             </div>
 
+            {/* Terms and Conditions - Only show if coming from a listing page */}
+            {isFromListing && (
+              <div className="space-y-4 border rounded-md p-4 bg-muted/30">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-5 w-5" />
+                  <h3 className="font-medium">Terms and Conditions</h3>
+                </div>
+
+                <div className="space-y-2 text-sm">
+                  <p>
+                    By listing your item, you agree to the following key terms:
+                  </p>
+                  <ul className="list-disc pl-5 space-y-1">
+                    <li>
+                      You confirm you own the item and have the right to sell it
+                    </li>
+                    <li>
+                      Items must be clean, safe, and suitable for public display
+                    </li>
+                    <li>All items are left at your own risk</li>
+                    <li>No insurance is provided for listed items</li>
+                    <li>Items not collected within 10 days may be forfeited</li>
+                  </ul>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="terms"
+                    checked={termsAccepted}
+                    onCheckedChange={(checked) =>
+                      setTermsAccepted(checked === true)
+                    }
+                  />
+                  <Label
+                    htmlFor="terms"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    I accept the{" "}
+                    <Button
+                      variant="link"
+                      className="p-0 h-auto font-medium"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setShowTermsModal(true);
+                      }}
+                    >
+                      terms and conditions
+                    </Button>
+                  </Label>
+                </div>
+
+                {errors.terms && (
+                  <p className="text-sm text-red-500">{errors.terms[0]}</p>
+                )}
+              </div>
+            )}
+
             {/* Non-field errors */}
             {errors.non_field_errors && (
               <Alert variant="destructive">
@@ -486,7 +598,11 @@ export default function ItemsNewPage() {
 
             {/* Submit button */}
             <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? "Creating..." : "Create Item"}
+              {isSubmitting
+                ? "Creating..."
+                : isFromListing
+                  ? "Create and List Item"
+                  : "Create Item"}
             </Button>
           </form>
         </CardContent>
@@ -525,6 +641,12 @@ export default function ItemsNewPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Terms and Conditions Modal */}
+      <TermsAndConditionsModal
+        isOpen={showTermsModal}
+        onClose={() => setShowTermsModal(false)}
+      />
     </div>
   );
 }
