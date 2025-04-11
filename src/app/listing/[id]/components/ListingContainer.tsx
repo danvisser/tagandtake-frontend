@@ -143,6 +143,7 @@ function ListingContent() {
         isOpen={isListItemModalOpen}
         onClose={() => setIsListItemModalOpen(false)}
         tagId={listingId}
+        storeCommission={listing?.store_commission || 0}
       />
 
       {/* Confirmation Modals */}

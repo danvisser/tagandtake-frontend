@@ -2,37 +2,42 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@src/components/ui/dialog";
 import { Button } from "@src/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Pencil } from "lucide-react";
 import { Routes } from "@src/constants/routes";
 import { getAvailableItems, Item } from "@src/api/itemsApi";
 import { createListing } from "@src/api/listingsApi";
 import LoadingSpinner from "@src/components/LoadingSpinner";
+import { formatCurrency } from "@src/lib/formatters";
+import { Card } from "@src/components/ui/card";
+import { useToast } from "@src/hooks/use-toast";
+import { handleListingError } from "@src/app/listing/[id]/utils/listingErrorHandler";
 
 interface ListItemModalProps {
   isOpen: boolean;
   onClose: () => void;
   tagId: number;
+  storeCommission: number;
 }
 
 export default function ListItemModal({
   isOpen,
   onClose,
   tagId,
+  storeCommission,
 }: ListItemModalProps) {
   const router = useRouter();
+  const { toast } = useToast();
   const [items, setItems] = useState<Item[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-  const [selectedItem, setSelectedItem] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -58,112 +63,159 @@ export default function ListItemModal({
   }, [isOpen]);
 
   const handleCreateNewItem = () => {
-    // Close the modal and navigate to create item page with tag context
     onClose();
     router.push(`${Routes.MEMBER.ITEMS.NEW}?tagId=${tagId}`);
   };
 
-  const handleListItem = async () => {
-    if (!selectedItem) {
-      setError("Please select an item to list");
-      return;
-    }
+  const handleEditItem = (itemId: number) => {
+    router.push(Routes.MEMBER.ITEMS.EDIT(itemId.toString()));
+  };
 
+  const handleListItem = async (itemId: number) => {
     setIsSubmitting(true);
     try {
       const response = await createListing({
-        item_id: selectedItem,
+        item_id: itemId,
         tag_id: tagId,
       });
 
       if (response.success) {
+        toast({
+          title: "Success",
+          description: "Item listed successfully",
+        });
         onClose();
         router.refresh();
       } else {
-        setError(
-          typeof response.error === "string"
-            ? response.error
-            : "Failed to create listing"
-        );
+        handleListingError(response.error || null);
       }
-    } catch {
-      setError("An error occurred while creating the listing");
+    } catch (err) {
+      console.error("Listing Error:", err);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "An unexpected error occurred while creating the listing.",
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  // Calculate price after store commission
+  const calculatePriceAfterCommission = (price: number) => {
+    return price * (1 - storeCommission / 100);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle>List an Item</DialogTitle>
-          <DialogDescription>
-            Select an item to list or create a new one.
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="py-4">
-          {isLoading ? (
-            <div className="flex justify-center py-8">
-              <LoadingSpinner size="md" />
-            </div>
-          ) : error ? (
-            <div className="text-center py-4 text-red-500">{error}</div>
-          ) : items.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
-              <p>You don&apos;t have any available items to list.</p>
-              <p className="mt-2">Create a new item to get started.</p>
-            </div>
-          ) : (
-            <div className="grid gap-4 max-h-[300px] overflow-y-auto">
-              {items.map((item) => (
-                <div
-                  key={item.id}
-                  className={`p-4 border rounded-md cursor-pointer transition-colors ${
-                    selectedItem === item.id
-                      ? "border-primary bg-primary/5"
-                      : "hover:bg-gray-50"
-                  }`}
-                  onClick={() => setSelectedItem(item.id)}
-                >
-                  <div className="font-medium">{item.name}</div>
-                  <div className="text-sm text-gray-500 mt-1">
-                    {item.category_details?.name} •{" "}
-                    {item.condition_details?.condition}
-                  </div>
-                  <div className="text-sm font-medium mt-1">
-                    £{item.price.toFixed(2)}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <DialogFooter className="flex flex-col sm:flex-row gap-2">
+      <DialogContent className="sm:max-w-[425px] p-0">
+        <DialogHeader className="px-4 py-6 space-y-1.5">
+          <DialogTitle className="text-xl font-medium m-2">
+            List a new item
+          </DialogTitle>
           <Button
-            type="button"
-            variant="outline"
-            className="w-full sm:w-auto"
             onClick={handleCreateNewItem}
+            className="w-full h-12 mt-4 text-base"
+            size="lg"
           >
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="h-5 w-5 mr-2" />
             Create New Item
           </Button>
-          <Button
-            type="button"
-            className="w-full sm:w-auto"
-            onClick={handleListItem}
-            disabled={!selectedItem || isSubmitting}
-          >
-            {isSubmitting ? (
-              <LoadingSpinner size="sm" text="Processing..." />
+        </DialogHeader>
+
+        <div className="h-px bg-gray-200 mx-6" />
+
+        <div className="p-4">
+          <h3 className="text-lg font-medium mb-3">From your wardrobe</h3>
+
+          <div className="space-y-3 max-h-[60vh] overflow-y-auto">
+            {isLoading ? (
+              <div className="flex justify-center py-8">
+                <LoadingSpinner size="md" />
+              </div>
+            ) : error ? (
+              <div className="text-center py-4 text-red-500">{error}</div>
+            ) : items.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>You don&apos;t have any available items to list.</p>
+                <p className="mt-2">Create a new item to get started.</p>
+              </div>
             ) : (
-              "List Selected Item"
+              items.map((item) => (
+                <Card
+                  key={item.id}
+                  className="overflow-hidden active:bg-gray-50 transition-colors"
+                  onClick={() => handleEditItem(item.id)}
+                >
+                  <div className="flex items-start p-3 gap-3">
+                    <div className="relative aspect-square w-28 flex-shrink-0">
+                      {item.images && item.images.length > 0 ? (
+                        <Image
+                          src={item.images[0].image_url}
+                          alt={item.name}
+                          fill
+                          className="object-cover rounded-md"
+                          sizes="(max-width: 112px) 100vw, 112px"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-100 flex items-center justify-center rounded-md">
+                          <span className="text-gray-400 text-xs">
+                            No image
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2">
+                        <h4 className="font-medium text-base leading-tight line-clamp-2">
+                          {item.name}
+                        </h4>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 px-2 text-muted-foreground hover:text-primary flex items-center gap-1"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditItem(item.id);
+                          }}
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                          <span className="text-xs">Edit</span>
+                        </Button>
+                      </div>
+                      <div className="mt-1.5">
+                        <div className="text-base font-semibold">
+                          {formatCurrency(item.price)}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          You&apos;ll receive{" "}
+                          {formatCurrency(
+                            calculatePriceAfterCommission(item.price)
+                          )}
+                        </div>
+                      </div>
+                      <Button
+                        className="w-full mt-3 h-10"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleListItem(item.id);
+                        }}
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? (
+                          <LoadingSpinner size="sm" text="Processing..." />
+                        ) : (
+                          "List Item"
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              ))
             )}
-          </Button>
-        </DialogFooter>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

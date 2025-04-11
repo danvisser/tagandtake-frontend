@@ -149,14 +149,8 @@ fetchClient.interceptors.response.use(
 
     // When handling errors
     if (error.response?.data) {
-      const errorData = error.response.data;
-      const errorMessage =
-        errorData.non_field_errors?.[0] ||
-        errorData.detail ||
-        errorData.error ||
-        "Request failed";
-
-      return Promise.reject(new Error(errorMessage));
+      // Return the original error response data
+      return Promise.reject(error);
     }
 
     return Promise.reject(error);

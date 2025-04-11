@@ -114,6 +114,13 @@ export interface CreateItemAndListingData {
 export interface ListingError {
   item_id?: string[];
   tag_id?: string[];
+  item?: string[];
+  tag?: string[];
+  condition?: string[];
+  category?: string[];
+  price?: string[];
+  store?: string[];
+  listing_limit?: string[];
   non_field_errors?: string[];
 }
 
@@ -156,11 +163,15 @@ export const createListing = async (
     };
   } catch (error: unknown) {
     console.error("Create listing error:", error);
-    if (axios.isAxiosError(error) && error.response?.data) {
-      return {
-        success: false,
-        error: error.response.data as ListingError,
-      };
+    if (axios.isAxiosError(error)) {
+      if (error.response?.data) {
+        // Ensure the error data matches the ListingError interface
+        const errorData = error.response.data as ListingError;
+        return {
+          success: false,
+          error: errorData,
+        };
+      }
     }
     throw error;
   }
