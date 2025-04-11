@@ -110,12 +110,12 @@ export default function ListItemModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px] p-0">
         <DialogHeader className="px-4 py-6 space-y-1.5">
-          <DialogTitle className="text-xl font-medium m-2">
+          <DialogTitle className="text-2xl font-medium m-2">
             List a new item
           </DialogTitle>
           <Button
             onClick={handleCreateNewItem}
-            className="w-full h-12 mt-4 text-base"
+            className="w-full h-12 mt-2 text-base"
             size="lg"
           >
             <Plus className="h-5 w-5 mr-2" />
@@ -123,10 +123,19 @@ export default function ListItemModal({
           </Button>
         </DialogHeader>
 
-        <div className="h-px bg-gray-200 mx-6" />
+        <div className="relative -mt-1">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300"></div>
+          </div>
+          <div className="relative flex justify-center">
+            <span className="bg-white px-4 text-xl font-medium text-gray-600">
+              or
+            </span>
+          </div>
+        </div>
 
-        <div className="p-4">
-          <h3 className="text-lg font-medium mb-3">From your wardrobe</h3>
+        <div className="p-4 pt-2">
+          <h3 className="text-2xl font-medium mb-3">From your wardrobe</h3>
 
           <div className="space-y-3 max-h-[60vh] overflow-y-auto">
             {isLoading ? (
@@ -144,8 +153,8 @@ export default function ListItemModal({
               items.map((item) => (
                 <Card
                   key={item.id}
-                  className="overflow-hidden active:bg-gray-50 transition-colors"
-                  onClick={() => handleEditItem(item.id)}
+                  className="overflow-hidden border-gray-200 active:bg-slate-300 transition-colors"
+                  variant="default"
                 >
                   <div className="flex items-start p-3 gap-3">
                     <div className="relative aspect-square w-28 flex-shrink-0">
