@@ -19,6 +19,7 @@ import { formatCurrency } from "@src/lib/formatters";
 import { Card } from "@src/components/ui/card";
 import { useToast } from "@src/hooks/use-toast";
 import { handleListingError } from "@src/app/listing/[id]/utils/listingErrorHandler";
+import { useListingContext } from "@src/app/listing/[id]/context/ListingContext";
 
 interface ListItemModalProps {
   isOpen: boolean;
@@ -35,6 +36,7 @@ export default function ListItemModal({
 }: ListItemModalProps) {
   const router = useRouter();
   const { toast } = useToast();
+  const { setIsListingSuccessModalOpen } = useListingContext();
   const [items, setItems] = useState<Item[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -64,7 +66,7 @@ export default function ListItemModal({
 
   const handleCreateNewItem = () => {
     onClose();
-    router.push(`${Routes.MEMBER.ITEMS.NEW}?tagId=${tagId}`);
+    router.push(`${Routes.LISTING.NEW}?tag_id=${tagId}`);
   };
 
   const handleEditItem = (itemId: number) => {
@@ -80,11 +82,8 @@ export default function ListItemModal({
       });
 
       if (response.success) {
-        toast({
-          title: "Success",
-          description: "Item listed successfully",
-        });
         onClose();
+        setIsListingSuccessModalOpen(true);
         router.refresh();
       } else {
         handleListingError(response.error || null);
@@ -128,7 +127,7 @@ export default function ListItemModal({
             <div className="w-full border-t border-gray-300"></div>
           </div>
           <div className="relative flex justify-center">
-            <span className="bg-white px-4 text-xl font-medium text-gray-600">
+            <span className="bg-background px-4 text-xl font-medium text-gray-600">
               or
             </span>
           </div>

@@ -34,6 +34,8 @@ function ListingContent() {
     setIsCollectionSuccessModalOpen,
     isRemoveTagSuccessModalOpen,
     setIsRemoveTagSuccessModalOpen,
+    isListingSuccessModalOpen,
+    setIsListingSuccessModalOpen,
     // Error states
     collectionError,
     setCollectionError,
@@ -192,6 +194,17 @@ function ListingContent() {
         onClose={() => setIsRemoveTagSuccessModalOpen(false)}
         title="Tag Removed Successfully"
         description="The tag has been successfully removed from the listing."
+        buttonText="Done"
+        shouldRefresh={true}
+      />
+
+      <SuccessModal
+        isOpen={isListingSuccessModalOpen}
+        onClose={() => setIsListingSuccessModalOpen(false)}
+        title="Listing Created Successfully"
+        description=""
+        secondaryMessage="Please attach the tag to your item."
+        secondaryIcon="tag"
         buttonText="Done"
         shouldRefresh={true}
       />

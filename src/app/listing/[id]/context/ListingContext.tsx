@@ -30,6 +30,8 @@ export interface ListingContextType {
   setIsCollectionSuccessModalOpen: (isOpen: boolean) => void;
   isRemoveTagSuccessModalOpen: boolean;
   setIsRemoveTagSuccessModalOpen: (isOpen: boolean) => void;
+  isListingSuccessModalOpen: boolean;
+  setIsListingSuccessModalOpen: (isOpen: boolean) => void;
   // Error states
   collectionError: string | null;
   setCollectionError: (error: string | null) => void;
@@ -63,6 +65,8 @@ export function ListingProvider({
     useState(false);
   const [isRemoveTagSuccessModalOpen, setIsRemoveTagSuccessModalOpen] =
     useState(false);
+  const [isListingSuccessModalOpen, setIsListingSuccessModalOpen] =
+    useState(false);
 
   // Error states
   const [collectionError, setCollectionError] = useState<string | null>(null);
@@ -82,6 +86,8 @@ export function ListingProvider({
     setIsCollectionSuccessModalOpen,
     isRemoveTagSuccessModalOpen,
     setIsRemoveTagSuccessModalOpen,
+    isListingSuccessModalOpen,
+    setIsListingSuccessModalOpen,
     // Error states
     collectionError,
     setCollectionError,

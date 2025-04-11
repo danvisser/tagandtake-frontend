@@ -43,6 +43,7 @@ export const API_ROUTES = {
     },
   },
   STORES: {
+    BASIC_INFO: (tagId: number) => `/tags/${tagId}/store-info/`,
     DELETE_ACCOUNT: `/store/account/delete/`,
     PROFILE: `/stores/me/profile/`,
     NOTIFICATION_SETTINGS: `/stores/me/notification-settings/`,
@@ -50,6 +51,10 @@ export const API_ROUTES = {
     PIN: `/stores/me/pin/`,
     CATEGORIES: `/stores/me/categories/`,
     CONDITIONS: `/stores/me/conditions/`,
+    PUBLIC_CATEGORIES: (storeId: number) => `/stores/${storeId}/categories/`,
+    PUBLIC_CONDITIONS: (storeId: number) => `/stores/${storeId}/conditions/`,
+    PURCHASE_TAGS: `/stores/me/purchase-tags/`,
+    LIST: `/stores/`,
     LISTINGS: {
       LIST: `/stores/me/listings/`,
       DELIST: (id: number) => `/stores/me/listings/${id}/delist/`,

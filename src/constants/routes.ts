@@ -50,6 +50,7 @@ export const Routes = {
     DETAILS: (listingId: string) => `/listing/${listingId}`,
     CHECKOUT_SUCCESS: (listingId: string) =>
       `/listing/${listingId}/checkout-success`,
+    NEW: "/listing/new",
   },
 
   // Store routes (Public)
