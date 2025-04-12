@@ -184,13 +184,12 @@ export default function ListingsNewPage() {
               Invalid Listing Request
             </CardTitle>
             <CardDescription>
-              No store tag ID was provided. Please scan a store tag to create a
+              No store tag ID was provided. Please scan a tag to create a
               listing.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Alert>
-              <AlertTitle>Missing Information</AlertTitle>
               <AlertDescription>
                 To create a listing, you need to scan a store tag first. This
                 provides the necessary information about the store where your

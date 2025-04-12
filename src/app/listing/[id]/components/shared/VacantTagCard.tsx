@@ -53,6 +53,7 @@ export default function VacantTagCard({
     store_conditions,
     store_categories,
     has_capacity,
+    min_price,
   } = listing;
 
   // Determine if guidelines should be shown
@@ -98,18 +99,18 @@ export default function VacantTagCard({
       </CardHeader>
       <CardContent className="p-4 md:p-8">
         <div className="space-y-2 mb-2">
-          <CardTitle className="text-2xl font-medium">
-            Store Listing Information
+          <CardTitle className="text-lg font-medium mb-2">
+            Listing Information:
           </CardTitle>
           <div>
-            <div className="flex flex-wrap gap-2 mb-6"></div>
+            <div className="flex flex-wrap gap-2 mb-2"></div>
           </div>
         </div>
 
         {/* Key information */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-8">
           <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-lg">
-            <CalendarDays className="h-5 w-5 text-black mt-0.5" />
+            <CalendarDays className="h-5 w-5 mt-0.5" />
             <div>
               <h3 className="font-medium">Guaranteed Display Period</h3>
               <p className="text-sm text-muted-foreground">
@@ -119,7 +120,7 @@ export default function VacantTagCard({
           </div>
 
           <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-lg">
-            <Store className="h-5 w-5 text-black mt-0.5" />
+            <Store className="h-5 w-5 mt-0.5" />
             <div>
               <h3 className="font-medium">Store Commission</h3>
               <p className="text-sm text-muted-foreground">
@@ -127,10 +128,20 @@ export default function VacantTagCard({
               </p>
             </div>
           </div>
+
+          <div className="flex items-start gap-3 p-4 bg-slate-50 rounded-lg">
+            <Tag className="h-5 w-5  mt-0.5" />
+            <div>
+              <h3 className="font-medium">Minimum Price</h3>
+              <p className="text-sm text-muted-foreground">
+                £{min_price?.toFixed(2) || "0.00"}
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Categories and Conditions - More prominent display */}
-        <div className="mb-8">
+        <div className="mb-10 mt-10">
           <h3 className="text-lg font-medium mb-2">What we accept:</h3>
           <Accordion type="single" collapsible className="w-full pl-2 pr-2">
             <AccordionItem value="conditions">
@@ -219,7 +230,7 @@ export default function VacantTagCard({
 
         {/* Refined Listing Guidelines - Only show for HOST role */}
         {showGuidelines && (
-          <div className="space-y-4 mb-6 bg-slate-50 border border-slate-200 rounded-lg p-4 md:p-5">
+          <div className="space-y-4 mb-6 bg-slate-50  rounded-lg p-4 md:p-5">
             <div className="flex items-center gap-2 mb-2">
               <Info className="h-5 w-5 text-destructive/60" />
               <h3 className="font-medium text-base">Listing Guidelines</h3>
@@ -231,13 +242,6 @@ export default function VacantTagCard({
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="h-4 w-4 text-primary/70 mt-0.5 flex-shrink-0" />
                 <span>All items must be clean.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="h-4 w-4 text-primary/70 mt-0.5 flex-shrink-0" />
-                <span>
-                  Your item must match one of the store&apos;s accepted
-                  conditions and categories shown above.
-                </span>
               </li>
               <li className="flex items-start gap-2">
                 <CheckCircle2 className="h-4 w-4 text-primary/70 mt-0.5 flex-shrink-0" />

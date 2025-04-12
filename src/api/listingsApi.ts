@@ -45,6 +45,7 @@ export interface BaseListing {
   store: number;
   store_commission: number;
   min_listing_days: number;
+  min_price: number;
   user_listing_relation: ListingRole;
   tagandtake_commission: number;
   tagandtake_flat_fee: number;
