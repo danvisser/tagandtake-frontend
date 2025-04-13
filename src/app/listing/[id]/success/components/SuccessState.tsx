@@ -74,7 +74,7 @@ export function SuccessState({ purchaseData, onGoHome }: SuccessStateProps) {
 
       {/* Action button */}
       <div className="w-full">
-        <Button variant="outline" onClick={onGoHome} className="h-11 w-full">
+        <Button onClick={onGoHome} className="h-11 w-full">
           <Home className="h-4 w-4 mr-2" />
           Return to Home
         </Button>

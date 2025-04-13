@@ -37,7 +37,7 @@ export default function ItemsNewPage() {
         price: data.price,
         condition: data.condition,
         category: data.category,
-        image: data.image,
+        images: data.images,
       });
 
       if (!itemResponse.success || !itemResponse.data) {

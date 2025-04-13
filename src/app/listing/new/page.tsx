@@ -2,24 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { createItem } from "@src/api/itemsApi";
-import { createListing } from "@src/api/listingsApi";
+import { createItemAndListing } from "@src/api/listingsApi";
 import { getBasicStoreInfo } from "@src/api/storeApi";
 import { Button } from "@src/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@src/components/ui/dialog";
-import { Alert, AlertDescription, AlertTitle } from "@src/components/ui/alert";
-import {
-  CheckCircle,
-  XCircle,
-  Store,
-} from "lucide-react";
+import { Alert, AlertDescription } from "@src/components/ui/alert";
+import { XCircle, Store } from "lucide-react";
 import ItemForm, {
   ItemFormData,
 } from "@src/app/member/items/components/ItemForm";
@@ -30,20 +17,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@src/components/ui/card";
+import { useToast } from "@src/hooks/use-toast";
+import { handleListingError } from "@src/app/listing/[id]/utils/listingErrorHandler";
 
 export default function ListingsNewPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { toast } = useToast();
   const tagId = searchParams.get("tag_id");
   const storeName = searchParams.get("store_name");
   const storeCommission = searchParams.get("commission");
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [createdItemId, setCreatedItemId] = useState<number | null>(null);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
-  const [listingError, setListingError] = useState<string | null>(null);
   const [storeInfo, setStoreInfo] = useState<{
     store_name: string;
     commission: number;
@@ -94,26 +80,31 @@ export default function ListingsNewPage() {
   const handleSubmit = async (data: ItemFormData) => {
     setIsSubmitting(true);
     setErrors({});
-    setListingError(null);
 
     try {
-      // Create the item
-      const itemResponse = await createItem({
+      // Create the item and listing in one call
+      const response = await createItemAndListing({
         name: data.name,
         description: data.description,
         size: data.size,
         price: data.price,
         condition: data.condition,
         category: data.category,
-        image: data.image,
+        images: data.images,
+        tag_id: Number(tagId),
       });
 
-      if (!itemResponse.success || !itemResponse.data) {
-        // Convert ItemError to Record<string, string[]>
+      if (!response.success) {
+        // Handle API validation errors with the utility
+        handleListingError(response.error || null);
+
+        // Also set form errors for field-specific validation
         const errorObj: Record<string, string[]> = {};
-        if (itemResponse.error) {
-          Object.entries(itemResponse.error).forEach(([key, value]) => {
-            errorObj[key] = value;
+        if (response.error) {
+          Object.entries(response.error).forEach(([key, value]) => {
+            if (Array.isArray(value)) {
+              errorObj[key] = value;
+            }
           });
         }
         setErrors(errorObj);
@@ -121,57 +112,19 @@ export default function ListingsNewPage() {
         return;
       }
 
-      const createdItem = itemResponse.data;
-      setCreatedItemId(createdItem.id);
-
-      // Create the listing
-      if (tagId) {
-        const listingResponse = await createListing({
-          item_id: createdItem.id,
-          tag_id: Number(tagId),
-        });
-
-        if (!listingResponse.success) {
-          setListingError(
-            "Item was created but listing failed. You can find your item in your wardrobe."
-          );
-        }
-      }
-
-      // Show success message
-      setSuccessMessage(
-        tagId && !listingError
-          ? "Item created and listed successfully!"
-          : "Item created successfully!"
-      );
-      setShowSuccessModal(true);
+      // Redirect to the listing page with a query parameter to trigger the success modal
+      router.push(`/listing/${tagId}?listing_created=true`);
     } catch (error) {
-      console.error("Error creating item:", error);
-      setErrors({
-        non_field_errors: ["An unexpected error occurred. Please try again."],
+      console.error("Error creating item and listing:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
       });
     } finally {
       setIsSubmitting(false);
     }
   };
-
-  // Navigate to item page
-  const navigateToItem = () => {
-    if (createdItemId) {
-      router.push(`/items/${createdItemId}`);
-    }
-  };
-
-  // Navigate to new item page
-  const navigateToNewItem = () => {
-    router.push("/items/new");
-  };
-
-  // Extract category and condition IDs from store info
-  const availableCategoryIds =
-    storeInfo?.categories?.map((cat) => cat.id) || [];
-  const availableConditionIds =
-    storeInfo?.conditions?.map((cond) => cond.id) || [];
 
   // If no tagId is provided, show a message
   if (!tagId) {
@@ -261,7 +214,9 @@ export default function ListingsNewPage() {
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">Guaranteed Display Period:</span>
+              <span className="text-sm font-medium">
+                Guaranteed Display Period:
+              </span>
               <span className="text-sm">
                 {storeInfo?.min_listing_days || "21"} days
               </span>
@@ -279,43 +234,11 @@ export default function ListingsNewPage() {
         isSubmitting={isSubmitting}
         errors={errors}
         submitButtonText="Create and List Item"
-        availableCategories={availableCategoryIds}
-        availableConditions={availableConditionIds}
+        availableCategories={storeInfo?.categories?.map((cat) => cat.id) || []}
+        availableConditions={
+          storeInfo?.conditions?.map((cond) => cond.id) || []
+        }
       />
-
-      {/* Success Modal */}
-      <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-green-500" />
-              Success
-            </DialogTitle>
-            <DialogDescription>{successMessage}</DialogDescription>
-          </DialogHeader>
-
-          {listingError && (
-            <Alert variant="destructive" className="mt-4">
-              <XCircle className="h-4 w-4" />
-              <AlertTitle>Warning</AlertTitle>
-              <AlertDescription>{listingError}</AlertDescription>
-            </Alert>
-          )}
-
-          <DialogFooter className="flex flex-col sm:flex-row gap-2 mt-4">
-            <Button
-              variant="outline"
-              onClick={navigateToNewItem}
-              className="w-full sm:w-auto"
-            >
-              Add Another Item
-            </Button>
-            <Button onClick={navigateToItem} className="w-full sm:w-auto">
-              View Item
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

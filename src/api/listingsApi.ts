@@ -3,6 +3,8 @@ import { API_ROUTES } from "@src/constants/apiRoutes";
 import axios from "axios";
 import { Item } from "./itemsApi";
 import { ListingRole } from "@src/types/roles";
+import { ItemCreateData } from "./itemsApi";
+import { appendItemFormData } from "@src/lib/formUtils";
 
 // Enum for recall reason types
 export enum RecallReasonType {
@@ -100,14 +102,7 @@ export interface CreateListingData {
 }
 
 // Interface for creating an item and listing together
-export interface CreateItemAndListingData {
-  name: string;
-  description?: string;
-  size?: string;
-  price: number;
-  condition: number;
-  category: number;
-  image: File;
+export interface CreateItemAndListingData extends ItemCreateData {
   tag_id: number;
 }
 
@@ -178,7 +173,7 @@ export const createListing = async (
   }
 };
 
-// Create an item and listing in one request
+// Create an item and listing together
 export const createItemAndListing = async (
   formData: CreateItemAndListingData
 ): Promise<{
@@ -188,18 +183,16 @@ export const createItemAndListing = async (
 }> => {
   try {
     const form = new FormData();
-    form.append("name", formData.name);
-    if (formData.description) form.append("description", formData.description);
-    if (formData.size) form.append("size", formData.size);
-    form.append("price", formData.price.toString());
-    form.append("condition", formData.condition.toString());
-    form.append("category", formData.category.toString());
-    form.append("image", formData.image);
+
+    // Use the utility function to append item data
+    appendItemFormData(form, formData);
+
+    // Append the tag_id
     form.append("tag_id", formData.tag_id.toString());
 
     const { data } = await fetchClient({
       method: "POST",
-      url: API_ROUTES.MEMBERS.ITEM_LISTINGS,
+      url: API_ROUTES.MEMBERS.LISTINGS.CREATE_WITH_ITEM,
       data: form,
       headers: {
         "Content-Type": "multipart/form-data",
@@ -212,11 +205,15 @@ export const createItemAndListing = async (
     };
   } catch (error: unknown) {
     console.error("Create item and listing error:", error);
-    if (axios.isAxiosError(error) && error.response?.data) {
-      return {
-        success: false,
-        error: error.response.data as ListingError,
-      };
+    if (axios.isAxiosError(error)) {
+      if (error.response?.data) {
+        // Ensure the error data matches the ListingError interface
+        const errorData = error.response.data as ListingError;
+        return {
+          success: false,
+          error: errorData,
+        };
+      }
     }
     throw error;
   }

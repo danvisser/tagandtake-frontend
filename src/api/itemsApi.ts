@@ -1,6 +1,10 @@
 import { fetchClient } from "@src/lib/fetchClient";
 import { API_ROUTES } from "@src/constants/apiRoutes";
 import axios from "axios";
+import {
+  appendItemFormData,
+  appendItemUpdateFormData,
+} from "@src/lib/formUtils";
 
 // Types for Item Category
 export interface ItemCategory {
@@ -71,7 +75,7 @@ export interface ItemCreateData {
   price: number;
   condition: number;
   category: number;
-  image: File;
+  images: File[];
 }
 
 // Types for Item Update
@@ -82,7 +86,7 @@ export interface ItemUpdateData {
   price?: number;
   condition?: number;
   category?: number;
-  image?: File;
+  images?: File[];
 }
 
 // Error types
@@ -196,14 +200,9 @@ export const createItem = async (
   try {
     // Create FormData for file upload
     const formData = new FormData();
-    formData.append("name", itemData.name);
-    if (itemData.description)
-      formData.append("description", itemData.description);
-    if (itemData.size) formData.append("size", itemData.size);
-    formData.append("price", itemData.price.toString());
-    formData.append("condition", itemData.condition.toString());
-    formData.append("category", itemData.category.toString());
-    formData.append("image", itemData.image);
+
+    // Use the utility function to append item data
+    appendItemFormData(formData, itemData);
 
     const { data } = await fetchClient({
       method: "POST",
@@ -272,16 +271,9 @@ export const updateItem = async (
   try {
     // Create FormData for file upload
     const formData = new FormData();
-    if (itemData.name) formData.append("name", itemData.name);
-    if (itemData.description)
-      formData.append("description", itemData.description);
-    if (itemData.size) formData.append("size", itemData.size);
-    if (itemData.price) formData.append("price", itemData.price.toString());
-    if (itemData.condition)
-      formData.append("condition", itemData.condition.toString());
-    if (itemData.category)
-      formData.append("category", itemData.category.toString());
-    if (itemData.image) formData.append("image", itemData.image);
+
+    // Use the utility function to append item update data
+    appendItemUpdateFormData(formData, itemData);
 
     const { data } = await fetchClient({
       method: "PATCH",

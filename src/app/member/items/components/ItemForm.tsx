@@ -101,7 +101,7 @@ export interface ItemFormData {
   price: number;
   condition: number;
   category: number;
-  image: File;
+  images: File[];
 }
 
 interface ItemFormProps {
@@ -236,7 +236,7 @@ export default function ItemForm({
         price: Number(price),
         condition: Number(condition),
         category: Number(category),
-        image: images[0], // API currently only supports one image
+        images: images,
       });
     } catch (error) {
       console.error("Error submitting form:", error);

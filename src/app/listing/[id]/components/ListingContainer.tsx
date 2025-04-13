@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useListingData } from "@src/app/listing/[id]/hooks/useListingData";
 import { useListingActions } from "@src/app/listing/[id]/hooks/useListingActions";
 import WithListingState from "@src/app/listing/[id]/components/withListingState";
@@ -15,10 +15,12 @@ import ListItemModal from "@src/app/listing/[id]/components/modals/ListItemModal
 import SuccessModal from "@src/app/listing/[id]/components/modals/SuccessModal";
 import RemoveTagConfirmationModal from "@src/app/listing/[id]/components/modals/RemoveTagConfirmationModal";
 import TagNotFound from "@src/app/listing/[id]/components/states/TagNotFound";
+import { useEffect } from "react";
 
 // Inner component that uses the context
 function ListingContent() {
   const { id } = useParams();
+  const searchParams = useSearchParams();
   const listingId = typeof id === "string" ? parseInt(id) : 0;
   const { listing, userRole, isLoading, error } = useListingData();
   const {
@@ -42,6 +44,19 @@ function ListingContent() {
     removeTagError,
     setRemoveTagError,
   } = useListingContext();
+
+  // Check for listing_created query parameter
+  useEffect(() => {
+    const listingCreated = searchParams.get("listing_created");
+    if (listingCreated === "true") {
+      setIsListingSuccessModalOpen(true);
+
+      // Clean up the URL by removing the query parameter
+      const url = new URL(window.location.href);
+      url.searchParams.delete("listing_created");
+      window.history.replaceState({}, "", url.toString());
+    }
+  }, [searchParams, setIsListingSuccessModalOpen]);
 
   // Use the actions from the context
   const actions = useListingContext().actions;
