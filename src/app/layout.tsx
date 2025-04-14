@@ -1,3 +1,5 @@
+"use client";
+
 import "./globals.css";
 import { AuthProvider } from "@src/providers/AuthProvider";
 import HeaderWithAuth from "@src/components/HeaderWithAuth";
