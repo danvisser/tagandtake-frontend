@@ -7,6 +7,7 @@ import { resendActivation } from "@src/api/authApi";
 import Link from "next/link";
 import { Routes } from "@src/constants/routes";
 import axios from "axios";
+import LoadingSpinner from "@src/components/LoadingSpinner";
 
 function ResendActivationContent() {
   const searchParams = useSearchParams();
@@ -120,10 +121,11 @@ function ResendActivationContent() {
               </div>
 
               <Button disabled={isLoading} type="submit" className="w-full">
-                {isLoading && (
-                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent" />
+                {isLoading ? (
+                  <LoadingSpinner size="sm" text="Sending..." />
+                ) : (
+                  "Send Activation Email"
                 )}
-                Send Activation Email
               </Button>
 
               <div className="text-center">
@@ -151,9 +153,7 @@ export default function Page() {
             <h2 className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
               Loading...
             </h2>
-            <div className="flex justify-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-            </div>
+            <LoadingSpinner size="md" />
           </div>
         </div>
       }

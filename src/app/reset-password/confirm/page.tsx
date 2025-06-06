@@ -17,6 +17,7 @@ import { confirmPasswordReset } from "@src/api/authApi";
 import Link from "next/link";
 import { Routes } from "@src/constants/routes";
 import { AxiosError } from "axios";
+import LoadingSpinner from "@src/components/LoadingSpinner";
 
 enum ResetStatus {
   IDLE = "idle",
@@ -232,7 +233,11 @@ function ConfirmResetPasswordContent() {
               )}
 
               <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Resetting..." : "Reset Password"}
+                {isSubmitting ? (
+                  <LoadingSpinner size="sm" text="Resetting..." />
+                ) : (
+                  "Reset Password"
+                )}
               </Button>
             </form>
           )}
@@ -270,9 +275,7 @@ export default function ConfirmResetPasswordPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col items-center space-y-4">
-              <div className="flex justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-              </div>
+              <LoadingSpinner size="md" />
             </CardContent>
           </Card>
         </div>

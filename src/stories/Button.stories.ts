@@ -71,6 +71,26 @@ export const Secondary: Story = {
   },
 };
 
+// Destructive inverse button story
+export const DestructiveInverse: Story = {
+  args: {
+    variant: "destructive-inverse",
+    size: "default",
+    asChild: false,
+    children: "Destructive Inverse Button",
+  },
+};
+
+// Secondary button story
+export const SecondaryInverse: Story = {
+  args: {
+    variant: "secondary-inverse",
+    size: "default",
+    asChild: false,
+    children: "Secondary Inverse Button",
+  },
+};
+
 // Ghost button story
 export const Ghost: Story = {
   args: {

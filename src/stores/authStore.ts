@@ -1,16 +1,17 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { fetchUserSession, login, logout } from "@src/api/authApi";
+import { setAccessToken } from "@src/lib/fetchClient";
 import axios from "axios";
 import { UserRole } from "@src/types/roles";
-
-// Check if window is defined (browser) or not (server)
-const isBrowser = typeof window !== "undefined";
 
 interface AuthState {
   isAuthenticated: boolean;
   role: UserRole | null;
-  setAuth: (role: UserRole | null) => void;
+  accessToken: string | null;
+  initializationStatus: "idle" | "loading" | "completed" | "error";
+  error: Error | null;
+  setAuth: (role: UserRole | null, token: string | null) => void;
   login: (
     username: string,
     password: string
@@ -24,12 +25,50 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       isAuthenticated: false,
       role: null,
+      accessToken: null,
+      initializationStatus: "idle",
+      error: null,
 
-      setAuth: (role) => {
-        set({ role, isAuthenticated: !!role });
-        // Dispatch storage event to sync across tabs (only in browser)
-        if (isBrowser) {
+      setAuth: (role, token) => {
+        setAccessToken(token);
+        set({
+          role,
+          accessToken: token,
+          isAuthenticated: !!role,
+          initializationStatus: "completed",
+        });
+        if (typeof window !== "undefined") {
           window.dispatchEvent(new Event("storage"));
+        }
+      },
+
+      initializeAuth: async () => {
+        // Don't re-initialize if already completed
+        if (get().initializationStatus === "completed") {
+          return;
+        }
+
+        set({ initializationStatus: "loading", error: null });
+
+        try {
+          const session = await fetchUserSession();
+          set({
+            role: session.user.role,
+            accessToken: session.access,
+            isAuthenticated: !!session.user.role,
+            initializationStatus: "completed",
+          });
+        } catch (error) {
+          set({
+            isAuthenticated: false,
+            role: null,
+            accessToken: null,
+            initializationStatus: "error",
+            error:
+              error instanceof Error
+                ? error
+                : new Error("Authentication failed"),
+          });
         }
       },
 
@@ -40,85 +79,70 @@ export const useAuthStore = create<AuthState>()(
             password: password,
           });
 
+          setAccessToken(response.access);
           set({
-            isAuthenticated: !!response.role,
-            role: response.role,
+            isAuthenticated: !!response.user.role,
+            role: response.user.role,
+            accessToken: response.access,
+            initializationStatus: "completed",
+            error: null,
           });
 
-          // Sync across tabs (only in browser)
-          if (isBrowser) {
+          if (typeof window !== "undefined") {
             window.dispatchEvent(new Event("storage"));
           }
-
-          return { success: true, role: response.role };
+          return { success: true, role: response.user.role };
         } catch (error) {
           console.error("Login error:", error);
-          // Extract the error message from the Axios error response
           let errorMessage = "Login failed";
 
           if (axios.isAxiosError(error) && error.response?.data) {
-            // Try to get the error message from the response data
             errorMessage =
               error.response.data.non_field_errors || "Invalid credentials";
           }
 
+          set({ error: new Error(errorMessage) });
           return { success: false, error: errorMessage };
         }
       },
 
       logout: async () => {
         try {
-          // First update the local state
-          set({ isAuthenticated: false, role: null });
-
-          // Then attempt the API call, but don't depend on its success
-          await logout().catch((error) => {
-            console.error("Logout API error:", error);
-            // This is non-critical, we've already updated local state
+          await logout();
+          // Clear the token
+          setAccessToken(null);
+          set({
+            isAuthenticated: false,
+            role: null,
+            accessToken: null,
+            initializationStatus: "idle",
+            error: null,
           });
-
-          // Sync across tabs (only in browser)
-          if (isBrowser) {
+          if (typeof window !== "undefined") {
             window.dispatchEvent(new Event("storage"));
           }
         } catch (error) {
           console.error("Logout error:", error);
-        }
-      },
-
-      initializeAuth: async () => {
-        const { isAuthenticated, role } = get();
-
-        // If we already have auth state from localStorage, trust it and don't make an API call
-        if (isAuthenticated && role) {
-          return;
-        }
-
-        // Only fetch from API if we don't have state in localStorage
-        try {
-          const session = await fetchUserSession();
           set({
-            role: session.role,
-            isAuthenticated: !!session.role,
+            error: error instanceof Error ? error : new Error("Logout failed"),
           });
-        } catch {
-          set({ isAuthenticated: false, role: null });
         }
       },
     }),
     {
       name: "auth-storage",
-      // Only persist the role and authentication status, not tokens
       partialize: (state) => ({
         role: state.role,
         isAuthenticated: state.isAuthenticated,
+        accessToken: state.accessToken,
+        initializationStatus: state.initializationStatus,
       }),
     }
   )
 );
 
-// Add the storage event listener for cross-tab sync only in browser environments
-if (isBrowser) {
+// Add the storage event listener for cross-tab sync
+if (typeof window !== "undefined") {
   window.addEventListener("storage", () => {
     const storedState = JSON.parse(
       localStorage.getItem("auth-storage") || "{}"
@@ -127,6 +151,7 @@ if (isBrowser) {
       useAuthStore.setState({
         role: storedState.state.role,
         isAuthenticated: storedState.state.isAuthenticated,
+        accessToken: storedState.state.accessToken,
       });
     }
   });

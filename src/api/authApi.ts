@@ -1,61 +1,61 @@
 import { authRequest } from "@src/lib/fetchClient";
 import { API_ROUTES } from "@src/constants/apiRoutes";
-import { setAccessToken } from "@src/lib/fetchClient";
 import axios from "axios";
 import { UserRole } from "@src/types/roles";
 
-export interface AuthResponse {
-  role: UserRole | null;
-  access?: string;
-  user?: {
-    role: UserRole;
+export interface AuthSuccessResponse {
+  access: string;
+  user: {
+    role: UserRole | null;
   };
 }
 
-export const fetchUserSession = async (): Promise<AuthResponse> => {
+export interface FieldError {
+  [field: string]: string[];
+}
+
+export interface AuthErrorResponse {
+  non_field_errors?: string[];
+  detail?: string;
+  error?: string;
+  [key: string]: string[] | string | undefined;
+}
+
+export const fetchUserSession = async (): Promise<AuthSuccessResponse> => {
   try {
     const { data } = await authRequest({
       method: "GET",
       url: API_ROUTES.AUTH.STATUS,
     });
     return {
-      role: data.role as UserRole,
+      access: data.access,
+      user: { role: data.user.role as UserRole },
     };
   } catch {
-    return { role: null };
+    return {
+      access: "",
+      user: { role: null },
+    };
   }
 };
 
 export const login = async (credentials: {
   username: string;
   password: string;
-}): Promise<AuthResponse> => {
+}): Promise<AuthSuccessResponse> => {
   const { data } = await authRequest({
     method: "POST",
     url: API_ROUTES.AUTH.LOGIN,
     data: credentials,
   });
-
-  if (data.access) {
-    setAccessToken(data.access);
-  }
-
-  return {
-    access: data.access,
-    role: (data.user?.role as UserRole) || null,
-  };
+  return data;
 };
 
-export const refreshAccessToken = async (): Promise<AuthResponse> => {
+export const refreshAccessToken = async (): Promise<AuthSuccessResponse> => {
   const { data } = await authRequest({
     method: "POST",
     url: API_ROUTES.AUTH.REFRESH,
   });
-
-  if (data.access) {
-    setAccessToken(data.access);
-  }
-
   return data;
 };
 
@@ -64,8 +64,6 @@ export const logout = async (): Promise<void> => {
     method: "POST",
     url: API_ROUTES.AUTH.LOGOUT,
   });
-
-  setAccessToken(null);
 };
 
 export const resendActivation = async (email: string): Promise<void> => {
@@ -79,14 +77,15 @@ export const resendActivation = async (email: string): Promise<void> => {
 export const activateAccount = async (
   uuid: string,
   token: string
-): Promise<AuthResponse> => {
+): Promise<AuthSuccessResponse> => {
   try {
     const { data } = await authRequest({
       method: "GET",
       url: API_ROUTES.ACTIVATION.ACTIVATE(uuid, token),
     });
     return {
-      role: (data.role as UserRole) || null,
+      access: data.access,
+      user: { role: data.user.role as UserRole },
     };
   } catch (error: unknown) {
     console.error("Account activation error:", error);

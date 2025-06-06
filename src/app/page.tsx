@@ -3,20 +3,26 @@
 import * as React from "react";
 import Link from "next/link";
 import { Button } from "@src/components/ui/button";
-import { useAuthStore } from "@src/stores/authStore";
 import { Routes } from "@src/constants/routes";
 import { UserRole, UserRoles } from "@src/types/roles";
 import Image from "next/image";
+import { useAuth } from "@src/providers/AuthProvider";
+import LoadingUI from "@src/components/LoadingUI";
 
 type PageVariant = "public" | UserRole;
 
 export default function HomePage() {
-  const { isAuthenticated, role } = useAuthStore();
+  const { isAuthenticated, role, isLoading } = useAuth();
 
   const variant = React.useMemo((): PageVariant => {
     if (!isAuthenticated) return "public";
     return role || "public";
   }, [isAuthenticated, role]);
+
+  // Show loading state while auth is being checked
+  if (isLoading) {
+    return <LoadingUI />;
+  }
 
   if (variant === UserRoles.MEMBER) {
     return <MemberHomePage />;
@@ -46,20 +52,20 @@ function PublicHomePage() {
       {/* Content section - full width on mobile, half width and centered on desktop */}
       <div className="w-full lg:w-1/2 space-y-6 text-center flex flex-col items-center justify-center px-4 py-8 md:py-12 lg:min-h-screen">
         <h1 className="text-2xl font-semibold md:text-3xl lg:text-4xl flex flex-col mt-4 lg:mt-0">
-          <span className="mb-2">Clear space, clear mind</span>
-          <span className="text-lg font-medium md:text-xl lg:text-2xl text-muted-foreground">
+          <span className="mb-8">Clear space, clear mind</span>
+          <span className="text-lg mb-6 font-light md:text-xl lg:text-2xl text-muted-foreground">
             Sell your pre-loved clothes on the high street
           </span>
         </h1>
 
         <div className="flex flex-col gap-4 items-center w-full max-w-xs">
           <Link href={Routes.LOGIN} className="w-full">
-            <Button variant="outline" className="w-full">
+            <Button variant="outline" className="w-3/4">
               Login
             </Button>
           </Link>
-          <div className="w-full h-px bg-border my-2" />
-          <Link href={Routes.SIGNUP.MEMBER} className="w-full">
+          <div className="w-full h-px bg-slate-300 " />
+          <Link href={Routes.SIGNUP.MEMBER} className="w-3/4">
             <Button className="w-full">Signup</Button>
           </Link>
         </div>
@@ -77,7 +83,7 @@ function PublicHomePage() {
         </p>
 
         <div className="flex flex-col md:flex-row items-center justify-center gap-3 mt-4 w-full max-w-xs md:max-w-md">
-          <h2 className="text-base md:text-lg font-semibold mb-2 md:mb-0">
+          <h2 className="text-base md:text-lg font-normal mb-2 md:mb-0">
             Become a pre-loved host:
           </h2>
           <Link href={Routes.SIGNUP.STORE} className="w-full md:w-auto">

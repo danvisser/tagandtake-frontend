@@ -6,16 +6,20 @@ import { Routes } from "@src/constants/routes";
 export const handleSessionExpiration = () => {
   // 1. Clear tokens
   setAccessToken(null);
-  
+
   // 2. Update auth state
-  useAuthStore.getState().setAuth(null);
-  
+  useAuthStore.getState().setAuth(null, null);
+
   // 3. Save current location for return after login
   const currentPath = window.location.pathname;
-  if (currentPath && currentPath !== Routes.LOGIN && !currentPath.includes('/auth/')) {
-    sessionStorage.setItem('returnPath', currentPath);
+  if (
+    currentPath &&
+    currentPath !== Routes.LOGIN &&
+    !currentPath.includes("/auth/")
+  ) {
+    sessionStorage.setItem("returnPath", currentPath);
   }
-  
+
   // 4. Dispatch event for UI notification
-  window.dispatchEvent(new Event('session-expired'));
+  window.dispatchEvent(new Event("session-expired"));
 };

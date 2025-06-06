@@ -30,6 +30,8 @@ export function SessionExpiredModal() {
 
   const handleLogin = () => {
     setShowModal(false);
+    // Store the current path as the return path
+    sessionStorage.setItem("returnPath", window.location.pathname);
     router.push(Routes.LOGIN);
   };
 

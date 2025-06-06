@@ -8,18 +8,19 @@ import {
   DropdownMenuSeparator,
 } from "@src/components/ui/dropdown-menu";
 import { Routes } from "@src/constants/routes";
-import { useAuthStore } from "@src/stores/authStore";
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { UserRole, UserRoles } from "@src/types/roles";
+import { useAuth } from "@src/providers/AuthProvider";
 
 export default function Header({ variant }: { variant: "public" | UserRole }) {
-  const logout = useAuthStore((state) => state.logout);
+  const { logout } = useAuth();
   const router = useRouter();
 
   const handleLogout = useCallback(async () => {
     await logout();
     router.push(Routes.HOME);
+    router.refresh();
   }, [logout, router]);
 
   return (

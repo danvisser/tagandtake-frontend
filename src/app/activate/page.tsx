@@ -14,6 +14,7 @@ import {
 } from "@src/components/ui/card";
 import { AlertCircle, CheckCircle } from "lucide-react";
 import { UserRole, UserRoles } from "@src/types/roles";
+import LoadingSpinner from "@src/components/LoadingSpinner";
 
 enum ActivationStatus {
   LOADING = "loading",
@@ -45,8 +46,8 @@ function ActivateContent() {
         const response = await activateAccount(uuid, token);
         setStatus(ActivationStatus.SUCCESS);
 
-        if (response && response.role) {
-          setUserRole(response.role);
+        if (response && response.user.role) {
+          setUserRole(response.user.role);
         }
       } catch (error) {
         setStatus(ActivationStatus.ERROR);
@@ -120,11 +121,7 @@ function ActivateContent() {
               </p>
             </>
           )}
-          {status === ActivationStatus.LOADING && (
-            <div className="flex justify-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-            </div>
-          )}
+          {status === ActivationStatus.LOADING && <LoadingSpinner size="md" />}
         </CardContent>
         <CardFooter className="flex justify-center">
           {status !== ActivationStatus.LOADING && (
@@ -146,9 +143,7 @@ export default function ActivatePage() {
               <CardTitle className="text-center">Loading...</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col items-center space-y-4">
-              <div className="flex justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-              </div>
+              <LoadingSpinner size="md" />
             </CardContent>
           </Card>
         </div>

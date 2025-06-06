@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import MemberSignupForm from "@src/components/MemberSignupForm";
+import MemberSignupForm from "@src/app/signup/member/components/MemberSignupForm";
 import {
   signupMember,
-  SignupCredentials,
-  SignupError,
-} from "@src/api/singupApi";
+  MemberSignupCredentials,
+  MemberSignupError,
+} from "@src/api/signupApi";
 import { CheckCircle, LogIn } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@src/components/ui/alert";
 import { Routes } from "@src/constants/routes";
@@ -14,12 +14,12 @@ import { Button } from "@src/components/ui/button";
 import { useRouter } from "next/navigation";
 
 export default function MemberSignupPage() {
-  const [errors, setErrors] = useState<SignupError | null>(null);
+  const [errors, setErrors] = useState<MemberSignupError | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const router = useRouter();
 
-  const handleSignup = async (credentials: SignupCredentials) => {
+  const handleMemberSignup = async (credentials: MemberSignupCredentials) => {
     try {
       setErrors(null);
       const result = await signupMember(credentials);
@@ -31,7 +31,7 @@ export default function MemberSignupPage() {
         setErrors(result.error);
       }
     } catch (error) {
-      console.error("Signup failed:", error);
+      console.error("Member signup failed:", error);
       setErrors({
         non_field_errors: [
           "An unexpected error occurred. Please try again later.",
@@ -79,12 +79,24 @@ export default function MemberSignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen justify-center items-center w-full md:px-4">
-      <div className="w-full max-w-md flex px-4 flex-col space-y-6">
-        <h2 className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
-          Create your account
-        </h2>
-        <MemberSignupForm onSubmit={handleSignup} errors={errors} />
+    <div className="flex flex-col w-full min-h-screen">
+      {/* Fixed header section */}
+      <div className="w-full py-12 bg-background">
+        <div className="container max-w-md mx-auto px-4">
+          <h2 className="text-2xl font-medium tracking-tight md:text-3xl text-center">
+            Sign up with email
+          </h2>
+          <p className="text-center text-muted-foreground mt-2">
+            Once singed up, scan a tag to list your item.
+          </p>
+        </div>
+      </div>
+
+      {/* Scrollable form section */}
+      <div className="flex-1 w-full">
+        <div className="container max-w-md mx-auto px-4 py-4">
+          <MemberSignupForm onSubmit={handleMemberSignup} errors={errors} />
+        </div>
       </div>
     </div>
   );

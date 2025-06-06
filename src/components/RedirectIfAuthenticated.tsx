@@ -1,6 +1,5 @@
 "use client";
 
-import { useAuthStore } from "@src/stores/authStore";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LogOut } from "lucide-react";
@@ -8,42 +7,31 @@ import { Card, CardContent } from "@src/components/ui/card";
 import { Button } from "@src/components/ui/button";
 import { UserRoles } from "@src/types/roles";
 import { Routes } from "@src/constants/routes";
+import { useAuth } from "@src/providers/AuthProvider";
 
 export default function RedirectIfAuthenticated({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { role, logout } = useAuthStore();
+  const { role, logout, isAuthenticated, isLoading, error } = useAuth();
   const router = useRouter();
   const [showUI, setShowUI] = useState<
     "loading" | "authenticated" | "unauthenticated"
   >("loading");
 
   useEffect(() => {
-    // Check if we're in a browser environment
-    if (typeof window !== "undefined") {
-      // Get auth state from localStorage directly
-      const authData = localStorage.getItem("auth-storage");
-      if (authData) {
-        try {
-          const parsedData = JSON.parse(authData);
-          if (parsedData.state?.isAuthenticated) {
-            setShowUI("authenticated");
-            return;
-          }
-        } catch (e) {
-          console.error("Error parsing auth data:", e);
-        }
-      }
-
-      // If we get here, user is not authenticated
-      setShowUI("unauthenticated");
+    if (error) {
+      console.error("Auth error in RedirectIfAuthenticated:", error);
     }
-  }, []);
+
+    if (!isLoading) {
+      setShowUI(isAuthenticated ? "authenticated" : "unauthenticated");
+    }
+  }, [isAuthenticated, isLoading, error]);
 
   // Show nothing during initial check
-  if (showUI === "loading") {
+  if (showUI === "loading" || isLoading) {
     return <div className="min-h-screen" />;
   }
 

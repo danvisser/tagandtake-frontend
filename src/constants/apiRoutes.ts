@@ -32,8 +32,10 @@ export const API_ROUTES = {
     },
     LISTINGS: {
       CREATE: `/members/me/listings/`,
+      CREATE_WITH_ITEM: `/members/me/listings/with-item/`,
       DETAILS: (id: number) => `/listings/${id}/`,
       CHECK_ROLE: (id: number) => `/listings/${id}/check-role/`,
+      CHECK_TAG_AVAILABILITY: (tagId: number) => `/tags/${tagId}/availability/`,
     },
     ITEM_LISTINGS: `/members/me/items-listings/`,
     RECALLED_LISTINGS: {
@@ -42,6 +44,7 @@ export const API_ROUTES = {
     },
   },
   STORES: {
+    BASIC_INFO: (tagId: number) => `/tags/${tagId}/store-info/`,
     DELETE_ACCOUNT: `/store/account/delete/`,
     PROFILE: `/stores/me/profile/`,
     NOTIFICATION_SETTINGS: `/stores/me/notification-settings/`,
@@ -49,6 +52,10 @@ export const API_ROUTES = {
     PIN: `/stores/me/pin/`,
     CATEGORIES: `/stores/me/categories/`,
     CONDITIONS: `/stores/me/conditions/`,
+    PUBLIC_CATEGORIES: (storeId: number) => `/stores/${storeId}/categories/`,
+    PUBLIC_CONDITIONS: (storeId: number) => `/stores/${storeId}/conditions/`,
+    PURCHASE_TAGS: `/stores/me/purchase-tags/`,
+    LIST: `/stores/`,
     LISTINGS: {
       LIST: `/stores/me/listings/`,
       DELIST: (id: number) => `/stores/me/listings/${id}/delist/`,
@@ -58,6 +65,15 @@ export const API_ROUTES = {
     RECALLED_LISTINGS: {
       LIST: `/stores/me/recalled-listings/`,
       COLLECT: (id: number) => `/stores/me/recalled-listings/${id}/collect/`,
+    },
+    ABANDONED_LISTINGS: {
+      LIST: `/stores/me/abandoned-listings/`,
+      REMOVE_TAG: (id: number) =>
+        `/stores/me/abandoned-listings/${id}/remove-tag/`,
+    },
+    SOLD_LISTINGS: {
+      LIST: `/stores/me/sold-listings/`,
+      REMOVE_TAG: (id: number) => `/stores/me/sold-listings/${id}/remove-tag/`,
     },
   },
   CHECKOUT: {
@@ -69,18 +85,21 @@ export const API_ROUTES = {
     CATEGORIES: `/items/categories/`,
     CONDITIONS: `/items/conditions/`,
   },
-  PAYMENT: {
-    ACCOUNTS: {
-      MANAGEMENT: `/payment-accounts/management/`,
-      NOTIFICATIONS: `/payment-accounts/notifications/`,
-      ONBOARDING: `/payment-accounts/onboarding/`,
-      PAYMENTS: `/payment-accounts/payments/`,
-      PAYOUTS: `/payment-accounts/payouts/`,
-      STATUS: `/payment-accounts/status/`,
-    },
+  PAYMENTS: {
+    ACCOUNT_STATUS: `/accounts/status/`,
+    ONBOARDING: `/accounts/onboarding/`,
+    MANAGEMENT: `/accounts/management/`,
+    PAYOUTS: `/accounts/payouts/`,
+    CHECKOUT_ITEM: `/checkout/item/`,
+    CHECKOUT_SUPPLIES: `/checkout/supplies/`,
+    ITEM_PURCHASED: `/checkout/purchased-item/`,
+    SUPPLY_PURCHASED: `/checkout/purchased-supply/`,
   },
   STRIPE: {
     CONNECT_WEBHOOK: `/stripe/connect-webhook/`,
     PLATFORM_WEBHOOK: `/stripe/platform-webhook/`,
+  },
+  CONTACT: {
+    SUPPORT: "/support/",
   },
 };

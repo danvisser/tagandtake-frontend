@@ -6,14 +6,18 @@ import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import { Routes } from "@src/constants/routes";
-import { SignupCredentials, SignupError } from "@src/api/singupApi";
+import { MemberSignupCredentials, MemberSignupError } from "@src/api/signupApi";
+import LoadingSpinner from "@src/components/LoadingSpinner";
 
-interface SignupFormProps {
-  onSubmit: (credentials: SignupCredentials) => Promise<void>;
-  errors?: SignupError | null;
+interface MemberSignupFormProps {
+  onSubmit: (credentials: MemberSignupCredentials) => Promise<void>;
+  errors?: MemberSignupError | null;
 }
 
-export default function MemberSignupForm({ onSubmit, errors }: SignupFormProps) {
+export default function MemberSignupForm({
+  onSubmit,
+  errors,
+}: MemberSignupFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [username, setUsername] = React.useState("");
   const [email, setEmail] = React.useState("");
@@ -151,10 +155,11 @@ export default function MemberSignupForm({ onSubmit, errors }: SignupFormProps) 
           </div>
 
           <Button disabled={isLoading} type="submit" className="w-full mt-6">
-            {isLoading && (
-              <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent" />
+            {isLoading ? (
+              <LoadingSpinner size="sm" text="Creating account..." />
+            ) : (
+              "Create Account"
             )}
-            Create Account
           </Button>
         </div>
       </form>

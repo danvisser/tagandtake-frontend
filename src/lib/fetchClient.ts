@@ -1,5 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
-import { refreshAccessToken } from "@src/api/authApi";
+import { refreshAccessToken, AuthErrorResponse } from "@src/api/authApi";
 import { handleSessionExpiration } from "@src/lib/sessionExpirationHandler";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -12,11 +12,37 @@ const REFRESH_TIMEOUT = 5000; // 5 seconds for token refresh operations
 
 // In-memory storage for the access token
 let accessToken: string | null = null;
+
+// Initialize token from localStorage if available (only in browser)
+if (typeof window !== "undefined") {
+  try {
+    const storedToken = localStorage.getItem("auth_access_token");
+    if (storedToken) {
+      accessToken = storedToken;
+    }
+  } catch (e) {
+    console.error("Error accessing localStorage:", e);
+  }
+}
+
 let isRefreshing = false;
 let refreshSubscribers: Array<(token: string) => void> = [];
 
 export const setAccessToken = (token: string | null) => {
   accessToken = token;
+
+  // Also store in localStorage for persistence across page loads
+  if (typeof window !== "undefined") {
+    try {
+      if (token) {
+        localStorage.setItem("auth_access_token", token);
+      } else {
+        localStorage.removeItem("auth_access_token");
+      }
+    } catch (e) {
+      console.error("Error accessing localStorage:", e);
+    }
+  }
 };
 
 // Function to subscribe to token refresh
@@ -50,7 +76,7 @@ fetchClient.interceptors.request.use(
 // Response interceptor to handle token refresh
 fetchClient.interceptors.response.use(
   (response) => response,
-  async (error: AxiosError) => {
+  async (error: AxiosError<AuthErrorResponse>) => {
     const originalRequest = error.config as AxiosRequestConfig & {
       _retry?: boolean;
     };
@@ -119,6 +145,12 @@ fetchClient.interceptors.response.use(
 
         return Promise.reject(refreshError);
       }
+    }
+
+    // When handling errors
+    if (error.response?.data) {
+      // Return the original error response data
+      return Promise.reject(error);
     }
 
     return Promise.reject(error);
