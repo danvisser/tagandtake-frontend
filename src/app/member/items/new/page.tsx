@@ -23,6 +23,7 @@ export default function ItemsNewPage() {
   const [successMessage, setSuccessMessage] = useState("");
   const [createdItemId, setCreatedItemId] = useState<number | null>(null);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
+  const [formKey, setFormKey] = useState(0);
 
   // Handle form submission
   const handleSubmit = async (data: ItemFormData) => {
@@ -79,7 +80,10 @@ export default function ItemsNewPage() {
 
   // Navigate to new item page
   const navigateToNewItem = () => {
-    router.push(Routes.MEMBER.ITEMS.NEW);
+    setShowSuccessModal(false);
+    setTimeout(() => {
+      setFormKey((k) => k + 1);
+    }, 200);
   };
 
   return (
@@ -92,6 +96,7 @@ export default function ItemsNewPage() {
       </div>
 
       <ItemForm
+        key={formKey}
         onSubmit={handleSubmit}
         isSubmitting={isSubmitting}
         errors={errors}
