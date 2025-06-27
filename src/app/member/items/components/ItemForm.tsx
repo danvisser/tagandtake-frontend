@@ -35,6 +35,8 @@ import {
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import TermsAndConditionsModal from "@src/app/listing/[id]/components/modals/TermsAndConditionsModal";
+import { Checkbox } from "@src/components/ui/checkbox";
 
 // Add SortableImage component
 function SortableImage({
@@ -132,6 +134,8 @@ export default function ItemForm({
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [errors, setErrors] =
     useState<Record<string, string[]>>(externalErrors);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
 
   // Add sensors for drag and drop
   const sensors = useSensors(
@@ -216,6 +220,10 @@ export default function ItemForm({
       newErrors.images = ["At least one image is required"];
     }
 
+    if (!acceptedTerms) {
+      newErrors.terms = ["You must accept the terms and conditions"];
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -276,298 +284,340 @@ export default function ItemForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl mx-auto">
-      {/* Images Card - Moved to top */}
-      <Card>
-        <CardContent className="space-y-6 pt-4">
-          <div className="space-y-4">
-            <div className="border-2 border-slate-300 border-dashed rounded-md p-6">
-              {imageUrls.length === 0 ? (
-                <div className="flex flex-col items-center justify-center">
-                  <div className="rounded-full bg-muted p-3 mb-3">
-                    <Camera className="h-6 w-6 text-muted-foreground" />
-                  </div>
-                  <Button
-                    variant="outline"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      document.getElementById("images")?.click();
-                    }}
-                  >
-                    Upload photos
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <DndContext
-                      sensors={sensors}
-                      collisionDetection={closestCenter}
-                      onDragEnd={handleDragEnd}
+    <>
+      <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl mx-auto">
+        {/* Images Card - Moved to top */}
+        <Card>
+          <CardContent className="space-y-6 pt-4">
+            <div className="space-y-4">
+              <div className="border-2 border-slate-300 border-dashed rounded-md p-6">
+                {imageUrls.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center">
+                    <div className="rounded-full bg-muted p-3 mb-3">
+                      <Camera className="h-6 w-6 text-muted-foreground" />
+                    </div>
+                    <Button
+                      variant="outline"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        document.getElementById("images")?.click();
+                      }}
                     >
-                      <SortableContext
-                        items={imageUrls}
-                        strategy={rectSortingStrategy}
+                      Upload photos
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        onDragEnd={handleDragEnd}
                       >
-                        {imageUrls.map((url, index) => (
-                          <SortableImage
-                            key={url}
-                            url={url}
-                            index={index}
-                            onRemove={() => removeImage(index)}
-                          />
-                        ))}
-                      </SortableContext>
-                    </DndContext>
-                    <div className="aspect-square flex items-center justify-center">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          document.getElementById("images")?.click();
-                        }}
-                        className="h-12 w-12 rounded-full"
-                      >
-                        <Plus className="h-6 w-6" />
-                      </Button>
+                        <SortableContext
+                          items={imageUrls}
+                          strategy={rectSortingStrategy}
+                        >
+                          {imageUrls.map((url, index) => (
+                            <SortableImage
+                              key={url}
+                              url={url}
+                              index={index}
+                              onRemove={() => removeImage(index)}
+                            />
+                          ))}
+                        </SortableContext>
+                      </DndContext>
+                      <div className="aspect-square flex items-center justify-center">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            document.getElementById("images")?.click();
+                          }}
+                          className="h-12 w-12 rounded-full"
+                        >
+                          <Plus className="h-6 w-6" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
+                <Input
+                  id="images"
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </div>
+
+              {errors.images && (
+                <p className="text-sm text-destructive">{errors.images[0]}</p>
               )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Basic Information Card */}
+        <Card>
+          <CardContent className="space-y-6 pt-4">
+            {/* Name */}
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-md ">
+                Name
+              </Label>
               <Input
-                id="images"
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleImageChange}
-                className="hidden"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g., Levis Denim Jacket"
+                className={errors.name ? "border-destructive" : ""}
               />
+              {errors.name && (
+                <p className="text-sm text-destructive">{errors.name[0]}</p>
+              )}
             </div>
 
-            {errors.images && (
-              <p className="text-sm text-destructive">{errors.images[0]}</p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+            {/* Description */}
+            <div className="space-y-2">
+              <Label htmlFor="description" className="text-md">
+                Description
+              </Label>
+              <Textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="e.g., gently worn with no stains or tears."
+                rows={3}
+                className={errors.description ? "border-destructive" : ""}
+              />
+              {errors.description && (
+                <p className="text-sm text-destructive">
+                  {errors.description[0]}
+                </p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Basic Information Card */}
-      <Card>
-        <CardContent className="space-y-6 pt-4">
-          {/* Name */}
-          <div className="space-y-2">
-            <Label htmlFor="name" className="text-md ">
-              Name
-            </Label>
-            <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Levis Denim Jacket"
-              className={errors.name ? "border-destructive" : ""}
-            />
-            {errors.name && (
-              <p className="text-sm text-destructive">{errors.name[0]}</p>
-            )}
-          </div>
+        {/* Pricing and Sizing Card */}
+        <Card>
+          <CardContent className="space-y-6 pt-4">
+            {/* Size */}
+            <div className="space-y-2">
+              <Label htmlFor="size" className="text-md">
+                Size
+              </Label>
+              <Input
+                id="size"
+                value={size}
+                onChange={(e) => setSize(e.target.value)}
+                placeholder="Any size format accepted"
+                className={`text-base ${errors.size ? "border-destructive" : ""}`}
+              />
+              {errors.size && (
+                <p className="text-sm text-destructive">{errors.size[0]}</p>
+              )}
+            </div>
 
-          {/* Description */}
-          <div className="space-y-2">
-            <Label htmlFor="description" className="text-md">
-              Description
-            </Label>
-            <Textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="e.g., gently worn with no stains or tears."
-              rows={3}
-              className={errors.description ? "border-destructive" : ""}
-            />
-            {errors.description && (
-              <p className="text-sm text-destructive">
-                {errors.description[0]}
-              </p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+            {/* Price */}
+            <div className="space-y-2">
+              <Label htmlFor="price" className="text-md">
+                Price
+              </Label>
+              <Input
+                id="price"
+                type="number"
+                min="0"
+                step="0.01"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                placeholder="£0.00"
+                className={errors.price ? "border-destructive" : ""}
+              />
+              {errors.price && (
+                <p className="text-sm text-destructive">{errors.price[0]}</p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Pricing and Sizing Card */}
-      <Card>
-        <CardContent className="space-y-6 pt-4">
-          {/* Size */}
-          <div className="space-y-2">
-            <Label htmlFor="size" className="text-md">
-              Size
-            </Label>
-            <Input
-              id="size"
-              value={size}
-              onChange={(e) => setSize(e.target.value)}
-              placeholder="Any size format accepted"
-              className={`text-base ${errors.size ? "border-destructive" : ""}`}
-            />
-            {errors.size && (
-              <p className="text-sm text-destructive">{errors.size[0]}</p>
-            )}
-          </div>
-
-          {/* Price */}
-          <div className="space-y-2">
-            <Label htmlFor="price" className="text-md">
-              Price
-            </Label>
-            <Input
-              id="price"
-              type="number"
-              min="0"
-              step="0.01"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              placeholder="£0.00"
-              className={errors.price ? "border-destructive" : ""}
-            />
-            {errors.price && (
-              <p className="text-sm text-destructive">{errors.price[0]}</p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Item Details Card */}
-      <Card>
-        <CardContent className="space-y-6 pt-4">
-          {/* Condition */}
-          <div className="space-y-2">
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="condition">
-                <AccordionTrigger className="text-base">
-                  <div className="flex items-center gap-2">
-                    <Info className="h-4 w-4" />
-                    <span>Select condition</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="pt-2">
-                    <div className="flex flex-wrap gap-2">
-                      {itemConditions.map((itemCondition) => {
-                        const isAvailable = isConditionAvailable(
-                          itemCondition.id
-                        );
-                        return (
-                          <Badge
-                            key={itemCondition.id}
-                            variant={
-                              condition === itemCondition.id.toString()
-                                ? "default"
-                                : "secondary"
-                            }
-                            className={`px-3 py-1 cursor-pointer ${
-                              !isAvailable ? "opacity-50 line-through" : ""
-                            }`}
-                            onClick={() => {
-                              if (!isAvailable) return; // Don't allow selection of unavailable conditions
-                              // Toggle selection - if already selected, deselect it
-                              if (condition === itemCondition.id.toString()) {
-                                setCondition("");
-                              } else {
-                                setCondition(itemCondition.id.toString());
-                              }
-                            }}
-                          >
-                            {itemCondition.condition}
-                          </Badge>
-                        );
-                      })}
+        {/* Item Details Card */}
+        <Card>
+          <CardContent className="space-y-6 pt-4">
+            {/* Condition */}
+            <div className="space-y-2">
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="condition">
+                  <AccordionTrigger className="text-base">
+                    <div className="flex items-center gap-2">
+                      <Info className="h-4 w-4" />
+                      <span>Select condition</span>
                     </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-            {selectedCondition && (
-              <p className="text-sm text-muted-foreground mt-1">
-                {selectedCondition.description}
-              </p>
-            )}
-            {errors.condition && (
-              <p className="text-sm text-destructive">{errors.condition[0]}</p>
-            )}
-          </div>
-
-          {/* Category */}
-          <div className="space-y-2">
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="category">
-                <AccordionTrigger className="text-base">
-                  <div className="flex items-center gap-2">
-                    <Tag className="h-4 w-4" />
-                    <span>Select category</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="pt-2">
-                    <div className="flex flex-wrap gap-2">
-                      {itemCategories.map((itemCategory) => {
-                        const isAvailable = isCategoryAvailable(
-                          itemCategory.id
-                        );
-                        return (
-                          <Badge
-                            key={itemCategory.id}
-                            variant={
-                              category === itemCategory.id.toString()
-                                ? "default"
-                                : "secondary"
-                            }
-                            className={`px-3 py-1 cursor-pointer ${
-                              !isAvailable ? "opacity-50 line-through" : ""
-                            }`}
-                            onClick={() => {
-                              if (!isAvailable) return; // Don't allow selection of unavailable categories
-                              // Toggle selection - if already selected, deselect it
-                              if (category === itemCategory.id.toString()) {
-                                setCategory("");
-                              } else {
-                                setCategory(itemCategory.id.toString());
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="pt-2">
+                      <div className="flex flex-wrap gap-2">
+                        {itemConditions.map((itemCondition) => {
+                          const isAvailable = isConditionAvailable(
+                            itemCondition.id
+                          );
+                          return (
+                            <Badge
+                              key={itemCondition.id}
+                              variant={
+                                condition === itemCondition.id.toString()
+                                  ? "default"
+                                  : "secondary"
                               }
-                            }}
-                          >
-                            {itemCategory.name}
-                          </Badge>
-                        );
-                      })}
+                              className={`px-3 py-1 cursor-pointer ${
+                                !isAvailable ? "opacity-50 line-through" : ""
+                              }`}
+                              onClick={() => {
+                                if (!isAvailable) return; // Don't allow selection of unavailable conditions
+                                // Toggle selection - if already selected, deselect it
+                                if (condition === itemCondition.id.toString()) {
+                                  setCondition("");
+                                } else {
+                                  setCondition(itemCondition.id.toString());
+                                }
+                              }}
+                            >
+                              {itemCondition.condition}
+                            </Badge>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-            {selectedCategory && (
-              <p className="text-sm text-muted-foreground mt-1">
-                {selectedCategory.description}
-              </p>
-            )}
-            {errors.category && (
-              <p className="text-sm text-destructive">{errors.category[0]}</p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+              {selectedCondition && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  {selectedCondition.description}
+                </p>
+              )}
+              {errors.condition && (
+                <p className="text-sm text-destructive">
+                  {errors.condition[0]}
+                </p>
+              )}
+            </div>
 
-      {/* Non-field errors */}
-      {errors.non_field_errors && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{errors.non_field_errors[0]}</AlertDescription>
-        </Alert>
-      )}
+            {/* Category */}
+            <div className="space-y-2">
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="category">
+                  <AccordionTrigger className="text-base">
+                    <div className="flex items-center gap-2">
+                      <Tag className="h-4 w-4" />
+                      <span>Select category</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="pt-2">
+                      <div className="flex flex-wrap gap-2">
+                        {itemCategories.map((itemCategory) => {
+                          const isAvailable = isCategoryAvailable(
+                            itemCategory.id
+                          );
+                          return (
+                            <Badge
+                              key={itemCategory.id}
+                              variant={
+                                category === itemCategory.id.toString()
+                                  ? "default"
+                                  : "secondary"
+                              }
+                              className={`px-3 py-1 cursor-pointer ${
+                                !isAvailable ? "opacity-50 line-through" : ""
+                              }`}
+                              onClick={() => {
+                                if (!isAvailable) return; // Don't allow selection of unavailable categories
+                                // Toggle selection - if already selected, deselect it
+                                if (category === itemCategory.id.toString()) {
+                                  setCategory("");
+                                } else {
+                                  setCategory(itemCategory.id.toString());
+                                }
+                              }}
+                            >
+                              {itemCategory.name}
+                            </Badge>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+              {selectedCategory && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  {selectedCategory.description}
+                </p>
+              )}
+              {errors.category && (
+                <p className="text-sm text-destructive">{errors.category[0]}</p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Submit button */}
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? "Creating..." : submitButtonText}
-      </Button>
-    </form>
+        {/* Terms and Conditions Checkbox */}
+        <Card>
+          <CardContent className="space-y-4 pt-4">
+            <div className="flex items-start space-x-2">
+              <Checkbox
+                id="terms-checkbox"
+                checked={acceptedTerms}
+                onCheckedChange={(checked) =>
+                  setAcceptedTerms(checked as boolean)
+                }
+              />
+              <div className="grid gap-1.5 leading-none">
+                <Label
+                  htmlFor="terms-checkbox"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  I accept the{" "}
+                  <button
+                    type="button"
+                    onClick={() => setIsTermsModalOpen(true)}
+                    className="text-primary hover:underline"
+                  >
+                    terms and conditions
+                  </button>
+                </Label>
+              </div>
+            </div>
+            {errors.terms && (
+              <p className="text-sm text-destructive">{errors.terms[0]}</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Non-field errors */}
+        {errors.non_field_errors && (
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{errors.non_field_errors[0]}</AlertDescription>
+          </Alert>
+        )}
+
+        {/* Submit button */}
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? "Creating..." : submitButtonText}
+        </Button>
+      </form>
+
+      <TermsAndConditionsModal
+        isOpen={isTermsModalOpen}
+        onClose={() => setIsTermsModalOpen(false)}
+      />
+    </>
   );
 }

@@ -20,6 +20,9 @@ import { Card } from "@src/components/ui/card";
 import { useToast } from "@src/hooks/use-toast";
 import { handleListingError } from "@src/app/listing/[id]/utils/listingErrorHandler";
 import { useListingContext } from "@src/app/listing/[id]/context/ListingContext";
+import TermsAndConditionsModal from "@src/app/listing/[id]/components/modals/TermsAndConditionsModal";
+import { Checkbox } from "@src/components/ui/checkbox";
+import { Label } from "@src/components/ui/label";
 
 interface ListItemModalProps {
   isOpen: boolean;
@@ -41,6 +44,8 @@ export default function ListItemModal({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
 
   useEffect(() => {
     async function fetchItems() {
@@ -74,6 +79,16 @@ export default function ListItemModal({
   };
 
   const handleListItem = async (itemId: number) => {
+    if (!acceptedTerms) {
+      toast({
+        variant: "destructive",
+        title: "Terms Required",
+        description:
+          "You must accept the terms and conditions to list an item.",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const response = await createListing({
@@ -107,7 +122,7 @@ export default function ListItemModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] p-0">
+      <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto p-4">
         <DialogHeader className="px-4 py-6 space-y-1.5">
           <DialogTitle className="text-2xl font-medium m-2">
             List a new item
@@ -135,6 +150,34 @@ export default function ListItemModal({
 
         <div className="p-4 pt-2">
           <h3 className="text-2xl font-medium mb-3">From your wardrobe</h3>
+
+          {/* Terms and Conditions Checkbox above the list */}
+          <div className="mb-4 p-2 bg-gray-50 rounded-lg">
+            <div className="flex items-start space-x-2">
+              <Checkbox
+                id="terms-checkbox"
+                checked={acceptedTerms}
+                onCheckedChange={(checked) =>
+                  setAcceptedTerms(checked as boolean)
+                }
+              />
+              <div className="grid gap-1.5 leading-none">
+                <Label
+                  htmlFor="terms-checkbox"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  I accept the{" "}
+                  <button
+                    type="button"
+                    onClick={() => setIsTermsModalOpen(true)}
+                    className="text-primary hover:underline"
+                  >
+                    terms and conditions
+                  </button>
+                </Label>
+              </div>
+            </div>
+          </div>
 
           <div className="space-y-3 max-h-[60vh] overflow-y-auto">
             {isLoading ? (
@@ -204,12 +247,12 @@ export default function ListItemModal({
                         </div>
                       </div>
                       <Button
-                        className="w-full mt-3 h-10"
+                        className="w-full mt-1 h-10"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleListItem(item.id);
                         }}
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || !acceptedTerms}
                       >
                         {isSubmitting ? (
                           <LoadingSpinner size="sm" text="Processing..." />
@@ -225,6 +268,11 @@ export default function ListItemModal({
           </div>
         </div>
       </DialogContent>
+
+      <TermsAndConditionsModal
+        isOpen={isTermsModalOpen}
+        onClose={() => setIsTermsModalOpen(false)}
+      />
     </Dialog>
   );
 }
