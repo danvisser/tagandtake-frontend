@@ -14,6 +14,7 @@ import {
 } from "@src/components/ui/dialog";
 import { CheckCircle } from "lucide-react";
 import ItemForm, { ItemFormData } from "../components/ItemForm";
+import { Routes } from "@src/constants/routes";
 
 export default function ItemsNewPage() {
   const router = useRouter();
@@ -72,13 +73,13 @@ export default function ItemsNewPage() {
   // Navigate to item page
   const navigateToItem = () => {
     if (createdItemId) {
-      router.push(`/items/${createdItemId}`);
+      router.push(Routes.MEMBER.ITEMS.DETAILS(createdItemId.toString()));
     }
   };
 
   // Navigate to new item page
   const navigateToNewItem = () => {
-    router.push("/items/new");
+    router.push(Routes.MEMBER.ITEMS.NEW);
   };
 
   return (
