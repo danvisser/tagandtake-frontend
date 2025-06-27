@@ -151,33 +151,35 @@ export default function ListItemModal({
         <div className="p-4 pt-2">
           <h3 className="text-2xl font-medium mb-3">From your wardrobe</h3>
 
-          {/* Terms and Conditions Checkbox above the list */}
-          <div className="mb-4 p-2 bg-gray-50 rounded-lg">
-            <div className="flex items-start space-x-2">
-              <Checkbox
-                id="terms-checkbox"
-                checked={acceptedTerms}
-                onCheckedChange={(checked) =>
-                  setAcceptedTerms(checked as boolean)
-                }
-              />
-              <div className="grid gap-1.5 leading-none">
-                <Label
-                  htmlFor="terms-checkbox"
-                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                >
-                  I accept the{" "}
-                  <button
-                    type="button"
-                    onClick={() => setIsTermsModalOpen(true)}
-                    className="text-primary hover:underline"
+          {/* Terms and Conditions Checkbox above the list, only if there are items */}
+          {items.length > 0 && (
+            <div className="mb-4 p-2 bg-gray-50 rounded-lg">
+              <div className="flex items-start space-x-2">
+                <Checkbox
+                  id="terms-checkbox"
+                  checked={acceptedTerms}
+                  onCheckedChange={(checked) =>
+                    setAcceptedTerms(checked as boolean)
+                  }
+                />
+                <div className="grid gap-1.5 leading-none">
+                  <Label
+                    htmlFor="terms-checkbox"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                   >
-                    terms and conditions
-                  </button>
-                </Label>
+                    I accept the{" "}
+                    <button
+                      type="button"
+                      onClick={() => setIsTermsModalOpen(true)}
+                      className="text-primary hover:underline"
+                    >
+                      terms and conditions
+                    </button>
+                  </Label>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           <div className="space-y-3 max-h-[60vh] overflow-y-auto">
             {isLoading ? (
