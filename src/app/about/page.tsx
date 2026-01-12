@@ -4,18 +4,18 @@ import { Routes } from "@src/constants/routes";
 
 export default function AboutPage() {
   return (
-    <div className="container mx-auto px-4 py-16 max-w-6xl">
-      <div className="max-w-3xl mx-auto mb-20 text-center">
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-medium mb-6 leading-tight">
+    <div className="container mx-auto px-4 py-8 md:py-12 max-w-6xl">
+      <div className="max-w-3xl mx-auto mb-12 md:mb-16 text-center">
+        <h1 className="text-2xl md:text-3xl lg:text-4xl font-medium mb-4 leading-tight">
           Our Story
         </h1>
-        <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+        <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
           On a mission to bring pre-loved to the high street
         </p>
       </div>
 
       {/* Main content with image and text side by side */}
-      <div className="flex flex-col md:flex-row gap-12 md:gap-16 mb-20">
+      <div className="flex flex-col md:flex-row gap-6 md:gap-8 lg:gap-12 mb-10 md:mb-16">
         {/* Image column - vertically centered on desktop */}
         <div className="w-full md:w-1/2 md:flex md:items-start">
           <div className="relative mx-auto">
@@ -36,12 +36,12 @@ export default function AboutPage() {
         </div>
 
         {/* Text column */}
-        <div className="w-full md:w-1/2 space-y-10">
+        <div className="w-full md:w-1/2 space-y-8">
           <section>
-            <h3 className="text-xl md:text-2xl font-medium mb-3 text-primary inline-block border-b-2 border-primary/30 pb-1">
+            <h3 className="text-lg md:text-xl lg:text-2xl font-semibold mb-3 text-primary inline-block border-b-2 border-primary/30 pb-1">
               Driving value for the high street
             </h3>
-            <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
+            <p className="text-muted-foreground text-sm md:text-base">
               We&apos;re led by a conviction that finding a smart solution to
               harness the potential of second hand markets can drive value for a
               struggling high street. Tag&Take was born out of a shared drive to
@@ -52,10 +52,10 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h3 className="text-xl md:text-2xl font-medium mb-3 text-primary inline-block border-b-2 border-primary/30 pb-1">
+            <h3 className="text-lg md:text-xl lg:text-2xl font-semibold mb-3 text-primary inline-block border-b-2 border-primary/30 pb-1">
               Keeping it circular
             </h3>
-            <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
+            <p className="text-muted-foreground text-sm md:text-base">
               Our aim is simple: to empower existing retailers to seamlessly
               integrate second hand sales. It isn&apos;t just about being
               eco-friendly (though that is a plus)—it&apos;s about enabling the
@@ -67,10 +67,10 @@ export default function AboutPage() {
           </section>
 
           <section>
-            <h3 className="text-xl md:text-2xl font-medium mb-3 text-primary inline-block border-b-2 border-primary/30 pb-1">
+            <h3 className="text-lg md:text-xl lg:text-2xl font-semibold mb-3 text-primary inline-block border-b-2 border-primary/30 pb-1">
               Leading the way
             </h3>
-            <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
+            <p className="text-muted-foreground text-sm md:text-base">
               We truly believe that technology can help us in sharing the value
               and extending the lifecycle of products we produce, and that smart
               solutions can redefine how we value and use what we already own.
@@ -82,11 +82,11 @@ export default function AboutPage() {
       </div>
 
       {/* CTA section */}
-      <div className="bg-primary/5 p-10 md:p-16 rounded-2xl text-center max-w-4xl mx-auto border border-primary/10 shadow-sm">
-        <h3 className="text-2xl md:text-3xl font-medium mb-4">
+      <div className="bg-primary/5 p-6 md:p-8 lg:p-12 rounded-2xl text-center max-w-4xl mx-auto border border-primary/10 shadow-sm">
+        <h3 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-3 md:mb-4">
           Want to know more?
         </h3>
-        <p className="mb-8 text-muted-foreground text-lg max-w-2xl mx-auto">
+        <p className="mb-5 md:mb-6 text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
           Discover how our platform can benefit you.
         </p>
         <Link

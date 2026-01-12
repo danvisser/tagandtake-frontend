@@ -83,9 +83,10 @@ export const activateAccount = async (
       method: "GET",
       url: API_ROUTES.ACTIVATION.ACTIVATE(uuid, token),
     });
+    // Backend returns: { message: "...", role: "member" | "store" }
     return {
-      access: data.access,
-      user: { role: data.user.role as UserRole },
+      access: data.access || "",
+      user: { role: (data.role || data.user?.role) as UserRole },
     };
   } catch (error: unknown) {
     console.error("Account activation error:", error);

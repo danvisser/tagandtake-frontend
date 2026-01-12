@@ -126,7 +126,7 @@ export default function ContactPage() {
               </li>
               <li>
                 <Link
-                  href={Routes.STORES.ROOT}
+                  href={Routes.STORE_FINDER}
                   className="text-primary hover:underline flex items-center"
                 >
                   <span className="mr-2">→</span> Find a store

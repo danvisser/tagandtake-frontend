@@ -5,6 +5,7 @@ export const Routes = {
   ABOUT: "/about",
   CONTACT: "/contact",
   ACTIVATE: "/activate",
+  STORE_FINDER: "/store-finder",
 
   // Auth routes (Public)
   SIGNUP: {

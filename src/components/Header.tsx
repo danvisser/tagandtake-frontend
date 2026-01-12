@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@src/components/ui/button";
 import {
@@ -8,7 +10,7 @@ import {
   DropdownMenuSeparator,
 } from "@src/components/ui/dropdown-menu";
 import { Routes } from "@src/constants/routes";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { UserRole, UserRoles } from "@src/types/roles";
 import { useAuth } from "@src/providers/AuthProvider";
@@ -16,6 +18,18 @@ import { useAuth } from "@src/providers/AuthProvider";
 export default function Header({ variant }: { variant: "public" | UserRole }) {
   const { logout } = useAuth();
   const router = useRouter();
+  const [show, setShow] = useState(true);
+  const lastY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const y = window.scrollY;
+      setShow(y < lastY.current || y < 10);
+      lastY.current = y;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleLogout = useCallback(async () => {
     await logout();
@@ -24,7 +38,7 @@ export default function Header({ variant }: { variant: "public" | UserRole }) {
   }, [logout, router]);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-300 bg-white dark:border-gray-800 dark:bg-gray-950 p-0 shadow-sm">
+    <header className={`sticky top-0 z-50 w-full border-b border-gray-300 bg-white dark:border-gray-800 dark:bg-gray-950 p-0 shadow-sm transition-transform duration-300 ${show ? "translate-y-0" : "-translate-y-full"}`}>
       <div className="container mx-auto flex h-16 max-w-full items-center justify-center px-4 md:px-6 relative">
         {/* Left: Logo */}
         <Link
@@ -32,7 +46,7 @@ export default function Header({ variant }: { variant: "public" | UserRole }) {
           className="absolute left-4 md:left-6 flex items-center gap-2"
           prefetch={false}
         >
-          <span className="text-lg font-[550] tracking-[0.3em]">TAG&TAKE</span>
+          <span className="italic text-lg font-[550] tracking-[0.2em]">TAG&TAKE</span>
           <span className="sr-only">TAG&TAKE</span>
         </Link>
 

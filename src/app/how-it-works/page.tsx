@@ -17,11 +17,6 @@ export default function HowItWorksPage() {
           Your in-store marketplace for{" "}
           <span className="border-b-4 border-primary/50">pre-loved pieces</span>
         </h1>
-
-        <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-          Sell clothes in stores near you. You bring the items, we handle the
-          rest.
-        </p>
       </div>
 
       {/* Process Steps */}
@@ -102,7 +97,7 @@ export default function HowItWorksPage() {
             3. Earn
           </h2>
           <p className="text-sm md:text-base text-muted-foreground">
-            Once your item sells, earnings are automatically split between you 
+            Once your item sells, earnings are automatically split between you
             and the store—no waiting, no hassle, just simple, shared rewards.
           </p>
         </div>
@@ -298,7 +293,7 @@ export default function HowItWorksPage() {
           off your items today.
         </p>
         <Link
-          href={Routes.STORES.ROOT}
+          href={Routes.STORE_FINDER}
           className="inline-block bg-primary text-primary-foreground px-6 py-2.5 md:px-8 md:py-3 rounded-md hover:bg-primary/90 transition-colors font-medium"
         >
           Find a Store Near You →

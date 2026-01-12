@@ -8,7 +8,7 @@
 @layer base {
   :root {
 
-    --background: 142 30% 97%;
+    --background: 0 0% 100%;
 
     --foreground: 0 0% 3.9%;
 
@@ -58,6 +58,7 @@
 
     --radius: 0.5rem
   }
+
   .dark {
 
     --background: 0 0% 3.9%;
@@ -116,6 +117,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
