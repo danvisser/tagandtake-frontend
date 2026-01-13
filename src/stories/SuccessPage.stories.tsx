@@ -26,6 +26,7 @@ const mockPurchaseData: ItemPurchasedResponse = {
     store: 789,
     store_commission: 10,
     min_listing_days: 7,
+    min_price: 5.0,
     user_listing_relation: "OWNER",
     tagandtake_commission: 5,
     tagandtake_flat_fee: 1,

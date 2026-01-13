@@ -6,6 +6,7 @@ import { useAuth } from "@src/providers/AuthProvider";
 import { UserRole } from "@src/types/roles";
 import { Routes } from "@src/constants/routes";
 import LoadingUI from "@src/components/LoadingUI";
+import { UserRoles } from "@src/types/roles";
 
 interface AuthenticatedPageProps {
   children: React.ReactNode;
@@ -32,7 +33,7 @@ export default function AuthenticatedPage({
       } else if (requiredRole && role !== requiredRole) {
         // Redirect to appropriate dashboard if wrong role
         router.replace(
-          role === "member" ? Routes.MEMBER.PROFILE : Routes.STORE.ROOT
+          role === UserRoles.MEMBER ? Routes.MEMBER.ROOT : Routes.STORE.ROOT
         );
       }
     }

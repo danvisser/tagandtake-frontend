@@ -57,7 +57,7 @@ export default function RedirectIfAuthenticated({
                     router.push(
                       role === UserRoles.STORE
                         ? Routes.STORE.ROOT
-                        : Routes.MEMBER.PROFILE
+                        : Routes.MEMBER.ROOT
                     )
                   }
                 >

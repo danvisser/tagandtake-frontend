@@ -74,7 +74,7 @@ export default function PermissionGate({
                 onClick={() =>
                   router.push(
                     role === UserRoles.MEMBER
-                      ? Routes.MEMBER.PROFILE
+                      ? Routes.MEMBER.ROOT
                       : Routes.STORE.ROOT
                   )
                 }
