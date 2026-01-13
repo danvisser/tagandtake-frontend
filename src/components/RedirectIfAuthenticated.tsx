@@ -56,7 +56,7 @@ export default function RedirectIfAuthenticated({
                   onClick={() =>
                     router.push(
                       role === UserRoles.STORE
-                        ? Routes.STORE.DASHBOARD
+                        ? Routes.STORE.ROOT
                         : Routes.MEMBER.PROFILE
                     )
                   }

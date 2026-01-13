@@ -32,7 +32,7 @@ export default function AuthenticatedPage({
       } else if (requiredRole && role !== requiredRole) {
         // Redirect to appropriate dashboard if wrong role
         router.replace(
-          role === "member" ? Routes.MEMBER.PROFILE : Routes.STORE.DASHBOARD
+          role === "member" ? Routes.MEMBER.PROFILE : Routes.STORE.ROOT
         );
       }
     }

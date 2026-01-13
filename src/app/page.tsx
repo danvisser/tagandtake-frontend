@@ -63,7 +63,7 @@ export default function HomePage() {
         </>
       ),
       buttons: [
-        { href: Routes.STORE_FINDER, label: "Find a Store Near You" },
+        { href: Routes.STORES, label: "Find a Store Near You" },
         { href: Routes.MEMBER.ITEMS.NEW, label: "Add New Item", variant: "outline" },
       ],
     },
@@ -77,7 +77,7 @@ export default function HomePage() {
           icon: <Shirt className="w-4 h-4" />
         },
         {
-          href: Routes.STORE.DASHBOARD,
+          href: Routes.STORE.ROOT,
           label: "View Dashboard",
           variant: "outline",
           icon: <Store className="w-4 h-4" />
@@ -283,7 +283,7 @@ function HowItWorksSection() {
         </div>
 
         <div className="text-center flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Link href={Routes.STORE_FINDER}>
+          <Link href={Routes.STORES}>
             <Button size="lg" className="text-base md:text-lg w-full sm:w-auto">
               Find a Store Near You
               <ArrowRight className="ml-2 w-4 h-4" />

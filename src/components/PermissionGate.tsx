@@ -75,7 +75,7 @@ export default function PermissionGate({
                   router.push(
                     role === UserRoles.MEMBER
                       ? Routes.MEMBER.PROFILE
-                      : Routes.STORE.DASHBOARD
+                      : Routes.STORE.ROOT
                   )
                 }
               >

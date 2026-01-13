@@ -98,7 +98,7 @@ export default function HowItWorksPage() {
           </h2>
           <p className="text-sm md:text-base text-muted-foreground">
             Once your item sells, earnings are automatically split between you
-            and the store—no waiting, no hassle, just simple, shared rewards.
+            and the store - no waiting, no hassle, just simple, shared rewards.
           </p>
         </div>
       </div>
@@ -285,15 +285,11 @@ export default function HowItWorksPage() {
 
       {/* CTA Section */}
       <div className="bg-primary/10 p-6 md:p-8 lg:p-12 rounded-lg text-center max-w-3xl mx-auto">
-        <h2 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-3 md:mb-4">
-          Ready to turn your items into cash?
-        </h2>
-        <p className="mb-5 md:mb-6 text-sm md:text-base text-muted-foreground max-w-xl mx-auto">
-          Start selling in minutes. Find a participating store near you and drop
-          off your items today.
-        </p>
+        <h3 className="text-xl md:text-2xl lg:text-3xl font-normal mb-3 md:mb-4">
+        Sell your items in-store today.
+        </h3>
         <Link
-          href={Routes.STORE_FINDER}
+          href={Routes.STORES.ROOT}
           className="inline-block bg-primary text-primary-foreground px-6 py-2.5 md:px-8 md:py-3 rounded-md hover:bg-primary/90 transition-colors font-medium"
         >
           Find a Store Near You →

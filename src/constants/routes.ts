@@ -1,60 +1,51 @@
 export const Routes = {
-  // Home routes (Public)
   HOME: "/",
   HOW_IT_WORKS: "/how-it-works",
   ABOUT: "/about",
   CONTACT: "/contact",
-  ACTIVATE: "/activate",
-  STORE_FINDER: "/store-finder",
 
-  // Auth routes (Public)
   SIGNUP: {
     MEMBER: "/signup/member",
     STORE: "/signup/store",
+    ACTIVATE: "/signup/activate",
+    RESEND: "/signup/resend-activation",
   },
   LOGIN: "/login",
   PASSWORD: {
     RESET: "/reset-password",
     CONFIRM: "/reset-password/confirm",
   },
+
+  LISTING: {
+    DETAILS: (listingId: string) => `/listing/${listingId}`,
+    CHECKOUT_SUCCESS: (listingId: string) =>
+      `/listing/${listingId}/success`,
+    NEW: "/listing/new",
+  },
   
-  // Member routes (Private)
   MEMBER: {
-    PROFILE: "/member/profile",
+    ROOT: "/member",
     SETTINGS: "/member/settings",
     PAYMENTS: "/member/payments",
     ITEMS: {
       ROOT: "/member/items",
       NEW: "/member/items/new",
       DETAILS: (itemId: string) => `/member/items/${itemId}`,
-      EDIT: (itemId: string) => `/member/items/${itemId}/edit`,
     },
   },
 
-  // Store routes (Private)
   STORE: {
-    DASHBOARD: "/store/dashboard",
+    ROOT: "/store",
     SETTINGS: "/store/settings",
     PAYMENTS: "/store/payments",
     SUPPLIES: "/store/supplies",
-    SUPPLIES_CHECKOUT: "/store/supplies/checkout",
-    SUPPLIES_CHECKOUT_SUCCESS: "/store/supplies/checkout-success",
+    SUPPLIES_CHECKOUT_SUCCESS: "/store/supplies/success",
     LISTINGS: {
       ROOT: "/store/listings",
       DETAILS: (listingId: string) => `/store/listings/${listingId}`,
-      MANAGE: (listingId: string) => `/store/listings/${listingId}/manage`,
     },
   },
 
-  // Listing routes (Public)
-  LISTING: {
-    DETAILS: (listingId: string) => `/listing/${listingId}`,
-    CHECKOUT_SUCCESS: (listingId: string) =>
-      `/listing/${listingId}/checkout-success`,
-    NEW: "/listing/new",
-  },
-
-  // Store routes (Public)
   STORES: {
     ROOT: "/stores",
   },

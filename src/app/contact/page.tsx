@@ -39,13 +39,13 @@ export default function ContactPage() {
   return (
     <div className="container mx-auto px-4 py-8 md:py-12 max-w-6xl">
       {/* Hero Section */}
-      <div className="max-w-3xl mx-auto mb-12 md:mb-16 text-center">
-        <h1 className="text-2xl md:text-3xl lg:text-4xl font-medium mb-4 leading-tight">
-          Get in touch with our team
+      <div className="max-w-3xl mx-auto mb-8 md:mb-8 text-center">
+        <h1 className="text-2xl md:text-3xl lg:text-4xl font-normal mb-4 leading-tight">
+          Contact Us
         </h1>
 
         <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-          Have a question or need assistance? We&apos;re here to help!
+          Have a question or need assistance? Get in touch with our team.
         </p>
       </div>
 
@@ -82,7 +82,7 @@ export default function ContactPage() {
           <div className="bg-white rounded-lg p-6 shadow-md border border-gray-200">
             <h2 className="text-lg font-medium mb-4">Contact Information</h2>
             <h3 className="text-sm text-muted-foreground mb-4">
-              Alternatively, you can always email us at:
+              Alternatively, you can email us directly at:
             </h3>
 
             <div className="space-y-3">
@@ -126,7 +126,7 @@ export default function ContactPage() {
               </li>
               <li>
                 <Link
-                  href={Routes.STORE_FINDER}
+                  href={Routes.STORES}
                   className="text-primary hover:underline flex items-center"
                 >
                   <span className="mr-2">→</span> Find a store

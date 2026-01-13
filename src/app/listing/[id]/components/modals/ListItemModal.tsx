@@ -70,7 +70,7 @@ export default function ListItemModal({
   };
 
   const handleEditItem = (itemId: number) => {
-    router.push(Routes.MEMBER.ITEMS.EDIT(itemId.toString()));
+    router.push(Routes.MEMBER.ITEMS.DETAILS(itemId.toString()));
   };
 
   const handleListItem = async (itemId: number) => {

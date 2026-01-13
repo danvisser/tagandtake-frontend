@@ -85,13 +85,13 @@ export default function Header({ variant }: { variant: "public" | UserRole }) {
           )}
           {variant === UserRoles.MEMBER && (
             <>
-              <Link href={Routes.HOME} prefetch={false}>
+              <Link href={Routes.MEMBER.ROOT} prefetch={false}>
                 <Button
                   variant="ghost"
                   size="lg"
                   className="text-lg font-light"
                 >
-                  Home
+                  My Account
                 </Button>
               </Link>
               <Link href={Routes.MEMBER.ITEMS.ROOT} prefetch={false}>
@@ -100,38 +100,20 @@ export default function Header({ variant }: { variant: "public" | UserRole }) {
                   size="lg"
                   className="text-lg font-light"
                 >
-                  Wardrobe
-                </Button>
-              </Link>
-              <Link href={Routes.MEMBER.PROFILE} prefetch={false}>
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  className="text-lg font-light"
-                >
-                  Profile
+                  Manage Wardrobe
                 </Button>
               </Link>
             </>
           )}
           {variant === UserRoles.STORE && (
             <>
-              <Link href={Routes.HOME} prefetch={false}>
+              <Link href={Routes.STORE.ROOT} prefetch={false}>
                 <Button
                   variant="ghost"
                   size="lg"
                   className="text-lg font-light"
                 >
-                  Home
-                </Button>
-              </Link>
-              <Link href={Routes.STORE.DASHBOARD} prefetch={false}>
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  className="text-lg font-light"
-                >
-                  Dashboard
+                  Store Dashboard
                 </Button>
               </Link>
               <Link href={Routes.STORE.LISTINGS.ROOT} prefetch={false}>
@@ -140,7 +122,7 @@ export default function Header({ variant }: { variant: "public" | UserRole }) {
                   size="lg"
                   className="text-lg font-light"
                 >
-                  Listings
+                  Manage Listings
                 </Button>
               </Link>
             </>
@@ -157,7 +139,7 @@ export default function Header({ variant }: { variant: "public" | UserRole }) {
             </Link>
           )}
           {variant === UserRoles.STORE && (
-            <Link href={Routes.STORE.DASHBOARD}>
+            <Link href={Routes.STORE.ROOT}>
               <StoreIcon className="h-6 w-6 dark:text-gray-400" />
             </Link>
           )}
@@ -168,7 +150,7 @@ export default function Header({ variant }: { variant: "public" | UserRole }) {
                   Sell now
                 </Button>
               </Link>
-              <Link href={Routes.MEMBER.PROFILE}>
+              <Link href={Routes.MEMBER.ROOT}>
                 <ProfileIcon className="h-6 w-6 dark:text-gray-400" />
               </Link>
             </>
@@ -216,18 +198,23 @@ export default function Header({ variant }: { variant: "public" | UserRole }) {
               {variant === UserRoles.MEMBER && (
                 <>
                   <DropdownMenuItem asChild>
+                    <Link href={Routes.MEMBER.ROOT} className="w-full">
+                      My Account
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
                     <Link href={Routes.MEMBER.ITEMS.ROOT} className="w-full">
-                      Wardrobe
+                      Manage Wardrobe
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href={Routes.MEMBER.PROFILE} className="w-full">
-                      Profile
+                    <Link href={Routes.MEMBER.ITEMS.NEW} className="w-full">
+                      New Item
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href={Routes.MEMBER.SETTINGS} className="w-full">
-                      Settings
+                    <Link href={Routes.MEMBER.PAYMENTS} className="w-full">
+                      Payments
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -239,18 +226,28 @@ export default function Header({ variant }: { variant: "public" | UserRole }) {
               {variant === UserRoles.STORE && (
                 <>
                   <DropdownMenuItem asChild>
-                    <Link href={Routes.STORE.DASHBOARD} className="w-full">
-                      Dashboard
+                    <Link href={Routes.STORE.ROOT} className="w-full">
+                      Store Dashboard
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href={Routes.STORE.LISTINGS.ROOT} className="w-full">
-                      Listings
+                      Manage Listings
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href={Routes.STORE.SETTINGS} className="w-full">
-                      Settings
+                      Store Settings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href={Routes.STORE.SUPPLIES} className="w-full">
+                      Store Supplies
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href={Routes.STORE.PAYMENTS} className="w-full">
+                      Payments
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />

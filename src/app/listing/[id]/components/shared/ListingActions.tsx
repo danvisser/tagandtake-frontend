@@ -147,7 +147,7 @@ export default function ListingActions({
             onClick={() => {
               // Store the current path as the return path
               sessionStorage.setItem("returnPath", window.location.pathname);
-              router.push(Routes.STORE.LISTINGS.MANAGE(listing.id.toString()));
+              router.push(Routes.STORE.LISTINGS.DETAILS(listing.id.toString()));
             }}
             variant="outline"
             className="w-full"

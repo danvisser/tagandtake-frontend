@@ -16,27 +16,8 @@ export default function AboutPage() {
 
       {/* Main content with image and text side by side */}
       <div className="flex flex-col md:flex-row gap-6 md:gap-8 lg:gap-12 mb-10 md:mb-16">
-        {/* Image column - vertically centered on desktop */}
-        <div className="w-full md:w-1/2 md:flex md:items-start">
-          <div className="relative mx-auto">
-            <div className="relative overflow-hidden rounded-xl shadow-xl">
-              <Image
-                src="/images/dan_and_mitch.webp"
-                alt="Michelle and Dan, co-founders of TAG&TAKE"
-                width={600}
-                height={400}
-                className="w-full h-auto object-cover"
-                priority
-              />
-            </div>
-            <p className="text-sm text-center text-muted-foreground mt-4 italic">
-              Michelle & Dan, co-founders of TAG&TAKE
-            </p>
-          </div>
-        </div>
-
-        {/* Text column */}
-        <div className="w-full md:w-1/2 space-y-8">
+        {/* Text column - appears first on mobile, second on desktop */}
+        <div className="w-full md:w-1/2 space-y-8 order-1 md:order-2">
           <section>
             <h3 className="text-lg md:text-xl lg:text-2xl font-semibold mb-3 text-primary inline-block border-b-2 border-primary/30 pb-1">
               Driving value for the high street
@@ -79,11 +60,30 @@ export default function AboutPage() {
             </p>
           </section>
         </div>
+
+        {/* Image column - appears after text on mobile, first on desktop */}
+        <div className="w-full md:w-1/2 md:flex md:items-start order-2 md:order-1">
+          <div className="relative mx-auto max-w-sm md:max-w-md">
+            <div className="relative overflow-hidden rounded-xl shadow-xl">
+              <Image
+                src="/images/dan_and_mitch.webp"
+                alt="Michelle and Dan, co-founders of TAG&TAKE"
+                width={500}
+                height={350}
+                className="w-full h-auto object-cover"
+                priority
+              />
+            </div>
+            <p className="text-sm text-center text-muted-foreground mt-4 italic">
+              Michelle & Dan, co-founders of TAG&TAKE
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* CTA section */}
       <div className="bg-primary/5 p-6 md:p-8 lg:p-12 rounded-2xl text-center max-w-4xl mx-auto border border-primary/10 shadow-sm">
-        <h3 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-3 md:mb-4">
+        <h3 className="text-xl md:text-2xl lg:text-3xl font-normal mb-3 md:mb-4">
           Want to know more?
         </h3>
         <p className="mb-5 md:mb-6 text-muted-foreground text-sm md:text-base max-w-2xl mx-auto">
