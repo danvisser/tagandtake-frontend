@@ -50,7 +50,7 @@ export default function HomePage() {
       ),
       buttons: [
         { href: Routes.SIGNUP.MEMBER, label: "Start Selling" },
-        { href: `${Routes.HOW_IT_WORKS}#faq`, label: "How it works", variant: "outline" },
+        { href: Routes.HOW_IT_WORKS, label: "How it works", variant: "outline" },
       ],
     },
     [UserRoles.MEMBER]: {
