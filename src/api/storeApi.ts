@@ -107,8 +107,13 @@ export interface PublicStore {
   distance?: number;
   has_capacity: boolean;
   remaining_stock: number;
+  active_stock: number;
   category_ids: number[];
   condition_ids: number[];
+  commission: number;
+  stock_limit: number;
+  min_listing_days: number;
+  min_price: number;
 }
 
 // Types for Basic Store Info
@@ -130,7 +135,6 @@ export interface StoreListResponse {
   results: PublicStore[];
 }
 
-// Error types
 export interface StoreError {
   store_name?: string[];
   phone?: string[];
