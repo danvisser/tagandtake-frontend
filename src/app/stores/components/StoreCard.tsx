@@ -56,7 +56,7 @@ export default function StoreCard({ store }: StoreCardProps) {
           </div>
 
           {/* Content on the right */}
-          <div className="flex-1 p-6 space-y-4">
+          <div className="flex-1 p-4 md:p-6 space-y-3 md:space-y-4">
             {/* Store name and Google link */}
             <div className="flex items-start justify-between gap-4">
               <h3 className="text-2xl font-semibold">

@@ -15,7 +15,7 @@ export interface StoreSearchBarProps {
 export default function StoreSearchBar({
   onSearch,
   isLoading = false,
-  placeholder = "Enter an address or postcode to find stores near you",
+  placeholder = "Enter an address or postcode",
   initialValue = "",
 }: StoreSearchBarProps) {
   const [searchValue, setSearchValue] = useState(initialValue);
@@ -28,7 +28,7 @@ export default function StoreSearchBar({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full">
+    <form onSubmit={handleSubmit} className="w-full max-w-2xl">
       <div className="flex gap-2">
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -37,7 +37,7 @@ export default function StoreSearchBar({
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
             placeholder={placeholder}
-            className="pl-10"
+            className="pl-10 text-sm md:text-base placeholder:text-xs md:placeholder:text-base"
             disabled={isLoading}
           />
         </div>

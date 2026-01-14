@@ -43,7 +43,7 @@ export function useGeocoding() {
     if (!apiKey) {
       setState({
         result: null,
-        error: "Google Maps API key is not configured",
+        error: "Unable to fetch addresses. Please try again or allow location.",
         isLoading: false,
       });
       return null;
@@ -65,10 +65,30 @@ export function useGeocoding() {
 
       const data = await response.json();
 
-      if (data.status !== "OK" || !data.results || data.results.length === 0) {
+      // Handle different Google Geocoding API status codes
+      if (data.status === "ZERO_RESULTS") {
         setState({
           result: null,
           error: "Could not find a location for that address. Please try a different address or postcode.",
+          isLoading: false,
+        });
+        return null;
+      }
+
+      if (data.status !== "OK" || !data.results || data.results.length === 0) {
+        let errorMessage = "Could not find a location for that address. Please try a different address or postcode.";
+
+        if (data.status === "OVER_QUERY_LIMIT") {
+          errorMessage = "Unable to fetch addresses. Please try again later.";
+        } else if (data.status === "REQUEST_DENIED") {
+          errorMessage = "Unable to fetch addresses. Please try again or allow location.";
+        } else if (data.status === "INVALID_REQUEST") {
+          errorMessage = "Invalid address format. Please check your input and try again.";
+        }
+
+        setState({
+          result: null,
+          error: errorMessage,
           isLoading: false,
         });
         return null;
@@ -120,15 +140,10 @@ export function useGeocoding() {
       });
 
       return geocodingResult;
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : "Failed to geocode address. Please try again.";
-
+    } catch {
       setState({
         result: null,
-        error: errorMessage,
+        error: "Unable to fetch addresses. Please try again or allow location.",
         isLoading: false,
       });
 
