@@ -5,6 +5,9 @@ export interface StoresNearbyState {
   stores: PublicStore[];
   isLoading: boolean;
   error: string | null;
+  count: number;
+  next: string | null;
+  previous: string | null;
 }
 
 export interface StoresNearbyParams {
@@ -12,18 +15,22 @@ export interface StoresNearbyParams {
   longitude: number | null;
   categoryIds?: number[];
   conditionIds?: number[];
+  page?: number;
 }
 
 /**
  * Hook to fetch stores near a given location
  */
 export function useStoresNearby(params: StoresNearbyParams) {
-  const { latitude, longitude, categoryIds, conditionIds } = params;
+  const { latitude, longitude, categoryIds, conditionIds, page = 1 } = params;
 
   const [state, setState] = useState<StoresNearbyState>({
     stores: [],
     isLoading: false,
     error: null,
+    count: 0,
+    next: null,
+    previous: null,
   });
 
   const fetchStores = useCallback(async () => {
@@ -33,6 +40,9 @@ export function useStoresNearby(params: StoresNearbyParams) {
         stores: [],
         isLoading: false,
         error: null,
+        count: 0,
+        next: null,
+        previous: null,
       });
       return;
     }
@@ -54,6 +64,10 @@ export function useStoresNearby(params: StoresNearbyParams) {
         queryParams.condition = conditionIds.join(",");
       }
 
+      if (page > 1) {
+        queryParams.page = page.toString();
+      }
+
       const response = await getPublicStores(queryParams);
 
       if (!response.success) {
@@ -66,6 +80,9 @@ export function useStoresNearby(params: StoresNearbyParams) {
         stores: data?.results || [],
         isLoading: false,
         error: null,
+        count: data?.count || 0,
+        next: data?.next || null,
+        previous: data?.previous || null,
       });
     } catch (error) {
       const errorMessage =
@@ -77,9 +94,12 @@ export function useStoresNearby(params: StoresNearbyParams) {
         stores: [],
         isLoading: false,
         error: errorMessage,
+        count: 0,
+        next: null,
+        previous: null,
       });
     }
-  }, [latitude, longitude, categoryIds, conditionIds]);
+  }, [latitude, longitude, categoryIds, conditionIds, page]);
 
   useEffect(() => {
     fetchStores();
