@@ -114,7 +114,7 @@ export default function ListingsNewPage() {
       }
 
       // Redirect to the listing page with a query parameter to trigger the success modal
-      router.push(`${Routes.LISTING.DETAILS(tagId)}?listing_created=true`);
+      router.push(`${Routes.LISTING.DETAILS(tagId!)}?listing_created=true`);
     } catch (error) {
       console.error("Error creating item and listing:", error);
       toast({
