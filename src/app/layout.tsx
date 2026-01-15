@@ -14,11 +14,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="min-h-screen grid grid-rows-[auto_1fr]">
         <ErrorBoundary>
           <AuthProvider>
             <HeaderWithAuth />
-            {children}
+            <main className="min-h-[calc(100dvh-var(--header-height))]">
+              {children}
+            </main>
             <SessionExpiredModal />
             <Toaster />
           </AuthProvider>

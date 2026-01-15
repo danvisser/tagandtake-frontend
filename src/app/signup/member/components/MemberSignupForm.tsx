@@ -69,7 +69,7 @@ export default function MemberSignupForm({
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-3">
-          <div className="space-y-1">
+          <div className="space-y-2">
             <Input
               id="username"
               placeholder="Username"
@@ -84,7 +84,7 @@ export default function MemberSignupForm({
             {renderFieldError(errors?.username)}
           </div>
 
-          <div className="space-y-1">
+          <div className="space-y-2">
             <Input
               id="email"
               placeholder="Email"
@@ -100,7 +100,7 @@ export default function MemberSignupForm({
             {renderFieldError(errors?.email)}
           </div>
 
-          <div className="space-y-1 relative">
+          <div className="space-y-2 relative">
             <Input
               id="password"
               placeholder="Password"
@@ -114,7 +114,7 @@ export default function MemberSignupForm({
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center"
+              className="absolute right-3 top-1/3 -translate-y-1/2 flex h-10 w-10 items-center justify-center"
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? (
@@ -126,7 +126,7 @@ export default function MemberSignupForm({
             {renderFieldError(errors?.password)}
           </div>
 
-          <div className="space-y-1 relative">
+          <div className="space-y-2 relative">
             <Input
               id="password2"
               placeholder="Confirm Password"
@@ -140,7 +140,7 @@ export default function MemberSignupForm({
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center"
+              className="absolute right-3 top-1/3 -translate-y-1/2 flex h-10 w-10 items-center justify-center"
               aria-label={
                 showConfirmPassword ? "Hide password" : "Show password"
               }
@@ -154,7 +154,7 @@ export default function MemberSignupForm({
             {renderFieldError(errors?.password2)}
           </div>
 
-          <Button disabled={isLoading} type="submit" className="w-full mt-6">
+          <Button disabled={isLoading} type="submit" className="w-full">
             {isLoading ? (
               <LoadingSpinner size="sm" text="Creating account..." />
             ) : (

@@ -39,7 +39,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen justify-center items-center w-full md:px-4">
+    <div className="flex min-h-full justify-center items-center w-full md:px-4">
       <div className="w-full max-w-md flex px-4 flex-col space-y-6">
         <h2 className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
           Log in

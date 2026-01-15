@@ -136,8 +136,9 @@ function ConfirmResetPasswordContent() {
 
   if (status === ResetStatus.INVALID) {
     return (
-      <div className="flex min-h-screen justify-center items-center w-full md:px-4">
-        <Card className="w-full max-w-md">
+      <div className="flex min-h-full justify-center items-center w-full md:px-4">
+        <div className="w-full max-w-md px-4">
+          <Card className="w-full">
           <CardHeader>
             <CardTitle className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
               Invalid Reset Link
@@ -154,14 +155,16 @@ function ConfirmResetPasswordContent() {
               <Button>Request New Reset Link</Button>
             </Link>
           </CardFooter>
-        </Card>
+          </Card>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen justify-center items-center w-full md:px-4">
-      <Card className="w-full max-w-md">
+    <div className="flex min-h-full justify-center items-center w-full md:px-4">
+      <div className="w-full max-w-md px-4">
+        <Card className="w-full">
         <CardHeader>
           <CardTitle className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
             Set New Password
@@ -258,7 +261,8 @@ function ConfirmResetPasswordContent() {
             </div>
           )}
         </CardFooter>
-      </Card>
+        </Card>
+      </div>
     </div>
   );
 }
@@ -267,8 +271,9 @@ export default function ConfirmResetPasswordPage() {
   return (
     <Suspense
       fallback={
-        <div className="flex min-h-screen justify-center items-center w-full md:px-4">
-          <Card className="w-full max-w-md">
+        <div className="flex min-h-full justify-center items-center w-full md:px-4">
+          <div className="w-full max-w-md px-4">
+            <Card className="w-full">
             <CardHeader>
               <CardTitle className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
                 Loading...
@@ -277,7 +282,8 @@ export default function ConfirmResetPasswordPage() {
             <CardContent className="flex flex-col items-center space-y-4">
               <LoadingSpinner size="md" />
             </CardContent>
-          </Card>
+            </Card>
+          </div>
         </div>
       }
     >

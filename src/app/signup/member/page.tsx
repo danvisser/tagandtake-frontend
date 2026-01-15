@@ -42,7 +42,7 @@ export default function MemberSignupPage() {
 
   if (isSuccess) {
     return (
-      <div className="flex min-h-screen justify-center items-center w-full md:px-4">
+      <div className="flex min-h-full justify-center items-center w-full md:px-4">
         <div className="w-full max-w-md flex px-4 flex-col space-y-6">
           <Alert className="border-green-200 bg-green-50 p-6">
             <div className="flex flex-col space-y-4">
@@ -79,24 +79,12 @@ export default function MemberSignupPage() {
   }
 
   return (
-    <div className="flex flex-col w-full min-h-screen">
-      {/* Fixed header section */}
-      <div className="w-full py-12 bg-background">
-        <div className="container max-w-md mx-auto px-4">
-          <h2 className="text-2xl font-medium tracking-tight md:text-3xl text-center">
-            Sign up with email
-          </h2>
-          <p className="text-center text-muted-foreground mt-2">
-            Once singed up, scan a tag to list your item.
-          </p>
-        </div>
-      </div>
-
-      {/* Scrollable form section */}
-      <div className="flex-1 w-full">
-        <div className="container max-w-md mx-auto px-4 py-4">
-          <MemberSignupForm onSubmit={handleMemberSignup} errors={errors} />
-        </div>
+    <div className="flex min-h-full justify-center items-center w-full md:px-4">
+      <div className="w-full max-w-md flex px-4 flex-col space-y-6">
+        <h2 className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
+          Sign Up
+        </h2>
+        <MemberSignupForm onSubmit={handleMemberSignup} errors={errors} />
       </div>
     </div>
   );
