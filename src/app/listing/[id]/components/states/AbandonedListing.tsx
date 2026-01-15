@@ -5,7 +5,7 @@ import { AbandonedItemListing } from "@src/api/listingsApi";
 import ListingCard from "@src/app/listing/[id]/components/shared/ListingCard";
 import ListingActions from "@src/app/listing/[id]/components/shared/ListingActions";
 import { getStatusMessage } from "@src/app/listing/[id]/utils/statusMessageUtils";
-import { LISTING_ROLES } from "@src/types/roles";
+import { ListingRoles } from "@src/types/roles";
 
 interface AbandonedListingProps {
   listing: AbandonedItemListing;
@@ -30,7 +30,7 @@ export default function AbandonedListing({
     <ListingCard
       listing={listing}
       statusBadge={{
-        label: userRole === LISTING_ROLES.HOST ? "Abandoned" : "Unavailable",
+        label: userRole === ListingRoles.HOST ? "Abandoned" : "Unavailable",
         variant: "destructive",
       }}
       statusMessage={statusMessage}

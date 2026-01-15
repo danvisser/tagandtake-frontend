@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@src/components/ui/button";
-import { ListingRole, LISTING_ROLES } from "@src/types/roles";
+import { ListingRole, ListingRoles } from "@src/types/roles";
 import {
   ItemListing,
   RecalledItemListing,
@@ -22,12 +22,12 @@ import StripeCheckoutButton from "@src/app/listing/[id]/components/StripeCheckou
 
 interface ListingActionsProps {
   listing:
-    | ItemListing
-    | RecalledItemListing
-    | AbandonedItemListing
-    | SoldItemListing
-    | VacantTag
-    | null;
+  | ItemListing
+  | RecalledItemListing
+  | AbandonedItemListing
+  | SoldItemListing
+  | VacantTag
+  | null;
   userRole: ListingRole | null;
   onOpenCollectionModal?: () => void;
   onOpenListItemModal?: () => void;
@@ -55,7 +55,7 @@ export default function ListingActions({
 
   if (isVacantTag(listing)) {
     // Vacant tag logic
-    if (userRole === LISTING_ROLES.HOST) {
+    if (userRole === ListingRoles.HOST) {
       return (
         <Button
           onClick={() => router.push(Routes.STORE.LISTINGS.ROOT)}
@@ -80,7 +80,7 @@ export default function ListingActions({
       );
     }
 
-    if (userRole === LISTING_ROLES.VIEWER) {
+    if (userRole === ListingRoles.VIEWER) {
       return (
         <div className="flex flex-col gap-4 w-full">
           <Button
@@ -114,7 +114,7 @@ export default function ListingActions({
   if (isItemListing(listing)) {
     // Active listing
     if (listing.item_details?.status === ItemStatus.LISTED) {
-      if (userRole === LISTING_ROLES.VIEWER) {
+      if (userRole === ListingRoles.VIEWER) {
         return (
           <StripeCheckoutButton
             tagId={listing.tag}
@@ -125,7 +125,7 @@ export default function ListingActions({
         );
       }
 
-      if (userRole === LISTING_ROLES.OWNER) {
+      if (userRole === ListingRoles.OWNER) {
         return (
           <Button
             onClick={() => {
@@ -141,7 +141,7 @@ export default function ListingActions({
         );
       }
 
-      if (userRole === LISTING_ROLES.HOST) {
+      if (userRole === ListingRoles.HOST) {
         return (
           <Button
             onClick={() => {
@@ -160,7 +160,7 @@ export default function ListingActions({
 
     // Recalled listing
     if (listing.item_details?.status === ItemStatus.RECALLED) {
-      if (userRole === LISTING_ROLES.HOST) {
+      if (userRole === ListingRoles.HOST) {
         return (
           <Button
             onClick={onOpenCollectionModal}
@@ -176,7 +176,7 @@ export default function ListingActions({
         );
       }
 
-      if (userRole === LISTING_ROLES.OWNER) {
+      if (userRole === ListingRoles.OWNER) {
         return (
           <Button variant="outline" className="w-full" disabled>
             Awaiting Collection
@@ -189,7 +189,7 @@ export default function ListingActions({
     if (listing.item_details?.status === ItemStatus.ABANDONED) {
       const abandonedListing = listing as AbandonedItemListing;
 
-      if (userRole === LISTING_ROLES.HOST && !abandonedListing.tag_removed) {
+      if (userRole === ListingRoles.HOST && !abandonedListing.tag_removed) {
         return (
           <Button
             onClick={() => setIsRemoveTagFromAbandonedModalOpen(true)}
@@ -211,7 +211,7 @@ export default function ListingActions({
     if (listing.item_details?.status === ItemStatus.SOLD) {
       const soldListing = listing as SoldItemListing;
 
-      if (userRole === LISTING_ROLES.HOST && !soldListing.tag_removed) {
+      if (userRole === ListingRoles.HOST && !soldListing.tag_removed) {
         return (
           <Button
             onClick={() => setIsRemoveTagFromSoldModalOpen(true)}

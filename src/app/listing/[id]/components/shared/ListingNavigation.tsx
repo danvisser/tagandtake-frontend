@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
-import { ListingRole, LISTING_ROLES } from "@src/types/roles";
+import { ListingRole, ListingRoles } from "@src/types/roles";
 import { Routes } from "@src/constants/routes";
 
 interface ListingNavigationProps {
@@ -15,10 +15,10 @@ export default function ListingNavigation({
   let backLink = Routes.HOME;
   let backText = "Home";
 
-  if (userRole === LISTING_ROLES.HOST) {
+  if (userRole === ListingRoles.HOST) {
     backLink = Routes.STORE.LISTINGS.ROOT;
     backText = "Store Listings";
-  } else if (userRole === LISTING_ROLES.OWNER) {
+  } else if (userRole === ListingRoles.OWNER) {
     backLink = Routes.MEMBER.ITEMS.ROOT;
     backText = "My Items";
   }

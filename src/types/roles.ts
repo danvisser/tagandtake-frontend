@@ -11,10 +11,10 @@ export interface AuthUser {
   role: UserRole;
 }
 
-export const LISTING_ROLES = {
+export const ListingRoles = {
   HOST: "HOST",
   OWNER: "OWNER",
   VIEWER: "VIEWER",
 } as const;
 
-export type ListingRole = (typeof LISTING_ROLES)[keyof typeof LISTING_ROLES];
+export type ListingRole = (typeof ListingRoles)[keyof typeof ListingRoles];

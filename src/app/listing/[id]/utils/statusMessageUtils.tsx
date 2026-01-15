@@ -1,5 +1,5 @@
 import React from "react";
-import { ListingRole, LISTING_ROLES } from "@src/types/roles";
+import { ListingRole, ListingRoles } from "@src/types/roles";
 import {
   ItemListing,
   RecalledItemListing,
@@ -38,7 +38,7 @@ export function getStatusMessage(
 
   // Active listing
   if (item.status === ItemStatus.LISTED) {
-    if (userRole === LISTING_ROLES.VIEWER) {
+    if (userRole === ListingRoles.VIEWER) {
       return {
         icon: null,
         mainText:
@@ -52,7 +52,7 @@ export function getStatusMessage(
   if (item.status === ItemStatus.RECALLED) {
     const recalledListing = listing as RecalledItemListing;
 
-    if (userRole === LISTING_ROLES.OWNER) {
+    if (userRole === ListingRoles.OWNER) {
       return {
         icon: <AlertCircle className="h-5 w-5 text-destructive/50" />,
         mainText: `Collection pin: ${recalledListing.collection_pin}`,
@@ -61,7 +61,7 @@ export function getStatusMessage(
     }
 
 
-    if (userRole === LISTING_ROLES.HOST) {
+    if (userRole === ListingRoles.HOST) {
       return {
         icon: <AlertCircle className="h-5 w-5 text-destructive/50" />,
         mainText: "Item recalled",
@@ -81,7 +81,7 @@ export function getStatusMessage(
   // Abandoned listing
   if (item.status === ItemStatus.ABANDONED) {
 
-    if (userRole === LISTING_ROLES.HOST) {
+    if (userRole === ListingRoles.HOST) {
       return {
         icon: <XCircle className="h-5 w-5 text-destructive/50" />,
         mainText: "Item abandoned",
@@ -90,7 +90,7 @@ export function getStatusMessage(
     }
 
     // For viewers
-    if (userRole === LISTING_ROLES.OWNER) {
+    if (userRole === ListingRoles.OWNER) {
       return {
         icon: <HelpCircle className="h-5 w-5 text-destructive/50" />,
         mainText: "Please take this tag to a member of staff to remove the tag",
@@ -110,14 +110,14 @@ export function getStatusMessage(
   if (item.status === ItemStatus.SOLD) {
     const soldListing = listing as SoldItemListing;
 
-    if (userRole === LISTING_ROLES.HOST) {
+    if (userRole === ListingRoles.HOST) {
       return {
         icon: <CheckCircle className="h-5 w-5 text-primary" />,
         mainText: "Item sold",
         secondaryText: "Please remove this tag",
         additionalInfo: `Sold on: ${formatDate(soldListing.sold_at)}`,
       };
-    } else if (userRole === LISTING_ROLES.OWNER) {
+    } else if (userRole === ListingRoles.OWNER) {
       return {
         icon: <CheckCircle className="h-5 w-5 text-primary" />,
         mainText: "Your item has been sold",

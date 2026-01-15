@@ -1,4 +1,4 @@
-import { ListingRole, LISTING_ROLES } from "@src/types/roles";
+import { ListingRole, ListingRoles } from "@src/types/roles";
 import { UserRoles } from "@src/types/roles";
 import {
   VacantTag,
@@ -21,7 +21,7 @@ export function canListItem(
   return (
     isAuthenticated &&
     userRole === UserRoles.MEMBER &&
-    listingRole === LISTING_ROLES.VIEWER
+    listingRole === ListingRoles.VIEWER
   );
 }
 
@@ -30,7 +30,7 @@ export function canListItem(
  */
 export function canCheckout(listingRole: ListingRole | null): boolean {
   // Only viewers can checkout
-  return listingRole === LISTING_ROLES.VIEWER;
+  return listingRole === ListingRoles.VIEWER;
 }
 
 /**

@@ -103,6 +103,21 @@ export default function HowItWorksPage() {
         </div>
       </div>
 
+      {/* CTA Section */}
+      <div className="bg-primary/10 p-6 md:p-8 lg:p-12 rounded-lg text-center max-w-3xl mx-auto">
+        <h3 className="text-xl md:text-2xl lg:text-3xl font-normal mb-3 md:mb-4">
+        Sell your items in-store today.
+        </h3>
+        <Link
+          href={Routes.STORES.ROOT}
+          className="inline-block bg-primary text-primary-foreground px-6 py-2.5 md:px-8 md:py-3 rounded-md hover:bg-primary/90 transition-colors font-medium"
+        >
+          Find a Store Near You →
+        </Link>
+      </div>
+
+      <div className="my-10"></div>
+
       {/* FAQ Section */}
       <div className="max-w-4xl mx-auto mb-10 md:mb-16">
         <h2
@@ -281,19 +296,6 @@ export default function HowItWorksPage() {
             </Accordion>
           </div>
         </div>
-      </div>
-
-      {/* CTA Section */}
-      <div className="bg-primary/10 p-6 md:p-8 lg:p-12 rounded-lg text-center max-w-3xl mx-auto">
-        <h3 className="text-xl md:text-2xl lg:text-3xl font-normal mb-3 md:mb-4">
-        Sell your items in-store today.
-        </h3>
-        <Link
-          href={Routes.STORES.ROOT}
-          className="inline-block bg-primary text-primary-foreground px-6 py-2.5 md:px-8 md:py-3 rounded-md hover:bg-primary/90 transition-colors font-medium"
-        >
-          Find a Store Near You →
-        </Link>
       </div>
     </div>
   );

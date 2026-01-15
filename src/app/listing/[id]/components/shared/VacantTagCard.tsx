@@ -22,7 +22,7 @@ import {
 } from "@src/components/ui/accordion";
 import { VacantTag } from "@src/api/listingsApi";
 import { CalendarDays, Tag, Info, Store, CheckCircle2 } from "lucide-react";
-import { ListingRole, LISTING_ROLES } from "@src/types/roles";
+import { ListingRole, ListingRoles } from "@src/types/roles";
 
 interface VacantTagCardProps {
   listing: VacantTag;
@@ -30,12 +30,12 @@ interface VacantTagCardProps {
   statusBadge?: {
     label: string;
     variant?:
-      | "default"
-      | "secondary"
-      | "destructive"
-      | "outline"
-      | "secondary-inverse"
-      | "destructive-inverse";
+    | "default"
+    | "secondary"
+    | "destructive"
+    | "outline"
+    | "secondary-inverse"
+    | "destructive-inverse";
   };
   footerContent?: ReactNode;
   userRole?: ListingRole | null;
@@ -44,7 +44,7 @@ interface VacantTagCardProps {
 export default function VacantTagCard({
   listing,
   footerContent,
-  userRole = LISTING_ROLES.VIEWER,
+  userRole = ListingRoles.VIEWER,
 }: VacantTagCardProps) {
   // Extract properties from the vacant tag
   const {
@@ -57,7 +57,7 @@ export default function VacantTagCard({
   } = listing;
 
   // Determine if guidelines should be shown
-  const showGuidelines = userRole !== LISTING_ROLES.HOST;
+  const showGuidelines = userRole !== ListingRoles.HOST;
 
   // Determine the header background color based on capacity
   const headerBgClass = has_capacity
