@@ -1,6 +1,12 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
-import { refreshAccessToken, AuthErrorResponse } from "@src/api/authApi";
+import {
+  refreshAccessToken,
+  AuthErrorResponse,
+  fetchUserSession,
+} from "@src/api/authApi";
 import { handleSessionExpiration } from "@src/lib/sessionExpirationHandler";
+import { useAuthStore } from "@src/stores/authStore";
+import { UserRole } from "@src/types/roles";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const API_VERSION = process.env.NEXT_PUBLIC_API_VERSION;
@@ -56,6 +62,38 @@ const onTokenRefreshed = (newToken: string) => {
   refreshSubscribers = [];
 };
 
+// Helper function to extract user context from various response structures
+const extractUserContext = (
+  responseData: unknown
+): { role: UserRole | null; id?: number } | null => {
+  if (
+    responseData &&
+    typeof responseData === "object" &&
+    "user" in responseData &&
+    responseData.user &&
+    typeof responseData.user === "object" &&
+    "role" in responseData.user
+  ) {
+    const user = responseData.user as { role: UserRole; id?: number };
+    return { role: user.role, id: user.id };
+  }
+  if (
+    responseData &&
+    typeof responseData === "object" &&
+    "data" in responseData &&
+    responseData.data &&
+    typeof responseData.data === "object" &&
+    "user" in responseData.data &&
+    responseData.data.user &&
+    typeof responseData.data.user === "object" &&
+    "role" in responseData.data.user
+  ) {
+    const user = responseData.data.user as { role: UserRole; id?: number };
+    return { role: user.role, id: user.id };
+  }
+  return null;
+};
+
 export const fetchClient = axios.create({
   baseURL: API_BASE_URL,
   headers: { "Content-Type": "application/json" },
@@ -73,9 +111,22 @@ fetchClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor to handle token refresh
+// Response interceptor to handle token refresh and sync auth state
 fetchClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const isAuthRequest = response.config?.withCredentials === true;
+
+    if (!isAuthRequest) {
+      const userContext = extractUserContext(response.data);
+      if (userContext?.role) {
+        const store = useAuthStore.getState();
+        if (store.accessToken && store.role !== userContext.role) {
+          store.setAuth(userContext.role, store.accessToken);
+        }
+      }
+    }
+    return response;
+  },
   async (error: AxiosError<AuthErrorResponse>) => {
     const originalRequest = error.config as AxiosRequestConfig & {
       _retry?: boolean;
@@ -128,6 +179,20 @@ fetchClient.interceptors.response.use(
 
         if (newToken) {
           setAccessToken(newToken);
+          const store = useAuthStore.getState();
+          const userRole = response.user?.role || null;
+
+          if (userRole) {
+            store.setAuth(userRole, newToken);
+          } else {
+            try {
+              const session = await fetchUserSession();
+              store.setAuth(session.user.role, newToken);
+            } catch {
+              store.setAuth(store.role, newToken);
+            }
+          }
+
           onTokenRefreshed(newToken);
 
           originalRequest.headers = originalRequest.headers || {};
