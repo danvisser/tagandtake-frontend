@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from "@storybook/react";
 import Header from "@src/components/Header";
+import { UserRoles } from "@src/types/roles";
 
 const meta: Meta<typeof Header> = {
   title: "Components/Header",
@@ -11,9 +12,9 @@ const meta: Meta<typeof Header> = {
 
 export default meta;
 
-export const Public: StoryObj<typeof Header> = {
+export const Guest: StoryObj<typeof Header> = {
   args: {
-    variant: 'public',
+    variant: UserRoles.GUEST,
   },
 };
 

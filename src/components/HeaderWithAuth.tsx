@@ -21,7 +21,7 @@ export default function HeaderWithAuth() {
   return (
     <Header
       variant={
-        role === UserRoles.MEMBER || role === UserRoles.STORE ? role : "public"
+        role === UserRoles.MEMBER || role === UserRoles.STORE ? role : UserRoles.GUEST
       }
     />
   );

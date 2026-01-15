@@ -10,7 +10,7 @@ import { useAuth } from "@src/providers/AuthProvider";
 import LoadingUI from "@src/components/LoadingUI";
 import { ArrowRight, Store, Shirt } from "lucide-react";
 
-type PageVariant = "public" | UserRole;
+type PageVariant = UserRole;
 
 type HeroButton = {
   href: string;
@@ -31,8 +31,8 @@ export default function HomePage() {
   const { isAuthenticated, role, isLoading } = useAuth();
 
   const variant = React.useMemo((): PageVariant => {
-    if (!isAuthenticated) return "public";
-    return role || "public";
+    if (!isAuthenticated) return UserRoles.GUEST;
+    return role || UserRoles.GUEST;
   }, [isAuthenticated, role]);
 
   // Show loading state while auth is being checked
@@ -41,7 +41,7 @@ export default function HomePage() {
   }
 
   const heroContent: Record<PageVariant, HeroContent> = {
-    public: {
+    [UserRoles.GUEST]: {
       title: "Your new favourite marketplace",
       subtitle: (
         <p className="text-xl md:text-2xl lg:text-3xl xl:text-4xl text-white drop-shadow-md">
@@ -87,7 +87,7 @@ export default function HomePage() {
   };
 
   const bottomSectionContent: Record<PageVariant, { href: string; text: string; buttonLabel: string }> = {
-    public: {
+    [UserRoles.GUEST]: {
       href: Routes.SIGNUP.STORE,
       text: "Join the forward-thinking businesses making the most of their space - no renovations required.",
       buttonLabel: "Become a host"

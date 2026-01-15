@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import { UserRole, UserRoles } from "@src/types/roles";
 import { useAuth } from "@src/providers/AuthProvider";
 
-export default function Header({ variant }: { variant: "public" | UserRole }) {
+export default function Header({ variant }: { variant: UserRole }) {
   const { logout } = useAuth();
   const router = useRouter();
   const [show, setShow] = useState(true);
@@ -52,7 +52,7 @@ export default function Header({ variant }: { variant: "public" | UserRole }) {
 
         {/* Center: Navigation (hidden on mobile) */}
         <nav className="hidden md:flex items-center space-x-6 text-sm font-light">
-          {variant === "public" && (
+          {variant === UserRoles.GUEST && (
             <>
               <Link href={Routes.STORES.ROOT} prefetch={false}>
                 <Button
@@ -140,8 +140,8 @@ export default function Header({ variant }: { variant: "public" | UserRole }) {
 
         {/* Right: User Actions */}
         <div className="absolute right-4 md:right-6 flex items-center gap-4">
-          {variant === "public" && (
-            <Link href={Routes.LOGIN}>
+          {variant === UserRoles.GUEST && (
+            <Link href={Routes.LOGIN} className="hidden md:block">
               <Button variant="default" size="sm">
                 Log in | Sign up
               </Button>
@@ -154,7 +154,7 @@ export default function Header({ variant }: { variant: "public" | UserRole }) {
           )}
           {variant === UserRoles.MEMBER && (
             <>
-              <Link href={Routes.MEMBER.ITEMS.NEW}>
+              <Link href={Routes.MEMBER.ITEMS.NEW} className="hidden md:block">
                 <Button variant="outline" size="sm">
                   Sell now
                 </Button>
@@ -174,7 +174,7 @@ export default function Header({ variant }: { variant: "public" | UserRole }) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
-              {variant === "public" && (
+              {variant === UserRoles.GUEST && (
                 <>
                   <DropdownMenuItem asChild>
                     <Link href={Routes.SIGNUP.MEMBER} className="w-full">
