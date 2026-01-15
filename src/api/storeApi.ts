@@ -130,6 +130,9 @@ export interface BasicStoreInfo {
 // Types for Store List Response
 export interface StoreListResponse {
   count: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
   next: string | null;
   previous: string | null;
   results: PublicStore[];

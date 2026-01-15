@@ -19,6 +19,7 @@ import {
 } from "@src/components/ui/card";
 import { useToast } from "@src/hooks/use-toast";
 import { handleListingError } from "@src/app/listing/[id]/utils/listingErrorHandler";
+import { Routes } from "@src/constants/routes";
 
 export default function ListingsNewPage() {
   const router = useRouter();
@@ -113,7 +114,7 @@ export default function ListingsNewPage() {
       }
 
       // Redirect to the listing page with a query parameter to trigger the success modal
-      router.push(`/listing/${tagId}?listing_created=true`);
+      router.push(`${Routes.LISTING.DETAILS(tagId)}?listing_created=true`);
     } catch (error) {
       console.error("Error creating item and listing:", error);
       toast({
@@ -150,7 +151,7 @@ export default function ListingsNewPage() {
               </AlertDescription>
             </Alert>
             <div className="mt-6 flex justify-center">
-              <Button onClick={() => router.push("/")}>Return to Home</Button>
+              <Button onClick={() => router.push(Routes.HOME)}>Return to Home</Button>
             </div>
           </CardContent>
         </Card>
@@ -188,7 +189,7 @@ export default function ListingsNewPage() {
           </CardHeader>
           <CardContent>
             <div className="mt-6 flex justify-center">
-              <Button onClick={() => router.push("/")}>Return to Home</Button>
+              <Button onClick={() => router.push(Routes.HOME)}>Return to Home</Button>
             </div>
           </CardContent>
         </Card>

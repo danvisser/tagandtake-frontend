@@ -16,7 +16,7 @@ import {
   HoverCardTrigger,
 } from "@src/components/ui/hover-card";
 import { Badge } from "@src/components/ui/badge";
-import { MapPin, Tag, Shirt } from "lucide-react";
+import { MapPin, Tag, Shirt, PoundSterling, Percent } from "lucide-react";
 import { getCategoryById, getConditionById } from "@src/data/itemReferenceData";
 import { formatCurrency } from "@src/lib/formatters";
 
@@ -92,26 +92,47 @@ export default function StoreCard({ store }: StoreCardProps) {
             )}
 
             {/* Available tags and listings in store - main info */}
-            <div className="grid grid-cols-2 gap-2 md:gap-3 pt-2">
+            <div className="grid grid-cols-2 gap-2 md:gap-3">
               <div className="flex flex-col items-center gap-2 p-3 md:p-4 lg:p-5 bg-slate-50 rounded-lg">
                 <div className="flex items-center gap-2">
                   <Tag className="h-5 w-5 text-foreground" />
-                  <span className="text-foreground text-sm md:text-base">Available</span>
+                  <span className="text-foreground text-sm md:text-base">Tags Available</span>
                 </div>
-                <span className="font-bold text-2xl md:text-3xl text-primary">{store.remaining_stock}</span>
+                <span className="font-bold text-xl md:text-2xl text-primary">{store.remaining_stock}</span>
               </div>
               <div className="flex flex-col items-center gap-2 p-3 md:p-4 lg:p-5 bg-slate-50 rounded-lg">
                 <div className="flex items-center gap-2">
                   <Shirt className="h-5 w-5 text-foreground" />
                   <span className="text-foreground text-sm md:text-base">Listings</span>
                 </div>
-                <span className="font-bold text-2xl md:text-3xl">{store.active_stock}</span>
+                <span className="font-bold text-xl md:text-2xl">{store.active_stock}</span>
               </div>
+            </div>
+
+            {/* Spacer for extra gap after listings */}
+            <div className="h-1 md:h-2"></div>
+
+            {/* Minimum Price */}
+            <div className="flex justify-between items-center text-sm md:text-sm">
+              <div className="flex items-center gap-2">
+                <PoundSterling className="h-4 w-4" />
+                <span className="font-medium">Minimum Price: </span>
+              </div>
+              <span className="text-muted-foreground font-medium">{formatCurrency(store.min_price)}</span>
+            </div>
+
+            {/* Commission */}
+            <div className="flex justify-between items-center text-sm md:text-sm">
+              <div className="flex items-center gap-2">
+                <Percent className="h-4 w-4" />
+                <span className="font-medium">Commission: </span>
+              </div>
+              <span className="text-muted-foreground font-medium">{store.commission}%</span>
             </div>
 
             {/* Categories and Conditions with Accordion dropdowns */}
             {(categories.length > 0 || conditions.length > 0) && (
-              <div className="pt-1">
+              <div>
                 <Accordion type="single" collapsible className="w-full">
                   {conditions.length > 0 && (
                     <AccordionItem value="conditions">
@@ -199,39 +220,6 @@ export default function StoreCard({ store }: StoreCardProps) {
                 </Accordion>
               </div>
             )}
-
-            {/* Store details - in boxes with shorter labels */}
-            <div className="grid grid-cols-3 gap-2 pt-2">
-              <div className="flex items-start gap-2 p-2 md:p-3 lg:p-3 bg-slate-50 rounded-lg">
-                {/* <Tag className="h-4 w-4 mt-0.5 flex-shrink-0" /> */}
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-medium text-xs md:text-sm">Min Price</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {formatCurrency(store.min_price)}
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-2 p-2 md:p-3 lg:p-3 bg-slate-50 rounded-lg">
-                {/* <Store className="h-4 w-4 mt-0.5 flex-shrink-0" /> */}
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-medium text-xs md:text-sm">Commission</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {store.commission}%
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-2 p-2 md:p-3 lg:p-3 bg-slate-50 rounded-lg">
-                {/* <CalendarDays className="h-4 w-4 mt-0.5 flex-shrink-0" /> */}
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-medium text-xs md:text-sm">Display</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {store.min_listing_days} {store.min_listing_days === 1 ? "day" : "days"}
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </CardContent>

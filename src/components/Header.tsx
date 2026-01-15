@@ -54,13 +54,13 @@ export default function Header({ variant }: { variant: "public" | UserRole }) {
         <nav className="hidden md:flex items-center space-x-6 text-sm font-light">
           {variant === "public" && (
             <>
-              <Link href={Routes.HOME} prefetch={false}>
+              <Link href={Routes.STORES.ROOT} prefetch={false}>
                 <Button
                   variant="ghost"
                   size="lg"
                   className="text-lg font-light"
                 >
-                  Home
+                  Store Finder
                 </Button>
               </Link>
               <Link href={Routes.HOW_IT_WORKS} prefetch={false}>
@@ -85,6 +85,15 @@ export default function Header({ variant }: { variant: "public" | UserRole }) {
           )}
           {variant === UserRoles.MEMBER && (
             <>
+              <Link href={Routes.STORES.ROOT} prefetch={false}>
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="text-lg font-light"
+                >
+                  Store Finder
+                </Button>
+              </Link>
               <Link href={Routes.MEMBER.ROOT} prefetch={false}>
                 <Button
                   variant="ghost"
@@ -179,8 +188,8 @@ export default function Header({ variant }: { variant: "public" | UserRole }) {
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href={Routes.HOME} className="w-full">
-                      Home
+                    <Link href={Routes.STORES.ROOT} className="w-full">
+                      Store Finder
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
@@ -197,6 +206,11 @@ export default function Header({ variant }: { variant: "public" | UserRole }) {
               )}
               {variant === UserRoles.MEMBER && (
                 <>
+                  <DropdownMenuItem asChild>
+                    <Link href={Routes.STORES.ROOT} className="w-full">
+                      Store Finder
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href={Routes.MEMBER.ROOT} className="w-full">
                       My Account

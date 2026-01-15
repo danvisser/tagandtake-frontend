@@ -6,6 +6,9 @@ export interface StoresNearbyState {
   isLoading: boolean;
   error: string | null;
   count: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
   next: string | null;
   previous: string | null;
 }
@@ -29,6 +32,9 @@ export function useStoresNearby(params: StoresNearbyParams) {
     isLoading: false,
     error: null,
     count: 0,
+    page: 1,
+    page_size: 20,
+    total_pages: 1,
     next: null,
     previous: null,
   });
@@ -41,6 +47,9 @@ export function useStoresNearby(params: StoresNearbyParams) {
         isLoading: false,
         error: null,
         count: 0,
+        page: 1,
+        page_size: 20,
+        total_pages: 1,
         next: null,
         previous: null,
       });
@@ -81,6 +90,9 @@ export function useStoresNearby(params: StoresNearbyParams) {
         isLoading: false,
         error: null,
         count: data?.count || 0,
+        page: data?.page || 1,
+        page_size: data?.page_size || 20,
+        total_pages: data?.total_pages || 1,
         next: data?.next || null,
         previous: data?.previous || null,
       });
@@ -95,6 +107,9 @@ export function useStoresNearby(params: StoresNearbyParams) {
         isLoading: false,
         error: errorMessage,
         count: 0,
+        page: 1,
+        page_size: 20,
+        total_pages: 1,
         next: null,
         previous: null,
       });

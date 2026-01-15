@@ -10,8 +10,9 @@ export default function AboutPage() {
         <h1 className="text-2xl md:text-3xl lg:text-4xl font-medium mb-4 leading-tight">
           Our Story
         </h1>
-        <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
-          On a mission to bring pre-loved to the high street
+        <p className="italic text-base md:text-lg text-muted-foreground max-w-2xl mx-auto">
+          &quot;We&apos;re on a mission to enable businesses to benefit from the rising consumer
+          appetite for second hand goods.&quot;
         </p>
       </div>
 
@@ -28,7 +29,7 @@ export default function AboutPage() {
               Our aim is simple: to empower high street businesses to 
               seamlessly integrate second hand sales. It isn&apos;t just about being
               eco-friendly - it&apos;s about enabling business to align with a rising consumer
-              appetite for pre-loved goods. We provide the tools and technology
+              appetite for second hand goods. We provide the tools and technology
               to make sustainable shopping accessible and attractive, ensuring
               it&apos;s a win for our partners, their customers, and the planet.
             </p>

@@ -47,6 +47,7 @@ export default function StoreFinder() {
     stores,
     isLoading: isStoresLoading,
     count,
+    total_pages,
     next,
     previous,
   } = useStoresNearby({
@@ -79,9 +80,7 @@ export default function StoreFinder() {
     await geocode(address);
   };
 
-  // Calculate pagination info
-  const pageSize = 10; // Adjust based on your backend's page size
-  const totalPages = Math.ceil(count / pageSize);
+  // Use total_pages from API response
 
   // Handle page changes
   const handlePreviousPage = () => {
@@ -142,7 +141,7 @@ export default function StoreFinder() {
       )}
 
       {hasStores && shouldShowSearchBar && (
-        <div className="mb-8 md:mb-10 flex flex-col items-center px-2 md:px-0">
+        <div className="mt-4 md:mt-6 mb-8 md:mb-10 flex flex-col items-center px-2 md:px-0">
           <StoreSearchBar
             onSearch={handleSearch}
             isLoading={isGeocodingLoading}
@@ -184,7 +183,7 @@ export default function StoreFinder() {
           {count > 0 && (
             <div className="mt-8 flex items-center justify-between pt-6">
               <div className="text-sm text-muted-foreground">
-                Showing {stores.length} of {count} stores
+                Showing {stores.length} of {count} {count === 1 ? 'store' : 'stores'}
               </div>
               <div className="flex items-center gap-2">
                 <Button
@@ -196,7 +195,7 @@ export default function StoreFinder() {
                   <ChevronLeft className="h-4 w-4 mr-1" />
                 </Button>
                 <div className="text-sm text-muted-foreground px-2">
-                  Page {currentPage} {totalPages > 1 && `of ${totalPages}`}
+                  Page {currentPage} of {total_pages || 1}
                 </div>
                 <Button
                   variant="ghost"

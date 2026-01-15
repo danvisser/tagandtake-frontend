@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createItem } from "@src/api/itemsApi";
 import { Button } from "@src/components/ui/button";
+import { Routes } from "@src/constants/routes";
 import {
   Dialog,
   DialogContent,
@@ -22,6 +23,7 @@ export default function ItemsNewPage() {
   const [successMessage, setSuccessMessage] = useState("");
   const [createdItemId, setCreatedItemId] = useState<number | null>(null);
   const [errors, setErrors] = useState<Record<string, string[]>>({});
+  const [formKey, setFormKey] = useState(0);
 
   // Handle form submission
   const handleSubmit = async (data: ItemFormData) => {
@@ -72,13 +74,21 @@ export default function ItemsNewPage() {
   // Navigate to item page
   const navigateToItem = () => {
     if (createdItemId) {
-      router.push(`/items/${createdItemId}`);
+      router.push(Routes.MEMBER.ITEMS.DETAILS(createdItemId.toString()));
     }
   };
 
-  // Navigate to new item page
+  // Reset form and prepare for new item
   const navigateToNewItem = () => {
-    router.push("/items/new");
+    // Close the success modal
+    setShowSuccessModal(false);
+    // Reset all state
+    setCreatedItemId(null);
+    setSuccessMessage("");
+    setErrors({});
+    setIsSubmitting(false);
+    // Force form remount by changing key
+    setFormKey((prev) => prev + 1);
   };
 
   return (
@@ -91,6 +101,7 @@ export default function ItemsNewPage() {
       </div>
 
       <ItemForm
+        key={formKey}
         onSubmit={handleSubmit}
         isSubmitting={isSubmitting}
         errors={errors}
