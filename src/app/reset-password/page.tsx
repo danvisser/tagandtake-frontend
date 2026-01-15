@@ -75,60 +75,60 @@ export default function ResetPasswordPage() {
     <div className="flex min-h-full justify-center items-center w-full md:px-4">
       <div className="w-full max-w-md px-4">
         <Card className="w-full">
-        <CardHeader>
-          <CardTitle className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
-            Reset Password
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {status === "success" ? (
-            <div className="flex flex-col items-center space-y-4">
-              <CheckCircle className="h-16 w-16 text-primary" />
-              <p className="text-center">
-                We&apos;ve sent an email to{" "}
-                <span className="font-medium">{email}</span> with a password
-                reset link.
-              </p>
-              <p className="text-sm text-muted-foreground text-center">
-                Please check your inbox and spam folder. The link will expire in
-                24 hours.
-              </p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email"></Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={isSubmitting}
-                  required
-                />
+          <CardHeader>
+            <CardTitle className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
+              Reset Password
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {status === "success" ? (
+              <div className="flex flex-col items-center space-y-4">
+                <CheckCircle className="h-16 w-16 text-primary" />
+                <p className="text-center">
+                  We&apos;ve sent an email to{" "}
+                  <span className="font-medium">{email}</span> with a password
+                  reset link.
+                </p>
+                <p className="text-sm text-muted-foreground text-center">
+                  Please check your inbox and spam folder. The link will expire in
+                  24 hours.
+                </p>
               </div>
-
-              {status === "error" && (
-                <div className="flex items-center gap-2 p-3 bg-destructive/10 text-destructive rounded-md">
-                  <AlertCircle className="h-4 w-4" />
-                  <p className="text-sm">{errorMessage}</p>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email"></Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email address"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={isSubmitting}
+                    required
+                  />
                 </div>
-              )}
 
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Sending..." : "Send Reset Link"}
-              </Button>
-            </form>
-          )}
-        </CardContent>
-        <CardFooter className="flex justify-center">
-          <div className="text-sm text-center">
-            <Link href={Routes.LOGIN} className="text-primary hover:underline">
-              Back to login
-            </Link>
-          </div>
-        </CardFooter>
+                {status === "error" && (
+                  <div className="flex items-center gap-2 p-3 bg-destructive/10 text-destructive rounded-md">
+                    <AlertCircle className="h-4 w-4" />
+                    <p className="text-sm">{errorMessage}</p>
+                  </div>
+                )}
+
+                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                  {isSubmitting ? "Sending..." : "Send Reset Link"}
+                </Button>
+              </form>
+            )}
+          </CardContent>
+          <CardFooter className="flex justify-center">
+            <div className="text-sm text-center">
+              <Link href={Routes.LOGIN} className="text-primary hover:underline">
+                Back to login
+              </Link>
+            </div>
+          </CardFooter>
         </Card>
       </div>
     </div>

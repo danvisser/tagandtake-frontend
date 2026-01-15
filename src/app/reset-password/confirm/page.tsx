@@ -139,22 +139,22 @@ function ConfirmResetPasswordContent() {
       <div className="flex min-h-full justify-center items-center w-full md:px-4">
         <div className="w-full max-w-md px-4">
           <Card className="w-full">
-          <CardHeader>
-            <CardTitle className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
-              Invalid Reset Link
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center space-y-4">
-            <AlertCircle className="h-16 w-16 text-amber-500" />
-            <p className="text-center">
-              The password reset link is invalid or has expired.
-            </p>
-          </CardContent>
-          <CardFooter className="flex justify-center">
-            <Link href={Routes.PASSWORD.RESET}>
-              <Button>Request New Reset Link</Button>
-            </Link>
-          </CardFooter>
+            <CardHeader>
+              <CardTitle className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
+                Invalid Reset Link
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center space-y-4">
+              <AlertCircle className="h-16 w-16 text-amber-500" />
+              <p className="text-center">
+                The password reset link is invalid or has expired.
+              </p>
+            </CardContent>
+            <CardFooter className="flex justify-center">
+              <Link href={Routes.PASSWORD.RESET}>
+                <Button>Request New Reset Link</Button>
+              </Link>
+            </CardFooter>
           </Card>
         </div>
       </div>
@@ -165,102 +165,102 @@ function ConfirmResetPasswordContent() {
     <div className="flex min-h-full justify-center items-center w-full md:px-4">
       <div className="w-full max-w-md px-4">
         <Card className="w-full">
-        <CardHeader>
-          <CardTitle className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
-            Set New Password
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {status === ResetStatus.SUCCESS ? (
-            <div className="flex flex-col items-center space-y-4">
-              <CheckCircle className="h-16 w-16 text-primary" />
-              <p className="text-center">
-                Your password has been successfully reset.
-              </p>
-              <p className="text-sm text-muted-foreground text-center">
-                You can now log in with your new password.
-              </p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="new_password"></Label>
-                <div className="relative">
+          <CardHeader>
+            <CardTitle className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
+              Set New Password
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {status === ResetStatus.SUCCESS ? (
+              <div className="flex flex-col items-center space-y-4">
+                <CheckCircle className="h-16 w-16 text-primary" />
+                <p className="text-center">
+                  Your password has been successfully reset.
+                </p>
+                <p className="text-sm text-muted-foreground text-center">
+                  You can now log in with your new password.
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="new_password"></Label>
+                  <div className="relative">
+                    <Input
+                      id="new_password"
+                      name="new_password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter new password"
+                      value={passwords.new_password}
+                      onChange={handleChange}
+                      disabled={isSubmitting}
+                      required
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-0 top-0 h-full px-3"
+                      onClick={toggleShowPassword}
+                    >
+                      {showPassword ? (
+                        <EyeOffIcon className="h-4 w-4" />
+                      ) : (
+                        <EyeIcon className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <Label htmlFor="confirm_new_password"></Label>
                   <Input
-                    id="new_password"
-                    name="new_password"
+                    id="confirm_new_password"
+                    name="confirm_new_password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Enter new password"
-                    value={passwords.new_password}
+                    placeholder="Confirm new password"
+                    value={passwords.confirm_new_password}
                     onChange={handleChange}
                     disabled={isSubmitting}
                     required
                   />
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-full px-3"
-                    onClick={toggleShowPassword}
-                  >
-                    {showPassword ? (
-                      <EyeOffIcon className="h-4 w-4" />
-                    ) : (
-                      <EyeIcon className="h-4 w-4" />
-                    )}
-                  </Button>
                 </div>
-              </div>
 
-              <div className="space-y-6">
-                <Label htmlFor="confirm_new_password"></Label>
-                <Input
-                  id="confirm_new_password"
-                  name="confirm_new_password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Confirm new password"
-                  value={passwords.confirm_new_password}
-                  onChange={handleChange}
-                  disabled={isSubmitting}
-                  required
-                />
-              </div>
+                <div className="h-2"></div>
 
-              <div className="h-2"></div>
-
-              {status === ResetStatus.ERROR && (
-                <div className="flex items-center gap-2 p-3 bg-destructive/10 text-destructive rounded-md">
-                  <AlertCircle className="h-4 w-4" />
-                  <p className="text-sm">{errorMessage}</p>
-                </div>
-              )}
-
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? (
-                  <LoadingSpinner size="sm" text="Resetting..." />
-                ) : (
-                  "Reset Password"
+                {status === ResetStatus.ERROR && (
+                  <div className="flex items-center gap-2 p-3 bg-destructive/10 text-destructive rounded-md">
+                    <AlertCircle className="h-4 w-4" />
+                    <p className="text-sm">{errorMessage}</p>
+                  </div>
                 )}
-              </Button>
-            </form>
-          )}
-        </CardContent>
-        <CardFooter className="flex justify-center">
-          {status === ResetStatus.SUCCESS ? (
-            <Link href={Routes.LOGIN}>
-              <Button>Go to Login</Button>
-            </Link>
-          ) : (
-            <div className="text-sm text-center">
-              <Link
-                href={Routes.LOGIN}
-                className="text-primary hover:underline"
-              >
-                Back to login
+
+                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <LoadingSpinner size="sm" text="Resetting..." />
+                  ) : (
+                    "Reset Password"
+                  )}
+                </Button>
+              </form>
+            )}
+          </CardContent>
+          <CardFooter className="flex justify-center">
+            {status === ResetStatus.SUCCESS ? (
+              <Link href={Routes.LOGIN}>
+                <Button>Go to Login</Button>
               </Link>
-            </div>
-          )}
-        </CardFooter>
+            ) : (
+              <div className="text-sm text-center">
+                <Link
+                  href={Routes.LOGIN}
+                  className="text-primary hover:underline"
+                >
+                  Back to login
+                </Link>
+              </div>
+            )}
+          </CardFooter>
         </Card>
       </div>
     </div>
@@ -274,14 +274,14 @@ export default function ConfirmResetPasswordPage() {
         <div className="flex min-h-full justify-center items-center w-full md:px-4">
           <div className="w-full max-w-md px-4">
             <Card className="w-full">
-            <CardHeader>
-              <CardTitle className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
-                Loading...
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col items-center space-y-4">
-              <LoadingSpinner size="md" />
-            </CardContent>
+              <CardHeader>
+                <CardTitle className="text-2xl font-semibold tracking-tight md:text-3xl text-center">
+                  Loading...
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col items-center space-y-4">
+                <LoadingSpinner size="md" />
+              </CardContent>
             </Card>
           </div>
         </div>
