@@ -5,13 +5,13 @@ export const recallReasons: RecallReason[] = [
     id: 1,
     reason: "IncorrectItem Condition",
     type: RecallReasonType.ISSUE,
-    description: "Item does not meet store's condition standards",
+    description: "Does not meet condition standards",
   },
   {
     id: 2,
     reason: "Incorrect Item Category",
     type: RecallReasonType.ISSUE,
-    description: "Item category is not one of the store's approved categories",
+    description: "Not an approved category",
   },
   {
     id: 3,
@@ -23,20 +23,19 @@ export const recallReasons: RecallReason[] = [
     id: 4,
     reason: "Store Discretion",
     type: RecallReasonType.STORE_DISCRETION,
-    description:
-      "Item has exceeded the store's listing period guarantee and is being recalled",
+    description: "Exceeded listing period guarantee",
   },
   {
     id: 5,
     reason: "Owner Request",
     type: RecallReasonType.OWNER_REQUEST,
-    description: "Owner has requested to recall their item",
+    description: "Owner requested delist",
   },
   {
     id: 6,
     reason: "No Item Attached",
     type: RecallReasonType.TAG_ERROR,
-    description: "No item is attached to the tag",
+    description: "No item attached",
   },
 ];
 

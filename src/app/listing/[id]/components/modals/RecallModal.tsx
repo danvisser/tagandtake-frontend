@@ -15,7 +15,7 @@ import {
   getRecallReasonsByType,
 } from "@src/data/recallReasonsData";
 import { RecallReasonType } from "@src/api/listingsApi";
-import { RotateCcw, X, RefreshCw } from "lucide-react";
+import { RotateCcw, X, RefreshCw, AlertTriangle, Store, User, Tag } from "lucide-react";
 
 interface RecallModalProps {
   isOpen: boolean;
@@ -136,7 +136,10 @@ export default function RecallModal({
           {/* Store Discretion - always visible but disabled if past_min_listing_days is false */}
           {storeDiscretionReasons.length > 0 && (
             <div className="space-y-2">
-              <p className="text-sm font-medium text-muted-foreground">Store Discretion</p>
+              <div className="flex items-center gap-2">
+                <Store className="h-4 w-4 text-muted-foreground" />
+                <p className="text-sm font-medium text-muted-foreground">Store Discretion</p>
+              </div>
               <div className="space-y-2">
                 {storeDiscretionReasons.map((reason) => (
                   <div key={reason.id} className="relative">
@@ -177,7 +180,10 @@ export default function RecallModal({
           {/* Issue Reasons */}
           {issueReasons.length > 0 && (
             <div className="space-y-2">
-              <p className="text-sm font-medium text-muted-foreground">Issues</p>
+              <div className="flex items-center gap-2">
+                <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+                <p className="text-sm font-medium text-muted-foreground">Issues</p>
+              </div>
               <div className="space-y-2">
                 {issueReasons.map((reason) => (
                   <Button
@@ -209,7 +215,10 @@ export default function RecallModal({
           {/* Owner Request */}
           {ownerRequestReasons.length > 0 && (
             <div className="space-y-2">
-              <p className="text-sm font-medium text-muted-foreground">Owner Request</p>
+              <div className="flex items-center gap-2">
+                <User className="h-4 w-4 text-muted-foreground" />
+                <p className="text-sm font-medium text-muted-foreground">Owner Request</p>
+              </div>
               <div className="space-y-2">
                 {ownerRequestReasons.map((reason) => (
                   <Button
@@ -232,10 +241,13 @@ export default function RecallModal({
             </div>
           )}
 
-          {/* Tag Error */}
-          {tagErrorReasons.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-sm font-medium text-muted-foreground">Tag Error</p>
+              {/* Tag Error */}
+              {tagErrorReasons.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Tag className="h-4 w-4 text-muted-foreground" />
+                    <p className="text-sm font-medium text-muted-foreground">Tag Error</p>
+                  </div>
               <div className="space-y-2">
                 {tagErrorReasons.map((reason) => (
                   <Button
