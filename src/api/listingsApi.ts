@@ -72,6 +72,7 @@ export interface ItemListing extends BaseListing {
   item_details: Item;
   created_at: string;
   updated_at: string;
+  past_min_listing_days: boolean;
 }
 
 // Interface for recalled listings

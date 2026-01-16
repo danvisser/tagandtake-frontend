@@ -54,7 +54,11 @@ export default function LoginForm({ onSubmit, errorMessage }: LoginFormProps) {
           </p>
           <div className="flex flex-col sm:flex-row gap-2 text-sm">
             <Link
-              href={`/resend-activation?email=${encodeURIComponent(email)}`}
+              href={
+                email.includes("@")
+                  ? `${Routes.SIGNUP.RESEND}?email=${encodeURIComponent(email)}`
+                  : Routes.SIGNUP.RESEND
+              }
               className="text-primary hover:underline font-medium"
             >
               Resend activation email

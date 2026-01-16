@@ -32,7 +32,7 @@ interface StoreProfile {
   min_listing_days: number;
   min_price: string;
   active_listings_count: number;
-  remaining_stock: number;
+  tags_available: number;
   created_at: string;
   updated_at: string;
   store_address?: {
@@ -211,7 +211,7 @@ function StoreSettingsContent() {
                     Remaining Stock
                   </p>
                   <p className="text-2xl font-bold">
-                    {storeProfile.remaining_stock}
+                    {storeProfile.tags_available}
                   </p>
                 </div>
               </div>

@@ -105,7 +105,7 @@ export default function StoreCard({ store }: StoreCardProps) {
                   <Tag className="h-5 w-5 text-foreground" />
                   <span className="text-foreground text-sm md:text-base">Tags Available</span>
                 </div>
-                <span className="font-bold text-xl md:text-2xl text-primary">{store.remaining_stock}</span>
+                <span className="font-bold text-xl md:text-2xl text-primary">{store.tags_available}</span>
               </div>
             </div>
 

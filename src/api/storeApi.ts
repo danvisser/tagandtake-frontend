@@ -43,7 +43,7 @@ export interface StoreProfile {
   commission: number;
   stock_limit: number;
   active_listings_count: number;
-  remaining_stock: number;
+  tags_available: number;
   min_listing_days: number;
   min_price: number;
   currency: string;
@@ -106,7 +106,7 @@ export interface PublicStore {
   google_profile_url?: string;
   distance?: number;
   has_capacity: boolean;
-  remaining_stock: number;
+  tags_available: number;
   active_stock: number;
   category_ids: number[];
   condition_ids: number[];
