@@ -7,7 +7,7 @@ import { ItemCreateData } from "./itemsApi";
 import { appendItemFormData } from "@src/lib/formUtils";
 
 // Enum for recall reason types
-export enum RecallReasonType {
+export enum ListingRemovalReasonType {
   ISSUE = "issue",
   STORE_DISCRETION = "store discretion",
   OWNER_REQUEST = "owner request",
@@ -15,10 +15,10 @@ export enum RecallReasonType {
 }
 
 // Types for Recall Reason
-export interface RecallReason {
+export interface ListingRemovalReason {
   id: number;
   reason: string;
-  type: RecallReasonType;
+  type: ListingRemovalReasonType;
   description: string;
 }
 
@@ -78,7 +78,7 @@ export interface ItemListing extends BaseListing {
 
 // Interface for recalled listings
 export interface RecalledItemListing extends ItemListing {
-  reason: RecallReason;
+  reason: ListingRemovalReason;
   recalled_at: string;
   collection_pin?: string;
   collection_deadline: string;
@@ -86,7 +86,7 @@ export interface RecalledItemListing extends ItemListing {
 
 // Interface for abandoned listings
 export interface AbandonedItemListing extends ItemListing {
-  reason: RecallReason;
+  reason: ListingRemovalReason;
   abandoned_at: string;
   tag_removed: boolean;
 }

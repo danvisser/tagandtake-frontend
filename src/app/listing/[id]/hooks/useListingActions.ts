@@ -14,8 +14,8 @@ import {
   delistListing,
   replaceListingTag,
 } from "@src/api/listingsApi";
-import { getRecallReasonById } from "@src/data/recallReasonsData";
-import { RecallReasonType } from "@src/api/listingsApi";
+import { getListingRemovalReasonById } from "@src/data/recallReasonsData";
+import { ListingRemovalReasonType } from "@src/api/listingsApi";
 
 // Define the error response type
 interface ErrorResponse {
@@ -134,9 +134,9 @@ export function useListingActions(listingId: number): ListingActions {
   const handleRecall = async (reasonId: number): Promise<ActionResult> => {
     try {
       setIsRecallLoading(true);
-      
+
       // Get the reason to determine its type
-      const reason = getRecallReasonById(reasonId);
+      const reason = getListingRemovalReasonById(reasonId);
       if (!reason) {
         return {
           success: false,
@@ -147,8 +147,8 @@ export function useListingActions(listingId: number): ListingActions {
       // Determine which endpoint to call based on reason type
       // Owner request and tag error both use delist endpoint
       const shouldDelist =
-        reason.type === RecallReasonType.OWNER_REQUEST ||
-        reason.type === RecallReasonType.TAG_ERROR;
+        reason.type === ListingRemovalReasonType.OWNER_REQUEST ||
+        reason.type === ListingRemovalReasonType.TAG_ERROR;
       const response = shouldDelist
         ? await delistListing(listingId, reasonId)
         : await recallListing(listingId, reasonId);
@@ -159,7 +159,7 @@ export function useListingActions(listingId: number): ListingActions {
         return { success: true, error: null };
       } else {
         console.error("Failed to recall/delist listing:", response.error);
-        
+
         // Try to extract error details
         let errorMessage = "Failed to process request";
         if (response.error) {
@@ -170,7 +170,7 @@ export function useListingActions(listingId: number): ListingActions {
             errorMessage = errorObj.detail || JSON.stringify(response.error);
           }
         }
-        
+
         return {
           success: false,
           error: errorMessage,
@@ -201,7 +201,7 @@ export function useListingActions(listingId: number): ListingActions {
         return { success: true, error: null };
       } else {
         console.error("Failed to replace tag:", response.error);
-        
+
         // Try to extract error details
         let errorMessage = "Failed to replace tag";
         if (response.error) {
@@ -212,7 +212,7 @@ export function useListingActions(listingId: number): ListingActions {
             errorMessage = errorObj.detail || JSON.stringify(response.error);
           }
         }
-        
+
         return {
           success: false,
           error: errorMessage,

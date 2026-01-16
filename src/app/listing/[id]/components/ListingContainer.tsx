@@ -14,11 +14,11 @@ import CollectionModal from "@src/app/listing/[id]/components/modals/CollectionM
 import ListItemModal from "@src/app/listing/[id]/components/modals/ListItemModal";
 import SuccessModal from "@src/app/listing/[id]/components/modals/SuccessModal";
 import RemoveTagConfirmationModal from "@src/app/listing/[id]/components/modals/RemoveTagConfirmationModal";
-import RecallModal from "@src/app/listing/[id]/components/modals/RecallModal";
+import ManageListingModal from "@src/app/listing/[id]/components/modals/ManageListingModal";
 import TagNotFound from "@src/app/listing/[id]/components/states/TagNotFound";
 import { useEffect, useState } from "react";
-import { getRecallReasonById } from "@src/data/recallReasonsData";
-import { RecallReasonType } from "@src/api/listingsApi";
+import { getListingRemovalReasonById } from "@src/data/recallReasonsData";
+import { ListingRemovalReasonType } from "@src/api/listingsApi";
 import { isItemListing } from "@src/app/listing/[id]/utils/listingHelpers";
 
 // Inner component that uses the context
@@ -42,8 +42,8 @@ function ListingContent() {
     setIsRemoveTagSuccessModalOpen,
     isListingSuccessModalOpen,
     setIsListingSuccessModalOpen,
-    isRecallModalOpen,
-    setIsRecallModalOpen,
+    isManageListingModalOpen,
+    setIsManageListingModalOpen,
     isRecallSuccessModalOpen,
     setIsRecallSuccessModalOpen,
     // Error states
@@ -149,16 +149,16 @@ function ListingContent() {
       setWasReplaceTag(false);
 
       // Check if this is an owner request or tag error (delist)
-      const reason = getRecallReasonById(reasonId);
+      const reason = getListingRemovalReasonById(reasonId);
       const shouldDelist =
-        reason?.type === RecallReasonType.OWNER_REQUEST ||
-        reason?.type === RecallReasonType.TAG_ERROR;
+        reason?.type === ListingRemovalReasonType.OWNER_REQUEST ||
+        reason?.type === ListingRemovalReasonType.TAG_ERROR;
       setWasDelist(shouldDelist || false);
 
       const result = await actions.handleRecall(reasonId);
 
       if (result.success) {
-        setIsRecallModalOpen(false);
+        setIsManageListingModalOpen(false);
         setIsRecallSuccessModalOpen(true);
       } else {
         // Set the error in the context
@@ -181,7 +181,7 @@ function ListingContent() {
       const result = await actions.handleReplaceTag(newTagId);
 
       if (result.success) {
-        setIsRecallModalOpen(false);
+        setIsManageListingModalOpen(false);
         setIsRecallSuccessModalOpen(true);
       } else {
         // Set the error in the context
@@ -292,10 +292,10 @@ function ListingContent() {
       />
 
       {/* Recall Modal */}
-      <RecallModal
-        isOpen={isRecallModalOpen}
+      <ManageListingModal
+        isOpen={isManageListingModalOpen}
         onClose={() => {
-          setIsRecallModalOpen(false);
+          setIsManageListingModalOpen(false);
           setRecallError(null); // Clear error when closing
         }}
         onConfirm={handleRecallConfirm}
@@ -315,15 +315,15 @@ function ListingContent() {
           wasReplaceTag
             ? "Successfully Changed Tag"
             : wasDelist
-            ? "Successfully Delisted"
-            : "Successfully Recalled"
+              ? "Successfully Delisted"
+              : "Successfully Recalled"
         }
         description={
           wasReplaceTag
             ? "Successfully changed tag - please attach new tag"
             : wasDelist
-            ? "Successfully delisted - please remove tag"
-            : "The listing has been successfully recalled."
+              ? "Successfully delisted - please remove tag"
+              : "The listing has been successfully recalled."
         }
         buttonText="Done"
         shouldRefresh={true}

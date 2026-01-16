@@ -15,15 +15,18 @@ export function SuccessState({ purchaseData, onGoHome }: SuccessStateProps) {
       {/* Clean success header */}
       <div className="flex flex-col items-center mb-6">
         <div className="rounded-full p-2 mb-3">
-          <CheckCircle className="h-6 w-6 text-primary" />
+          <CheckCircle className="h-12 w-12 text-primary" />
         </div>
         <h2 className="text-xl text-center mb-1">Payment Successful</h2>
       </div>
 
       {/* Tag removal instruction - Clear call to action */}
-      <div className="w-full mb-6 bg-slate-200 rounded-md p-3 flex items-start gap-2">
-        <Tag className="h-6 w-6 text-primary mt-0.5" />
-        <p className="text-lg font-medium text-primary">
+      <div className="w-full mb-6">
+        <div className="flex items-center gap-2 mb-2">
+          <Tag className="h-5 w-5 text-primary" />
+          <h3 className="text-base font-semibold">Remove tag</h3>
+        </div>
+        <p className="text-sm text-muted-foreground pl-7">
           Please take the item to a member of staff to remove the tag.
         </p>
       </div>
@@ -61,13 +64,13 @@ export function SuccessState({ purchaseData, onGoHome }: SuccessStateProps) {
 
       {/* Email confirmation - Subtle */}
       <div className="w-full mb-6">
-        <div className="flex items-center gap-2 mb-1">
+        <div className="flex items-center gap-2 mb-3">
           <div className="bg-gray-100 rounded-full p-1.5">
             <Mail className="h-4 w-4 text-gray-500" />
           </div>
           <h3 className="text-base font-semibold">Receipt Sent</h3>
         </div>
-        <p className="text-sm text-gray-600 pl-4">
+        <p className="text-sm text-muted-foreground pl-9">
           A receipt has been sent to your email confirming your purchase.
         </p>
       </div>

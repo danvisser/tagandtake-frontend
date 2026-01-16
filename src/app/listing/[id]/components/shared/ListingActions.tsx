@@ -31,7 +31,7 @@ interface ListingActionsProps {
   userRole: ListingRole | null;
   onOpenCollectionModal?: () => void;
   onOpenListItemModal?: () => void;
-  onOpenRecallModal?: () => void;
+  onOpenManageListingModal?: () => void;
   isRemoveTagLoading?: boolean;
   isCollectLoading?: boolean;
 }
@@ -41,7 +41,7 @@ export default function ListingActions({
   userRole,
   onOpenCollectionModal,
   onOpenListItemModal,
-  onOpenRecallModal,
+  onOpenManageListingModal,
   isRemoveTagLoading,
   isCollectLoading,
 }: ListingActionsProps) {
@@ -146,7 +146,7 @@ export default function ListingActions({
       if (userRole === ListingRoles.HOST) {
         return (
           <Button
-            onClick={onOpenRecallModal}
+            onClick={onOpenManageListingModal}
             variant="outline"
             className="w-full"
           >

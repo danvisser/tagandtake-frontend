@@ -35,8 +35,8 @@ export interface ListingContextType {
   setIsRemoveTagSuccessModalOpen: (isOpen: boolean) => void;
   isListingSuccessModalOpen: boolean;
   setIsListingSuccessModalOpen: (isOpen: boolean) => void;
-  isRecallModalOpen: boolean;
-  setIsRecallModalOpen: (isOpen: boolean) => void;
+  isManageListingModalOpen: boolean;
+  setIsManageListingModalOpen: (isOpen: boolean) => void;
   isRecallSuccessModalOpen: boolean;
   setIsRecallSuccessModalOpen: (isOpen: boolean) => void;
   // Error states
@@ -76,7 +76,7 @@ export function ListingProvider({
     useState(false);
   const [isListingSuccessModalOpen, setIsListingSuccessModalOpen] =
     useState(false);
-  const [isRecallModalOpen, setIsRecallModalOpen] = useState(false);
+  const [isManageListingModalOpen, setIsManageListingModalOpen] = useState(false);
   const [isRecallSuccessModalOpen, setIsRecallSuccessModalOpen] =
     useState(false);
 
@@ -101,8 +101,8 @@ export function ListingProvider({
     setIsRemoveTagSuccessModalOpen,
     isListingSuccessModalOpen,
     setIsListingSuccessModalOpen,
-    isRecallModalOpen,
-    setIsRecallModalOpen,
+    isManageListingModalOpen,
+    setIsManageListingModalOpen,
     isRecallSuccessModalOpen,
     setIsRecallSuccessModalOpen,
     // Error states

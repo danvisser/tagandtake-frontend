@@ -20,12 +20,12 @@ import { useListingContext } from "../context/ListingContext";
 
 interface WithListingStateProps {
   listing:
-    | ItemListing
-    | RecalledItemListing
-    | AbandonedItemListing
-    | SoldItemListing
-    | VacantTag
-    | null;
+  | ItemListing
+  | RecalledItemListing
+  | AbandonedItemListing
+  | SoldItemListing
+  | VacantTag
+  | null;
   userRole: ListingRole | null;
 }
 
@@ -33,7 +33,7 @@ export default function WithListingState({
   listing,
   userRole,
 }: WithListingStateProps) {
-  const { setIsCollectionModalOpen, setIsListItemModalOpen, setIsRecallModalOpen, actions } =
+  const { setIsCollectionModalOpen, setIsListItemModalOpen, setIsManageListingModalOpen, actions } =
     useListingContext();
 
   if (!listing) {
@@ -59,7 +59,7 @@ export default function WithListingState({
       <ActiveListing
         listing={activeListing}
         userRole={userRole}
-        onOpenRecallModal={() => setIsRecallModalOpen(true)}
+        onOpenManageListingModal={() => setIsManageListingModalOpen(true)}
       />
     );
   }

@@ -12,12 +12,12 @@ import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
 import LoadingSpinner from "@src/components/LoadingSpinner";
 import {
-  getRecallReasonsByType,
+  getListingRemovalReasonsByType,
 } from "@src/data/recallReasonsData";
-import { RecallReasonType } from "@src/api/listingsApi";
+import { ListingRemovalReasonType } from "@src/api/listingsApi";
 import { RotateCcw, X, RefreshCw, AlertTriangle, Store, User, Tag } from "lucide-react";
 
-interface RecallModalProps {
+interface ManageListingModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: (reasonId: number) => Promise<void>;
@@ -29,7 +29,7 @@ interface RecallModalProps {
 
 type ActionType = "recall" | "delist" | "replace_tag" | null;
 
-export default function RecallModal({
+export default function ManageListingModal({
   isOpen,
   onClose,
   onConfirm,
@@ -37,7 +37,7 @@ export default function RecallModal({
   isLoading,
   error,
   pastMinListingDays,
-}: RecallModalProps) {
+}: ManageListingModalProps) {
   const [selectedAction, setSelectedAction] = React.useState<ActionType>(null);
   const [selectedReasonId, setSelectedReasonId] = React.useState<number | null>(
     null
@@ -45,14 +45,14 @@ export default function RecallModal({
   const [newTagId, setNewTagId] = React.useState<string>("");
 
   // Get reasons by type
-  const issueReasons = getRecallReasonsByType(RecallReasonType.ISSUE);
-  const storeDiscretionReasons = getRecallReasonsByType(
-    RecallReasonType.STORE_DISCRETION
+  const issueReasons = getListingRemovalReasonsByType(ListingRemovalReasonType.ISSUE);
+  const storeDiscretionReasons = getListingRemovalReasonsByType(
+    ListingRemovalReasonType.STORE_DISCRETION
   );
-  const ownerRequestReasons = getRecallReasonsByType(
-    RecallReasonType.OWNER_REQUEST
+  const ownerRequestReasons = getListingRemovalReasonsByType(
+    ListingRemovalReasonType.OWNER_REQUEST
   );
-  const tagErrorReasons = getRecallReasonsByType(RecallReasonType.TAG_ERROR);
+  const tagErrorReasons = getListingRemovalReasonsByType(ListingRemovalReasonType.TAG_ERROR);
 
   const handleConfirm = async () => {
     if (selectedAction === "replace_tag") {
@@ -152,13 +152,11 @@ export default function RecallModal({
                         }
                       }}
                       disabled={!pastMinListingDays}
-                      className={`w-full flex justify-start text-left h-auto py-3 px-4 border-destructive whitespace-normal ${
-                        selectedReasonId === reason.id
-                          ? "bg-destructive text-white"
-                          : "bg-white text-destructive hover:bg-destructive hover:text-white"
-                      } ${
-                        !pastMinListingDays ? "opacity-50 cursor-not-allowed" : ""
-                      } transition-colors`}
+                      className={`w-full flex justify-start text-left h-auto py-3 px-4 border-destructive whitespace-normal ${selectedReasonId === reason.id
+                        ? "bg-destructive text-white"
+                        : "bg-white text-destructive hover:bg-destructive hover:text-white"
+                        } ${!pastMinListingDays ? "opacity-50 cursor-not-allowed" : ""
+                        } transition-colors`}
                     >
                       <div className="flex flex-col items-start w-full min-w-0 text-left">
                         <div className="font-medium break-words w-full text-left">{reason.description}</div>
@@ -191,11 +189,10 @@ export default function RecallModal({
                     type="button"
                     variant="outline"
                     onClick={() => setSelectedReasonId(reason.id)}
-                    className={`w-full flex justify-start text-left h-auto py-3 px-4 border-destructive whitespace-normal ${
-                      selectedReasonId === reason.id
-                        ? "bg-destructive text-white"
-                        : "bg-white text-destructive hover:bg-destructive hover:text-white"
-                    } transition-colors`}
+                    className={`w-full flex justify-start text-left h-auto py-3 px-4 border-destructive whitespace-normal ${selectedReasonId === reason.id
+                      ? "bg-destructive text-white"
+                      : "bg-white text-destructive hover:bg-destructive hover:text-white"
+                      } transition-colors`}
                   >
                     <div className="flex flex-col items-start w-full min-w-0 text-left">
                       <div className="font-medium break-words w-full text-left">{reason.description}</div>
@@ -226,11 +223,10 @@ export default function RecallModal({
                     type="button"
                     variant="outline"
                     onClick={() => setSelectedReasonId(reason.id)}
-                    className={`w-full flex justify-start text-left h-auto py-3 px-4 border-foreground whitespace-normal ${
-                      selectedReasonId === reason.id
-                        ? "bg-foreground text-background"
-                        : "bg-white text-foreground hover:bg-foreground hover:text-background"
-                    } transition-colors`}
+                    className={`w-full flex justify-start text-left h-auto py-3 px-4 border-foreground whitespace-normal ${selectedReasonId === reason.id
+                      ? "bg-foreground text-background"
+                      : "bg-white text-foreground hover:bg-foreground hover:text-background"
+                      } transition-colors`}
                   >
                     <div className="flex flex-col items-start w-full min-w-0 text-left">
                       <div className="font-medium break-words w-full text-left">{reason.description}</div>
@@ -241,13 +237,13 @@ export default function RecallModal({
             </div>
           )}
 
-              {/* Tag Error */}
-              {tagErrorReasons.length > 0 && (
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Tag className="h-4 w-4 text-muted-foreground" />
-                    <p className="text-sm font-medium text-muted-foreground">Tag Error</p>
-                  </div>
+          {/* Tag Error */}
+          {tagErrorReasons.length > 0 && (
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Tag className="h-4 w-4 text-muted-foreground" />
+                <p className="text-sm font-medium text-muted-foreground">Tag Error</p>
+              </div>
               <div className="space-y-2">
                 {tagErrorReasons.map((reason) => (
                   <Button
@@ -255,11 +251,10 @@ export default function RecallModal({
                     type="button"
                     variant="outline"
                     onClick={() => setSelectedReasonId(reason.id)}
-                    className={`w-full flex justify-start text-left h-auto py-3 px-4 border-foreground whitespace-normal ${
-                      selectedReasonId === reason.id
-                        ? "bg-foreground text-background"
-                        : "bg-white text-foreground hover:bg-foreground hover:text-background"
-                    } transition-colors`}
+                    className={`w-full flex justify-start text-left h-auto py-3 px-4 border-foreground whitespace-normal ${selectedReasonId === reason.id
+                      ? "bg-foreground text-background"
+                      : "bg-white text-foreground hover:bg-foreground hover:text-background"
+                      } transition-colors`}
                   >
                     <div className="flex flex-col items-start w-full min-w-0 text-left">
                       <div className="font-medium break-words w-full text-left">{reason.description}</div>
