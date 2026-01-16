@@ -14,8 +14,12 @@ import CollectionModal from "@src/app/listing/[id]/components/modals/CollectionM
 import ListItemModal from "@src/app/listing/[id]/components/modals/ListItemModal";
 import SuccessModal from "@src/app/listing/[id]/components/modals/SuccessModal";
 import RemoveTagConfirmationModal from "@src/app/listing/[id]/components/modals/RemoveTagConfirmationModal";
+import RecallModal from "@src/app/listing/[id]/components/modals/RecallModal";
 import TagNotFound from "@src/app/listing/[id]/components/states/TagNotFound";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { getRecallReasonById } from "@src/data/recallReasonsData";
+import { RecallReasonType } from "@src/api/listingsApi";
+import { isItemListing } from "@src/app/listing/[id]/utils/listingHelpers";
 
 // Inner component that uses the context
 function ListingContent() {
@@ -38,12 +42,23 @@ function ListingContent() {
     setIsRemoveTagSuccessModalOpen,
     isListingSuccessModalOpen,
     setIsListingSuccessModalOpen,
+    isRecallModalOpen,
+    setIsRecallModalOpen,
+    isRecallSuccessModalOpen,
+    setIsRecallSuccessModalOpen,
     // Error states
     collectionError,
     setCollectionError,
     removeTagError,
     setRemoveTagError,
+    recallError,
+    setRecallError,
   } = useListingContext();
+
+  // Track if the last action was a delist (owner request) to show appropriate success message
+  const [wasDelist, setWasDelist] = useState(false);
+  // Track if the last action was a replace tag
+  const [wasReplaceTag, setWasReplaceTag] = useState(false);
 
   // Check for listing_created query parameter
   useEffect(() => {
@@ -123,6 +138,58 @@ function ListingContent() {
     } catch (error) {
       console.error("Error removing tag from sold listing:", error);
       setRemoveTagError("An unexpected error occurred while removing the tag.");
+    }
+  };
+
+  // Handler for confirming recall/delist
+  const handleRecallConfirm = async (reasonId: number) => {
+    try {
+      // Clear any previous errors
+      setRecallError(null);
+      setWasReplaceTag(false);
+
+      // Check if this is an owner request or tag error (delist)
+      const reason = getRecallReasonById(reasonId);
+      const shouldDelist =
+        reason?.type === RecallReasonType.OWNER_REQUEST ||
+        reason?.type === RecallReasonType.TAG_ERROR;
+      setWasDelist(shouldDelist || false);
+
+      const result = await actions.handleRecall(reasonId);
+
+      if (result.success) {
+        setIsRecallModalOpen(false);
+        setIsRecallSuccessModalOpen(true);
+      } else {
+        // Set the error in the context
+        setRecallError(result.error);
+      }
+    } catch (error) {
+      console.error("Error recalling/delisting listing:", error);
+      setRecallError("An unexpected error occurred while processing the request.");
+    }
+  };
+
+  // Handler for confirming replace tag
+  const handleReplaceTagConfirm = async (newTagId: number) => {
+    try {
+      // Clear any previous errors
+      setRecallError(null);
+      setWasDelist(false);
+      setWasReplaceTag(true);
+
+      const result = await actions.handleReplaceTag(newTagId);
+
+      if (result.success) {
+        setIsRecallModalOpen(false);
+        setIsRecallSuccessModalOpen(true);
+      } else {
+        // Set the error in the context
+        setRecallError(result.error);
+      }
+    } catch (error) {
+      console.error("Error replacing tag:", error);
+      setRecallError("An unexpected error occurred while replacing the tag.");
     }
   };
 
@@ -220,6 +287,44 @@ function ListingContent() {
         description=""
         secondaryMessage="Please attach the tag to your item."
         secondaryIcon="tag"
+        buttonText="Done"
+        shouldRefresh={true}
+      />
+
+      {/* Recall Modal */}
+      <RecallModal
+        isOpen={isRecallModalOpen}
+        onClose={() => {
+          setIsRecallModalOpen(false);
+          setRecallError(null); // Clear error when closing
+        }}
+        onConfirm={handleRecallConfirm}
+        onReplaceTag={handleReplaceTagConfirm}
+        isLoading={actions.isRecallLoading}
+        error={recallError}
+        pastMinListingDays={
+          isItemListing(listing) ? listing.past_min_listing_days : false
+        }
+      />
+
+      {/* Recall/Delist/Replace Tag Success Modals */}
+      <SuccessModal
+        isOpen={isRecallSuccessModalOpen}
+        onClose={() => setIsRecallSuccessModalOpen(false)}
+        title={
+          wasReplaceTag
+            ? "Successfully Changed Tag"
+            : wasDelist
+            ? "Successfully Delisted"
+            : "Successfully Recalled"
+        }
+        description={
+          wasReplaceTag
+            ? "Successfully changed tag - please attach new tag"
+            : wasDelist
+            ? "Successfully delisted - please remove tag"
+            : "The listing has been successfully recalled."
+        }
         buttonText="Done"
         shouldRefresh={true}
       />

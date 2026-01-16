@@ -35,7 +35,7 @@ export const recallReasons: RecallReason[] = [
   {
     id: 6,
     reason: "No Item Attached",
-    type: RecallReasonType.ISSUE,
+    type: RecallReasonType.TAG_ERROR,
     description: "No item is attached to the tag",
   },
 ];

@@ -33,7 +33,7 @@ export default function WithListingState({
   listing,
   userRole,
 }: WithListingStateProps) {
-  const { setIsCollectionModalOpen, setIsListItemModalOpen, actions } =
+  const { setIsCollectionModalOpen, setIsListItemModalOpen, setIsRecallModalOpen, actions } =
     useListingContext();
 
   if (!listing) {
@@ -55,7 +55,13 @@ export default function WithListingState({
   if (listing.item_details?.status === ItemStatus.LISTED) {
     const activeListing = listing as ItemListing;
 
-    return <ActiveListing listing={activeListing} userRole={userRole} />;
+    return (
+      <ActiveListing
+        listing={activeListing}
+        userRole={userRole}
+        onOpenRecallModal={() => setIsRecallModalOpen(true)}
+      />
+    );
   }
 
   // Handle recalled listing

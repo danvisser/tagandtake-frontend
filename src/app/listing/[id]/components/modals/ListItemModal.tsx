@@ -20,6 +20,7 @@ import { Card } from "@src/components/ui/card";
 import { useToast } from "@src/hooks/use-toast";
 import { handleListingError } from "@src/app/listing/[id]/utils/listingErrorHandler";
 import { useListingContext } from "@src/app/listing/[id]/context/ListingContext";
+import ConfirmationModal from "@src/app/listing/[id]/components/modals/ConfirmationModal";
 
 interface ListItemModalProps {
   isOpen: boolean;
@@ -41,6 +42,8 @@ export default function ListItemModal({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [pendingItemId, setPendingItemId] = useState<number | null>(null);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
 
   useEffect(() => {
     async function fetchItems() {
@@ -73,11 +76,19 @@ export default function ListItemModal({
     router.push(Routes.MEMBER.ITEMS.DETAILS(itemId.toString()));
   };
 
-  const handleListItem = async (itemId: number) => {
+  const handleListItemClick = (itemId: number) => {
+    setPendingItemId(itemId);
+    setIsConfirmationModalOpen(true);
+  };
+
+  const handleConfirmListItem = async () => {
+    if (!pendingItemId) return;
+
     setIsSubmitting(true);
+    setIsConfirmationModalOpen(false);
     try {
       const response = await createListing({
-        item_id: itemId,
+        item_id: pendingItemId,
         tag_id: tagId,
       });
 
@@ -97,6 +108,7 @@ export default function ListItemModal({
       });
     } finally {
       setIsSubmitting(false);
+      setPendingItemId(null);
     }
   };
 
@@ -107,8 +119,8 @@ export default function ListItemModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] p-0">
-        <DialogHeader className="px-4 py-6 space-y-1.5">
+      <DialogContent className="sm:max-w-[425px] p-0 max-h-[90vh] flex flex-col overflow-hidden">
+        <DialogHeader className="px-4 py-6 space-y-1.5 flex-shrink-0">
           <DialogTitle className="text-2xl font-medium m-2">
             List a new item
           </DialogTitle>
@@ -122,7 +134,7 @@ export default function ListItemModal({
           </Button>
         </DialogHeader>
 
-        <div className="relative -mt-1">
+        <div className="relative -mt-1 flex-shrink-0">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-300"></div>
           </div>
@@ -133,10 +145,10 @@ export default function ListItemModal({
           </div>
         </div>
 
-        <div className="p-4 pt-2">
-          <h3 className="text-2xl font-medium mb-3">From your wardrobe</h3>
+        <div className="p-4 pt-2 flex flex-col flex-1 min-h-0 overflow-hidden">
+          <h3 className="text-2xl font-medium mb-3 flex-shrink-0">From your wardrobe</h3>
 
-          <div className="space-y-3 max-h-[60vh] overflow-y-auto">
+          <div className="space-y-3 flex-1 overflow-y-auto min-h-0">
             {isLoading ? (
               <div className="flex justify-center py-8">
                 <LoadingSpinner size="md" />
@@ -207,15 +219,11 @@ export default function ListItemModal({
                         className="w-full mt-3 h-10"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleListItem(item.id);
+                          handleListItemClick(item.id);
                         }}
                         disabled={isSubmitting}
                       >
-                        {isSubmitting ? (
-                          <LoadingSpinner size="sm" text="Processing..." />
-                        ) : (
-                          "List Item"
-                        )}
+                        List Item
                       </Button>
                     </div>
                   </div>
@@ -224,6 +232,24 @@ export default function ListItemModal({
             )}
           </div>
         </div>
+
+        <ConfirmationModal
+          isOpen={isConfirmationModalOpen}
+          onClose={() => {
+            setIsConfirmationModalOpen(false);
+            setPendingItemId(null);
+          }}
+          onConfirm={handleConfirmListItem}
+          title="Confirm Listing"
+          description={
+            pendingItemId
+              ? `Are you sure you want to list "${items.find((i) => i.id === pendingItemId)?.name || "this item"}"?`
+              : "Are you sure you want to list this item?"
+          }
+          confirmButtonText="Confirm"
+          cancelButtonText="Cancel"
+          isLoading={isSubmitting}
+        />
       </DialogContent>
     </Dialog>
   );

@@ -9,11 +9,13 @@ import { getStatusMessage } from "@src/app/listing/[id]/utils/statusMessageUtils
 interface ActiveListingProps {
   listing: ItemListing;
   userRole: ListingRole | null;
+  onOpenRecallModal?: () => void;
 }
 
 export default function ActiveListing({
   listing,
   userRole,
+  onOpenRecallModal,
 }: ActiveListingProps) {
   const item = listing.item_details;
 
@@ -35,7 +37,13 @@ export default function ActiveListing({
           }
       }
       statusMessage={statusMessage}
-      footerContent={<ListingActions listing={listing} userRole={userRole} />}
+      footerContent={
+        <ListingActions
+          listing={listing}
+          userRole={userRole}
+          onOpenRecallModal={onOpenRecallModal}
+        />
+      }
     />
   );
 }

@@ -40,7 +40,7 @@ export default function ConfirmationModal({
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
 
-        <DialogFooter>
+        <DialogFooter className="gap-3">
           <Button
             type="button"
             variant="outline"
@@ -53,7 +53,7 @@ export default function ConfirmationModal({
             type="button"
             onClick={onConfirm}
             disabled={isLoading}
-            variant="destructive"
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
           >
             {isLoading ? (
               <LoadingSpinner size="sm" text="Processing..." />

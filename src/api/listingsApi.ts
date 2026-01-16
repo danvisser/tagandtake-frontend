@@ -11,6 +11,7 @@ export enum RecallReasonType {
   ISSUE = "issue",
   STORE_DISCRETION = "store discretion",
   OWNER_REQUEST = "owner request",
+  TAG_ERROR = "tag error",
 }
 
 // Types for Recall Reason

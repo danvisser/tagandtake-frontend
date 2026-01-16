@@ -11,8 +11,11 @@ export interface ListingActions {
   handleRemoveTagFromAbandoned: () => Promise<ActionResult>;
   handleRemoveTagFromSold: () => Promise<ActionResult>;
   handleCollect: (pin: string) => Promise<ActionResult>;
+  handleRecall: (reasonId: number) => Promise<ActionResult>;
+  handleReplaceTag: (newTagId: number) => Promise<ActionResult>;
   isRemoveTagLoading: boolean;
   isCollectLoading: boolean;
+  isRecallLoading: boolean;
 }
 
 // Define the type for the context
@@ -32,11 +35,17 @@ export interface ListingContextType {
   setIsRemoveTagSuccessModalOpen: (isOpen: boolean) => void;
   isListingSuccessModalOpen: boolean;
   setIsListingSuccessModalOpen: (isOpen: boolean) => void;
+  isRecallModalOpen: boolean;
+  setIsRecallModalOpen: (isOpen: boolean) => void;
+  isRecallSuccessModalOpen: boolean;
+  setIsRecallSuccessModalOpen: (isOpen: boolean) => void;
   // Error states
   collectionError: string | null;
   setCollectionError: (error: string | null) => void;
   removeTagError: string | null;
   setRemoveTagError: (error: string | null) => void;
+  recallError: string | null;
+  setRecallError: (error: string | null) => void;
   // Actions
   actions: ListingActions;
 }
@@ -67,10 +76,14 @@ export function ListingProvider({
     useState(false);
   const [isListingSuccessModalOpen, setIsListingSuccessModalOpen] =
     useState(false);
+  const [isRecallModalOpen, setIsRecallModalOpen] = useState(false);
+  const [isRecallSuccessModalOpen, setIsRecallSuccessModalOpen] =
+    useState(false);
 
   // Error states
   const [collectionError, setCollectionError] = useState<string | null>(null);
   const [removeTagError, setRemoveTagError] = useState<string | null>(null);
+  const [recallError, setRecallError] = useState<string | null>(null);
 
   const value = {
     // Modal states
@@ -88,11 +101,17 @@ export function ListingProvider({
     setIsRemoveTagSuccessModalOpen,
     isListingSuccessModalOpen,
     setIsListingSuccessModalOpen,
+    isRecallModalOpen,
+    setIsRecallModalOpen,
+    isRecallSuccessModalOpen,
+    setIsRecallSuccessModalOpen,
     // Error states
     collectionError,
     setCollectionError,
     removeTagError,
     setRemoveTagError,
+    recallError,
+    setRecallError,
     // Actions
     actions,
   };

@@ -31,6 +31,7 @@ interface ListingActionsProps {
   userRole: ListingRole | null;
   onOpenCollectionModal?: () => void;
   onOpenListItemModal?: () => void;
+  onOpenRecallModal?: () => void;
   isRemoveTagLoading?: boolean;
   isCollectLoading?: boolean;
 }
@@ -40,6 +41,7 @@ export default function ListingActions({
   userRole,
   onOpenCollectionModal,
   onOpenListItemModal,
+  onOpenRecallModal,
   isRemoveTagLoading,
   isCollectLoading,
 }: ListingActionsProps) {
@@ -144,11 +146,7 @@ export default function ListingActions({
       if (userRole === ListingRoles.HOST) {
         return (
           <Button
-            onClick={() => {
-              // Store the current path as the return path
-              sessionStorage.setItem("returnPath", window.location.pathname);
-              router.push(Routes.STORE.LISTINGS.DETAILS(listing.id.toString()));
-            }}
+            onClick={onOpenRecallModal}
             variant="outline"
             className="w-full"
           >
