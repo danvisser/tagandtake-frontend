@@ -38,15 +38,23 @@ export enum ItemStatus {
 
 // Store info for items
 export interface ItemStoreInfo {
+  id: number; // Listing ID
+  tag_id: number;
   store_id: number;
   store_name: string;
+  // LISTED status fields
   listed_at?: string;
+  item_price?: number;
+  member_earnings?: number;
+  // SOLD status fields
   sold_at?: string;
+  // RECALLED status fields
   recalled_at?: string;
-  abandoned_at?: string;
   reason?: string;
   description?: string;
   collection_deadline?: string;
+  // ABANDONED status fields
+  abandoned_at?: string;
   tag_removed?: boolean;
 }
 
