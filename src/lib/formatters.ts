@@ -19,3 +19,15 @@ export function formatPercentage(value: number): string {
   }).format(value);
 }
 
+/**
+ * Format a date string or Date object as a readable date
+ */
+export function formatDate(date: string | Date): string {
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(dateObj);
+}
+

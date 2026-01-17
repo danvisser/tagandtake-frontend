@@ -85,6 +85,15 @@ export default function Header({ variant }: { variant: UserRole }) {
           )}
           {variant === UserRoles.MEMBER && (
             <>
+              <Link href={Routes.MEMBER.ITEMS.ROOT} prefetch={false}>
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="text-lg font-light"
+                >
+                  My Wardrobe
+                </Button>
+              </Link>
               <Link href={Routes.STORES.ROOT} prefetch={false}>
                 <Button
                   variant="ghost"
@@ -92,24 +101,6 @@ export default function Header({ variant }: { variant: UserRole }) {
                   className="text-lg font-light"
                 >
                   Store Finder
-                </Button>
-              </Link>
-              <Link href={Routes.MEMBER.ROOT} prefetch={false}>
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  className="text-lg font-light"
-                >
-                  My Account
-                </Button>
-              </Link>
-              <Link href={Routes.MEMBER.ITEMS.ROOT} prefetch={false}>
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  className="text-lg font-light"
-                >
-                  Manage Wardrobe
                 </Button>
               </Link>
             </>
@@ -131,7 +122,7 @@ export default function Header({ variant }: { variant: UserRole }) {
                   size="lg"
                   className="text-lg font-light"
                 >
-                  Manage Listings
+                  Store Listings
                 </Button>
               </Link>
             </>
@@ -218,7 +209,7 @@ export default function Header({ variant }: { variant: UserRole }) {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href={Routes.MEMBER.ITEMS.ROOT} className="w-full">
-                      Manage Wardrobe
+                      My Wardrobe
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
@@ -246,7 +237,7 @@ export default function Header({ variant }: { variant: UserRole }) {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href={Routes.STORE.LISTINGS.ROOT} className="w-full">
-                      Manage Listings
+                      Store Listings
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>

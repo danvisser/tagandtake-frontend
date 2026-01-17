@@ -37,7 +37,16 @@ export function canCheckout(listingRole: ListingRole | null): boolean {
  * Formats a date string to a human-readable format like "2pm on 4 July" or "2pm on 4 July 2022" if not current year
  */
 export function formatDate(dateString: string): string {
+  if (!dateString) {
+    return "Unknown date";
+  }
+
   const date = new Date(dateString);
+
+  if (isNaN(date.getTime())) {
+    return "Invalid date";
+  }
+
   const hours = date.getHours();
   const ampm = hours >= 12 ? "pm" : "am";
   const hour12 = hours % 12 || 12;

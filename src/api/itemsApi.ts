@@ -5,6 +5,7 @@ import {
   appendItemFormData,
   appendItemUpdateFormData,
 } from "@src/lib/formUtils";
+import { PaginatedResponse } from "@src/types/api";
 
 // Types for Item Category
 export interface ItemCategory {
@@ -99,14 +100,6 @@ export interface ItemError {
   category?: string[];
   image?: string[];
   non_field_errors?: string[];
-}
-
-// Add this interface for paginated responses
-export interface PaginatedResponse<T> {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: T[];
 }
 
 // Interface for member items filter options

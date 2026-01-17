@@ -3,7 +3,7 @@ import { ListingRemovalReason, ListingRemovalReasonType } from "@src/api/listing
 export const recallReasons: ListingRemovalReason[] = [
   {
     id: 1,
-    reason: "IncorrectItem Condition",
+    reason: "Incorrect Item Condition",
     type: ListingRemovalReasonType.ISSUE,
     description: "Does not meet condition standards",
   },

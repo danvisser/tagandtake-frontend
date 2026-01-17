@@ -22,7 +22,7 @@ export const Routes = {
       `/listing/${listingId}/success`,
     NEW: "/listing/new",
   },
-  
+
   MEMBER: {
     ROOT: "/member",
     SETTINGS: "/member/settings",
@@ -43,6 +43,9 @@ export const Routes = {
     LISTINGS: {
       ROOT: "/store/listings",
       DETAILS: (listingId: string) => `/store/listings/${listingId}`,
+      RECALLED: (listingId: string) => `/store/listings/recalled/${listingId}`,
+      ABANDONED: (listingId: string) => `/store/listings/abandoned/${listingId}`,
+      SOLD: (listingId: string) => `/store/listings/sold/${listingId}`,
     },
   },
 

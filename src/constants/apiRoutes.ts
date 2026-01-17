@@ -64,15 +64,18 @@ export const API_ROUTES = {
     },
     RECALLED_LISTINGS: {
       LIST: `/stores/me/recalled-listings/`,
+      DETAIL: (id: number) => `/stores/me/recalled-listings/${id}/`,
       COLLECT: (id: number) => `/stores/me/recalled-listings/${id}/collect/`,
     },
     ABANDONED_LISTINGS: {
       LIST: `/stores/me/abandoned-listings/`,
+      DETAIL: (id: number) => `/stores/me/abandoned-listings/${id}/`,
       REMOVE_TAG: (id: number) =>
         `/stores/me/abandoned-listings/${id}/remove-tag/`,
     },
     SOLD_LISTINGS: {
       LIST: `/stores/me/sold-listings/`,
+      DETAIL: (id: number) => `/stores/me/sold-listings/${id}/`,
       REMOVE_TAG: (id: number) => `/stores/me/sold-listings/${id}/remove-tag/`,
     },
   },

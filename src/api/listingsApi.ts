@@ -5,6 +5,7 @@ import { Item } from "./itemsApi";
 import { ListingRole } from "@src/types/roles";
 import { ItemCreateData } from "./itemsApi";
 import { appendItemFormData } from "@src/lib/formUtils";
+import { PaginatedResponse } from "@src/types/api";
 
 // Enum for recall reason types
 export enum ListingRemovalReasonType {
@@ -125,13 +126,6 @@ export interface ListingError {
 // Response for checking listing role
 export interface ListingRoleResponse {
   user_listing_relation: ListingRole;
-}
-
-export interface PaginatedResponse<T> {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: T[];
 }
 
 // Interface for tag availability response
@@ -659,6 +653,102 @@ export const removeTagFromSoldListing = async (
         error:
           error.response?.data?.detail ||
           `Failed to remove tag from sold listing ${id}`,
+      };
+    }
+    throw error;
+  }
+};
+
+// Get store recalled listing detail
+export const getStoreRecalledListing = async (
+  id: number
+): Promise<{
+  success: boolean;
+  data?: RecalledItemListing;
+  error?: string;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "GET",
+      url: API_ROUTES.STORES.RECALLED_LISTINGS.DETAIL(id),
+    });
+
+    return {
+      success: true,
+      data: data.data || data,
+    };
+  } catch (error: unknown) {
+    console.error(`Get store recalled listing ${id} error:`, error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.detail ||
+          `Failed to fetch recalled listing ${id}`,
+      };
+    }
+    throw error;
+  }
+};
+
+// Get store abandoned listing detail
+export const getStoreAbandonedListing = async (
+  id: number
+): Promise<{
+  success: boolean;
+  data?: AbandonedItemListing;
+  error?: string;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "GET",
+      url: API_ROUTES.STORES.ABANDONED_LISTINGS.DETAIL(id),
+    });
+
+    return {
+      success: true,
+      data: data.data || data,
+    };
+  } catch (error: unknown) {
+    console.error(`Get store abandoned listing ${id} error:`, error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.detail ||
+          `Failed to fetch abandoned listing ${id}`,
+      };
+    }
+    throw error;
+  }
+};
+
+// Get store sold listing detail
+export const getStoreSoldListing = async (
+  id: number
+): Promise<{
+  success: boolean;
+  data?: SoldItemListing;
+  error?: string;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "GET",
+      url: API_ROUTES.STORES.SOLD_LISTINGS.DETAIL(id),
+    });
+
+    return {
+      success: true,
+      data: data.data || data,
+    };
+  } catch (error: unknown) {
+    console.error(`Get store sold listing ${id} error:`, error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.detail ||
+          `Failed to fetch sold listing ${id}`,
       };
     }
     throw error;

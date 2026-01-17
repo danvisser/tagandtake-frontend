@@ -2,6 +2,7 @@ import { fetchClient } from "@src/lib/fetchClient";
 import { API_ROUTES } from "@src/constants/apiRoutes";
 import axios from "axios";
 import { ItemCategory, ItemCondition } from "./itemsApi";
+import { PaginatedResponse } from "@src/types/api";
 
 // Types for Store Address
 export interface StoreAddress {
@@ -125,17 +126,6 @@ export interface BasicStoreInfo {
   min_price: number;
   categories: ItemCategory[];
   conditions: ItemCondition[];
-}
-
-// Types for Store List Response
-export interface StoreListResponse {
-  count: number;
-  page: number;
-  page_size: number;
-  total_pages: number;
-  next: string | null;
-  previous: string | null;
-  results: PublicStore[];
 }
 
 export interface StoreError {
@@ -591,7 +581,7 @@ export const getPublicStores = async (
   params?: Record<string, string>
 ): Promise<{
   success: boolean;
-  data?: StoreListResponse;
+  data?: PaginatedResponse<PublicStore>;
   error?: string;
 }> => {
   try {
