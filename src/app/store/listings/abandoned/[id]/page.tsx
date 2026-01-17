@@ -80,7 +80,7 @@ function AbandonedListingDetailContent() {
           listing={listing}
           statusBadge={{
             label: "Abandoned",
-            variant: "secondary",
+            variant: "destructive",
           }}
           statusMessage={statusMessage}
         />

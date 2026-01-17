@@ -48,7 +48,7 @@ export default function SoldListingCard({
           </div>
         </div>
 
-        <Badge variant="default" className="mb-4 bg-green-600">
+        <Badge variant="secondary" className="mb-4">
           Sold
         </Badge>
 

@@ -84,7 +84,7 @@ function RecalledListingDetailContent() {
           listing={listing}
           statusBadge={{
             label: "Recalled",
-            variant: "outline",
+            variant: "destructive",
           }}
           statusMessage={statusMessage}
         />

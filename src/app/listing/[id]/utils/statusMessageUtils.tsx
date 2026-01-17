@@ -8,7 +8,7 @@ import {
   VacantTag,
 } from "@src/api/listingsApi";
 import { formatDate } from "./listingHelpers";
-import { ItemStatus } from "@src/api/itemsApi";
+import { ITEM_STATUS } from "@src/api/itemsApi";
 import { AlertCircle, CheckCircle, HelpCircle, XCircle } from "lucide-react";
 
 // Define a consistent interface for all status messages
@@ -37,7 +37,7 @@ export function getStatusMessage(
   if (!item) return null;
 
   // Active listing
-  if (item.status === ItemStatus.LISTED) {
+  if (item.status === ITEM_STATUS.LISTED) {
     if (userRole === ListingRoles.VIEWER) {
       return {
         icon: null,
@@ -49,7 +49,7 @@ export function getStatusMessage(
   }
 
   // Recalled listing
-  if (item.status === ItemStatus.RECALLED) {
+  if (item.status === ITEM_STATUS.RECALLED) {
     const recalledListing = listing as RecalledItemListing;
 
     if (userRole === ListingRoles.OWNER) {
@@ -79,7 +79,7 @@ export function getStatusMessage(
   }
 
   // Abandoned listing
-  if (item.status === ItemStatus.ABANDONED) {
+  if (item.status === ITEM_STATUS.ABANDONED) {
 
     if (userRole === ListingRoles.HOST) {
       return {
@@ -107,7 +107,7 @@ export function getStatusMessage(
   }
 
   // Sold listing
-  if (item.status === ItemStatus.SOLD) {
+  if (item.status === ITEM_STATUS.SOLD) {
     const soldListing = listing as SoldItemListing;
 
     if (userRole === ListingRoles.HOST) {

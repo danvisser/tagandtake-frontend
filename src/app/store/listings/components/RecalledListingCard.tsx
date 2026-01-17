@@ -46,7 +46,7 @@ export default function RecalledListingCard({
           )}
         </div>
 
-        <Badge variant="outline" className="mb-4">
+        <Badge variant="destructive" className="mb-4">
           Recalled
         </Badge>
 

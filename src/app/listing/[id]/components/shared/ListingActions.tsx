@@ -12,7 +12,7 @@ import {
 } from "@src/api/listingsApi";
 import { Routes } from "@src/constants/routes";
 import LoadingSpinner from "@src/components/LoadingSpinner";
-import { ItemStatus } from "@src/api/itemsApi";
+import { ITEM_STATUS } from "@src/api/itemsApi";
 import {
   isVacantTag,
   isItemListing,
@@ -115,7 +115,7 @@ export default function ListingActions({
 
   if (isItemListing(listing)) {
     // Active listing
-    if (listing.item_details?.status === ItemStatus.LISTED) {
+    if (listing.item_details?.status === ITEM_STATUS.LISTED) {
       if (userRole === ListingRoles.VIEWER) {
         return (
           <StripeCheckoutButton
@@ -157,7 +157,7 @@ export default function ListingActions({
     }
 
     // Recalled listing
-    if (listing.item_details?.status === ItemStatus.RECALLED) {
+    if (listing.item_details?.status === ITEM_STATUS.RECALLED) {
       if (userRole === ListingRoles.HOST) {
         return (
           <Button
@@ -184,7 +184,7 @@ export default function ListingActions({
     }
 
     // Abandoned listing
-    if (listing.item_details?.status === ItemStatus.ABANDONED) {
+    if (listing.item_details?.status === ITEM_STATUS.ABANDONED) {
       const abandonedListing = listing as AbandonedItemListing;
 
       if (userRole === ListingRoles.HOST && !abandonedListing.tag_removed) {
@@ -206,7 +206,7 @@ export default function ListingActions({
     }
 
     // Sold listing
-    if (listing.item_details?.status === ItemStatus.SOLD) {
+    if (listing.item_details?.status === ITEM_STATUS.SOLD) {
       const soldListing = listing as SoldItemListing;
 
       if (userRole === ListingRoles.HOST && !soldListing.tag_removed) {

@@ -91,7 +91,7 @@ export default function Header({ variant }: { variant: UserRole }) {
                   size="lg"
                   className="text-lg font-light"
                 >
-                  My Wardrobe
+                  My Items
                 </Button>
               </Link>
               <Link href={Routes.STORES.ROOT} prefetch={false}>
@@ -209,7 +209,7 @@ export default function Header({ variant }: { variant: UserRole }) {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href={Routes.MEMBER.ITEMS.ROOT} className="w-full">
-                      My Wardrobe
+                      My Items
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>

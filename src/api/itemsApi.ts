@@ -1,5 +1,6 @@
 import { fetchClient } from "@src/lib/fetchClient";
 import { API_ROUTES } from "@src/constants/apiRoutes";
+import { ITEM_STATUS, ItemStatus } from "@src/constants/itemStatuses";
 import axios from "axios";
 import {
   appendItemFormData,
@@ -27,14 +28,9 @@ export interface ItemImage {
   order: number;
 }
 
-// Item Status Enum
-export enum ItemStatus {
-  AVAILABLE = "available",
-  LISTED = "listed",
-  RECALLED = "recalled",
-  SOLD = "sold",
-  ABANDONED = "abandoned",
-}
+// Re-export ItemStatus for backwards compatibility
+export type { ItemStatus } from "@src/constants/itemStatuses";
+export { ITEM_STATUS } from "@src/constants/itemStatuses";
 
 // Store info for items
 export interface ItemStoreInfo {
@@ -73,7 +69,7 @@ export interface Item {
   main_image?: string;
   category_details?: ItemCategory;
   condition_details?: ItemCondition;
-  store_info?: ItemStoreInfo;
+  listing_info?: ItemStoreInfo;
 }
 
 // Types for Item Creation
@@ -117,6 +113,7 @@ export interface MemberItemsFilters {
   condition?: number;
   search?: string;
   sort_by?: string; // For sorting options
+  page?: number; // Page number for pagination
 }
 
 // Get member items with filters
@@ -148,6 +145,7 @@ export const getMemberItems = async (
       queryParams.append("condition", filters.condition.toString());
     if (filters?.search) queryParams.append("search", filters.search);
     if (filters?.sort_by) queryParams.append("sort_by", filters.sort_by);
+    if (filters?.page) queryParams.append("page", filters.page.toString());
 
     const queryString = queryParams.toString();
     const url = queryString
@@ -181,7 +179,7 @@ export const getAvailableItems = async (): Promise<{
   data?: Item[];
   error?: string;
 }> => {
-  const response = await getMemberItems({ status: ItemStatus.AVAILABLE });
+  const response = await getMemberItems({ status: ITEM_STATUS.AVAILABLE });
 
   return {
     success: response.success,

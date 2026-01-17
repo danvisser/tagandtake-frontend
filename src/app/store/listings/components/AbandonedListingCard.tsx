@@ -46,7 +46,7 @@ export default function AbandonedListingCard({
           </div>
         </div>
 
-        <Badge variant="secondary" className="mb-4">
+        <Badge variant="destructive" className="mb-4">
           Abandoned
         </Badge>
 

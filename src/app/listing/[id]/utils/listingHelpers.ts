@@ -7,7 +7,7 @@ import {
   AbandonedItemListing,
   SoldItemListing,
 } from "@src/api/listingsApi";
-import { ItemStatus } from "@src/api/itemsApi";
+import { ITEM_STATUS } from "@src/api/itemsApi";
 
 /**
  * Determines if the user can list an item based on their role and authentication status
@@ -64,13 +64,13 @@ export function formatDate(dateString: string): string {
  */
 export function getStatusBadge(status: string | undefined) {
   switch (status) {
-    case ItemStatus.LISTED:
+    case ITEM_STATUS.LISTED:
       return { label: "Available", variant: "default" as const };
-    case ItemStatus.RECALLED:
+    case ITEM_STATUS.RECALLED:
       return { label: "Recalled", variant: "destructive" as const };
-    case ItemStatus.ABANDONED:
+    case ITEM_STATUS.ABANDONED:
       return { label: "Abandoned", variant: "destructive" as const };
-    case ItemStatus.SOLD:
+    case ITEM_STATUS.SOLD:
       return { label: "Sold", variant: "secondary" as const };
     default:
       return { label: "Unknown", variant: "outline" as const };

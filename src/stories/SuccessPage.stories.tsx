@@ -5,7 +5,7 @@ import { ExpiredState } from "@src/app/listing/[id]/success/components/ExpiredSt
 import { NotFoundState } from "@src/app/listing/[id]/success/components/NotFoundState";
 import { PendingState } from "@src/app/listing/[id]/success/components/PendingState";
 import { ItemPurchasedResponse } from "@src/api/paymentsApi";
-import { ItemStatus } from "@src/api/itemsApi";
+import { ITEM_STATUS } from "@src/api/itemsApi";
 
 const meta: Meta = {
   title: "Success Page States",
@@ -49,7 +49,7 @@ const mockPurchaseData: ItemPurchasedResponse = {
       price: 25.99,
       condition: 1,
       category: 1,
-      status: ItemStatus.SOLD,
+      status: ITEM_STATUS.SOLD,
       tag_id: 456,
       main_image: "https://picsum.photos/400/300",
       images: [

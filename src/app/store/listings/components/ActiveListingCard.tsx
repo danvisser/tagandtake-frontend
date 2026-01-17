@@ -57,7 +57,7 @@ export default function ActiveListingCard({ listing }: ActiveListingCardProps) {
           Active
         </Badge>
 
-        <Link href={Routes.LISTING.DETAILS(listing.id.toString())}>
+        <Link href={Routes.LISTING.DETAILS(listing.tag.toString())}>
           <Button className="w-full">Manage</Button>
         </Link>
       </CardContent>

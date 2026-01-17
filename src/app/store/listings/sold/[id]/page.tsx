@@ -81,7 +81,7 @@ function SoldListingDetailContent() {
           listing={listing}
           statusBadge={{
             label: "Sold",
-            variant: "default",
+            variant: "secondary",
           }}
           statusMessage={statusMessage}
         />

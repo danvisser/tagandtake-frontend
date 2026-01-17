@@ -15,7 +15,7 @@ import SoldListing from "@src/app/listing/[id]/components/states/SoldListing";
 import VacantTagState from "@src/app/listing/[id]/components/states/VacantTag";
 import TagNotFound from "@src/app/listing/[id]/components/states/TagNotFound";
 import { isVacantTag } from "@src/app/listing/[id]/utils/listingHelpers";
-import { ItemStatus } from "@src/api/itemsApi";
+import { ITEM_STATUS } from "@src/api/itemsApi";
 import { useListingContext } from "../context/ListingContext";
 
 interface WithListingStateProps {
@@ -52,7 +52,7 @@ export default function WithListingState({
   }
 
   // Handle active listing
-  if (listing.item_details?.status === ItemStatus.LISTED) {
+  if (listing.item_details?.status === ITEM_STATUS.LISTED) {
     const activeListing = listing as ItemListing;
 
     return (
@@ -65,7 +65,7 @@ export default function WithListingState({
   }
 
   // Handle recalled listing
-  if (listing.item_details?.status === ItemStatus.RECALLED) {
+  if (listing.item_details?.status === ITEM_STATUS.RECALLED) {
     const recalledListing = listing as RecalledItemListing;
 
     return (
@@ -79,7 +79,7 @@ export default function WithListingState({
   }
 
   // Handle abandoned listing
-  if (listing.item_details?.status === ItemStatus.ABANDONED) {
+  if (listing.item_details?.status === ITEM_STATUS.ABANDONED) {
     const abandonedListing = listing as AbandonedItemListing;
 
     return (
@@ -92,7 +92,7 @@ export default function WithListingState({
   }
 
   // Handle sold listing
-  if (listing.item_details?.status === ItemStatus.SOLD) {
+  if (listing.item_details?.status === ITEM_STATUS.SOLD) {
     const soldListing = listing as SoldItemListing;
 
     return (

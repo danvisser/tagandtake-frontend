@@ -146,7 +146,7 @@ export default function ListItemModal({
         </div>
 
         <div className="p-4 pt-2 flex flex-col flex-1 min-h-0 overflow-hidden">
-          <h3 className="text-2xl font-medium mb-3 flex-shrink-0">From your wardrobe</h3>
+          <h3 className="text-2xl font-medium mb-3 flex-shrink-0">From your items</h3>
 
           <div className="space-y-3 flex-1 overflow-y-auto min-h-0">
             {isLoading ? (

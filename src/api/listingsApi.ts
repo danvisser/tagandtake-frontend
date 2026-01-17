@@ -278,15 +278,20 @@ export const checkListingRole = async (
 };
 
 // Update getStoreListings to handle pagination
-export const getStoreListings = async (): Promise<{
+export const getStoreListings = async (
+  page?: number
+): Promise<{
   success: boolean;
   data?: PaginatedResponse<ItemListing>;
   error?: string;
 }> => {
   try {
+    const url = page
+      ? `${API_ROUTES.STORES.LISTINGS.LIST}?page=${page}`
+      : API_ROUTES.STORES.LISTINGS.LIST;
     const { data } = await fetchClient({
       method: "GET",
-      url: API_ROUTES.STORES.LISTINGS.LIST,
+      url,
     });
 
     return {
@@ -306,15 +311,20 @@ export const getStoreListings = async (): Promise<{
 };
 
 // Update getStoreRecalledListings to handle pagination
-export const getStoreRecalledListings = async (): Promise<{
+export const getStoreRecalledListings = async (
+  page?: number
+): Promise<{
   success: boolean;
   data?: PaginatedResponse<RecalledItemListing>;
   error?: string;
 }> => {
   try {
+    const url = page
+      ? `${API_ROUTES.STORES.RECALLED_LISTINGS.LIST}?page=${page}`
+      : API_ROUTES.STORES.RECALLED_LISTINGS.LIST;
     const { data } = await fetchClient({
       method: "GET",
-      url: API_ROUTES.STORES.RECALLED_LISTINGS.LIST,
+      url,
     });
 
     return {
@@ -534,22 +544,24 @@ export const getPublicStoreListings = async (
 
 // Get store abandoned listings
 export const getStoreAbandonedListings = async (
-  params?: Record<string, string>
+  page?: number
 ): Promise<{
   success: boolean;
-  data?: AbandonedItemListing[];
+  data?: PaginatedResponse<AbandonedItemListing>;
   error?: string;
 }> => {
   try {
+    const url = page
+      ? `${API_ROUTES.STORES.ABANDONED_LISTINGS.LIST}?page=${page}`
+      : API_ROUTES.STORES.ABANDONED_LISTINGS.LIST;
     const { data } = await fetchClient({
       method: "GET",
-      url: API_ROUTES.STORES.ABANDONED_LISTINGS.LIST,
-      params,
+      url,
     });
 
     return {
       success: true,
-      data: data,
+      data,
     };
   } catch (error: unknown) {
     console.error("Get store abandoned listings error:", error);
@@ -566,22 +578,24 @@ export const getStoreAbandonedListings = async (
 
 // Get store sold listings
 export const getStoreSoldListings = async (
-  params?: Record<string, string>
+  page?: number
 ): Promise<{
   success: boolean;
-  data?: SoldItemListing[];
+  data?: PaginatedResponse<SoldItemListing>;
   error?: string;
 }> => {
   try {
+    const url = page
+      ? `${API_ROUTES.STORES.SOLD_LISTINGS.LIST}?page=${page}`
+      : API_ROUTES.STORES.SOLD_LISTINGS.LIST;
     const { data } = await fetchClient({
       method: "GET",
-      url: API_ROUTES.STORES.SOLD_LISTINGS.LIST,
-      params,
+      url,
     });
 
     return {
       success: true,
-      data: data,
+      data,
     };
   } catch (error: unknown) {
     console.error("Get store sold listings error:", error);

@@ -94,7 +94,7 @@ export default function ItemsNewPage() {
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="space-y-2 max-w-3xl mx-auto mb-6">
-        <span className="text-2xl font-medium">Add to Wardrobe</span>
+        <span className="text-2xl font-medium">Add Item</span>
         <p className="text-muted-foreground">
           Upload your item now and simply click to list in your chosen host
         </p>
