@@ -11,7 +11,7 @@ import { Store } from "lucide-react";
 
 interface ItemCardProps {
   item: Item;
-  tab?: "in-store" | "at-home" | "sold";
+  tab?: "in-store" | "unlisted" | "sold";
 }
 
 export default function ItemCard({ item, tab }: ItemCardProps) {

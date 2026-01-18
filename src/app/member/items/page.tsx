@@ -28,15 +28,20 @@ function MemberItemsContent() {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab");
 
-  const isValidTab = (tab: string | null): tab is "in-store" | "at-home" | "sold" =>
-    tab === "in-store" || tab === "at-home" || tab === "sold";
+  const normalizeTabParam = (
+    tab: string | null
+  ): "in-store" | "unlisted" | "sold" | null => {
+    if (tab === "at-home") return "unlisted";
+    if (tab === "in-store" || tab === "unlisted" || tab === "sold") return tab;
+    return null;
+  };
 
   const initialTab = useMemo(
-    () => (isValidTab(tabParam) ? tabParam : "in-store"),
+    () => normalizeTabParam(tabParam) ?? "in-store",
     [tabParam]
   );
 
-  const [activeTab, setActiveTab] = useState<"in-store" | "at-home" | "sold">(initialTab);
+  const [activeTab, setActiveTab] = useState<"in-store" | "unlisted" | "sold">(initialTab);
   const [loading, setLoading] = useState(true);
 
   // Page state for each tab
@@ -113,8 +118,9 @@ function MemberItemsContent() {
   }, []);
 
   useEffect(() => {
-    if (isValidTab(tabParam) && tabParam !== activeTab) {
-      setActiveTab(tabParam);
+    const normalized = normalizeTabParam(tabParam);
+    if (normalized && normalized !== activeTab) {
+      setActiveTab(normalized);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tabParam]);
@@ -154,7 +160,7 @@ function MemberItemsContent() {
               );
             }
             break;
-          case "at-home":
+          case "unlisted":
             const atHomeResult = await getMemberItems({
               status: ITEM_STATUS.AVAILABLE,
               page: atHomePage,
@@ -170,7 +176,7 @@ function MemberItemsContent() {
               setAtHomeError(null);
             } else {
               setAtHomeError(
-                atHomeResult.error || "Failed to load wardrobe items"
+                atHomeResult.error || "Failed to load unlisted items"
               );
             }
             break;
@@ -266,19 +272,33 @@ function MemberItemsContent() {
 
   return (
     <div className="container mx-auto px-4 py-4">
-      <h1 className="text-3xl font-normal mb-4">My Items</h1>
+      <div className="mb-4 flex flex-row flex-wrap items-center justify-between gap-3">
+        <h1 className="text-3xl font-normal leading-8 min-w-0">My Items</h1>
+        <div className="flex items-center gap-2 shrink-0">
+          <Link href={Routes.STORES.ROOT}>
+            <Button size="sm" className="lg:text-base lg:px-4 lg:py-2">
+              Find a Store
+            </Button>
+          </Link>
+          <Link href={Routes.MEMBER.ITEMS.NEW}>
+            <Button size="sm" variant="outline" className="lg:text-base lg:px-4 lg:py-2">
+              New Item
+            </Button>
+          </Link>
+        </div>
+      </div>
 
       <Tabs
         value={activeTab}
         onValueChange={(value) => {
-          const nextTab = value as "in-store" | "at-home" | "sold";
+          const nextTab = value as "in-store" | "unlisted" | "sold";
           setActiveTab(nextTab);
           router.replace(`${Routes.MEMBER.ITEMS.ROOT}?tab=${nextTab}`, { scroll: false });
         }}
         className="w-full"
       >
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="in-store" className="relative inline-flex items-center gap-2">
+        <TabsList variant="pill">
+          <TabsTrigger variant="secondary" value="in-store">
             <span>In Store</span>
             {recalledCount > 0 && (
               <Badge
@@ -289,8 +309,12 @@ function MemberItemsContent() {
               </Badge>
             )}
           </TabsTrigger>
-          <TabsTrigger value="at-home">My Wardrobe</TabsTrigger>
-          <TabsTrigger value="sold">Sold</TabsTrigger>
+          <TabsTrigger variant="secondary" value="unlisted">
+            <span>Unlisted</span>
+          </TabsTrigger>
+          <TabsTrigger variant="secondary" value="sold">
+            <span>Sold</span>
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="in-store" className="mt-6">
@@ -349,25 +373,13 @@ function MemberItemsContent() {
           )}
         </TabsContent>
 
-        <TabsContent value="at-home" className="mt-6">
-          <div className="flex items-center justify-between mb-6">
-            <Link href={Routes.STORES.ROOT}>
-              <Button size="sm" className="lg:text-base lg:px-4 lg:py-2">
-                Find a Store
-              </Button>
-            </Link>
-            <Link href={Routes.MEMBER.ITEMS.NEW}>
-              <Button size="sm" variant="outline" className="lg:text-base lg:px-4 lg:py-2">
-                New Item
-              </Button>
-            </Link>
-          </div>
+        <TabsContent value="unlisted" className="mt-6">
           {loading ? (
             <LoadingSpinner />
           ) : atHomeError ? (
             <div className="text-destructive">{atHomeError}</div>
           ) : atHomeItems.length === 0 ? (
-            <div className="text-muted-foreground">No items in your wardrobe.</div>
+            <div className="text-muted-foreground">No unlisted items.</div>
           ) : (
             <>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

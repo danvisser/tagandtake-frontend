@@ -106,13 +106,18 @@ function MemberItemDetailContent() {
   const isListed = status === ITEM_STATUS.LISTED;
 
   const tabParam = searchParams.get("tab");
-  const isValidTab = (tab: string | null): tab is "in-store" | "at-home" | "sold" =>
-    tab === "in-store" || tab === "at-home" || tab === "sold";
+  const normalizeTabParam = (
+    tab: string | null
+  ): "in-store" | "unlisted" | "sold" | null => {
+    if (tab === "at-home") return "unlisted";
+    if (tab === "in-store" || tab === "unlisted" || tab === "sold") return tab;
+    return null;
+  };
 
-  const tabFromStatus = (s: Item["status"]): "in-store" | "at-home" | "sold" => {
+  const tabFromStatus = (s: Item["status"]): "in-store" | "unlisted" | "sold" => {
     switch (s) {
       case ITEM_STATUS.AVAILABLE:
-        return "at-home";
+        return "unlisted";
       case ITEM_STATUS.SOLD:
         return "sold";
       case ITEM_STATUS.LISTED:
@@ -123,7 +128,7 @@ function MemberItemDetailContent() {
     }
   };
 
-  const backTab = isValidTab(tabParam) ? tabParam : tabFromStatus(status);
+  const backTab = normalizeTabParam(tabParam) ?? tabFromStatus(status);
 
   return (
     <div className="container mx-auto px-4 py-8">
