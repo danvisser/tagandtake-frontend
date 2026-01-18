@@ -222,19 +222,7 @@ function HowItWorksSection() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 lg:gap-12 mb-10 md:mb-16">
           <ProcessStep
             icon={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-10 w-10 md:h-12 md:w-12 text-primary"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-                <polyline points="9 22 9 12 15 12 15 22" />
-              </svg>
+              <Store className="h-10 w-10 md:h-12 md:w-12 text-primary" />
             }
             title="1. Drop Off"
             description="Bring your items to a participating store, tag them with our QR code security tags, and place them in a designated area."

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Routes } from "@src/constants/routes";
+import { Store } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -24,19 +25,7 @@ export default function HowItWorksPage() {
         {/* Step 1 */}
         <div className="bg-white rounded-lg p-5 md:p-6 lg:p-8 shadow-md border-2 border-gray-200 flex flex-col items-center text-center">
           <div className="w-20 h-20 md:w-24 md:h-24 bg-primary/10 rounded-full flex items-center justify-center mb-4 md:mb-6">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-10 w-10 md:h-12 md:w-12 text-primary"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
-              <polyline points="9 22 9 12 15 12 15 22" />
-            </svg>
+            <Store className="h-10 w-10 md:h-12 md:w-12 text-primary" />
           </div>
           <h2 className="text-lg md:text-xl lg:text-2xl font-semibold mb-2">
             1. Drop Off

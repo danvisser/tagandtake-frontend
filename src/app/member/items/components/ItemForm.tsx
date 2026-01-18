@@ -761,8 +761,8 @@ export default function ItemForm({
                                 : "secondary"
                             }
                             className={`px-3 py-1 ${disableCategoryAndCondition || !isAvailable
-                                ? "opacity-50 cursor-not-allowed"
-                                : "cursor-pointer"
+                              ? "opacity-50 cursor-not-allowed"
+                              : "cursor-pointer"
                               }`}
                             onClick={() => {
                               if (disableCategoryAndCondition || !isAvailable) return;
@@ -838,8 +838,8 @@ export default function ItemForm({
                                 : "secondary"
                             }
                             className={`px-3 py-1 ${disableCategoryAndCondition || !isAvailable
-                                ? "opacity-50 cursor-not-allowed"
-                                : "cursor-pointer"
+                              ? "opacity-50 cursor-not-allowed"
+                              : "cursor-pointer"
                               }`}
                             onClick={() => {
                               if (disableCategoryAndCondition || !isAvailable) return;
