@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@src/components/ui/tabs";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
@@ -23,7 +24,19 @@ export default function MemberItemsPage() {
 }
 
 function MemberItemsContent() {
-  const [activeTab, setActiveTab] = useState("in-store");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get("tab");
+
+  const isValidTab = (tab: string | null): tab is "in-store" | "at-home" | "sold" =>
+    tab === "in-store" || tab === "at-home" || tab === "sold";
+
+  const initialTab = useMemo(
+    () => (isValidTab(tabParam) ? tabParam : "in-store"),
+    [tabParam]
+  );
+
+  const [activeTab, setActiveTab] = useState<"in-store" | "at-home" | "sold">(initialTab);
   const [loading, setLoading] = useState(true);
 
   // Page state for each tab
@@ -98,6 +111,13 @@ function MemberItemsContent() {
 
     loadInStoreItems();
   }, []);
+
+  useEffect(() => {
+    if (isValidTab(tabParam) && tabParam !== activeTab) {
+      setActiveTab(tabParam);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tabParam]);
 
   // Reset page when tab changes
   useEffect(() => {
@@ -248,7 +268,15 @@ function MemberItemsContent() {
     <div className="container mx-auto px-4 py-4">
       <h1 className="text-3xl font-normal mb-4">My Items</h1>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <Tabs
+        value={activeTab}
+        onValueChange={(value) => {
+          const nextTab = value as "in-store" | "at-home" | "sold";
+          setActiveTab(nextTab);
+          router.replace(`${Routes.MEMBER.ITEMS.ROOT}?tab=${nextTab}`, { scroll: false });
+        }}
+        className="w-full"
+      >
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="in-store" className="relative inline-flex items-center gap-2">
             <span>In Store</span>
@@ -285,7 +313,7 @@ function MemberItemsContent() {
               )}
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {inStoreItems.map((item) => (
-                  <ItemCard key={item.id} item={item} />
+                  <ItemCard key={item.id} item={item} tab={activeTab} />
                 ))}
               </div>
               {inStorePagination.count > 0 && (
@@ -344,7 +372,7 @@ function MemberItemsContent() {
             <>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {atHomeItems.map((item) => (
-                  <ItemCard key={item.id} item={item} />
+                  <ItemCard key={item.id} item={item} tab={activeTab} />
                 ))}
               </div>
               {atHomePagination.count > 0 && (
@@ -391,7 +419,7 @@ function MemberItemsContent() {
             <>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {soldItems.map((item) => (
-                  <ItemCard key={item.id} item={item} />
+                  <ItemCard key={item.id} item={item} tab={activeTab} />
                 ))}
               </div>
               {soldPagination.count > 0 && (

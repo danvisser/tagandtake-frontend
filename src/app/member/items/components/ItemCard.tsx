@@ -11,9 +11,10 @@ import { Store } from "lucide-react";
 
 interface ItemCardProps {
   item: Item;
+  tab?: "in-store" | "at-home" | "sold";
 }
 
-export default function ItemCard({ item }: ItemCardProps) {
+export default function ItemCard({ item, tab }: ItemCardProps) {
   const image = item.images?.[0]?.image_url;
   const itemName = item.name || "Unknown Item";
   const size = item.size || "Unknown";
@@ -38,9 +39,12 @@ export default function ItemCard({ item }: ItemCardProps) {
   };
 
   const statusBadge = getStatusBadge();
+  const href = tab
+    ? `${Routes.MEMBER.ITEMS.DETAILS(item.id.toString())}?tab=${encodeURIComponent(tab)}`
+    : Routes.MEMBER.ITEMS.DETAILS(item.id.toString());
 
   return (
-    <Link href={Routes.MEMBER.ITEMS.DETAILS(item.id.toString())} className="h-full">
+    <Link href={href} className="h-full">
       <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col">
         {image && (
           <div className="relative w-full h-48 flex-shrink-0">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { UserRoles } from "@src/types/roles";
@@ -27,6 +27,7 @@ export default function MemberItemDetailPage() {
 function MemberItemDetailContent() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const id = parseInt(params.id as string);
   const [loading, setLoading] = useState(true);
   const [item, setItem] = useState<Item | null>(null);
@@ -104,12 +105,32 @@ function MemberItemDetailContent() {
   const status = item.status || ITEM_STATUS.AVAILABLE;
   const isListed = status === ITEM_STATUS.LISTED;
 
+  const tabParam = searchParams.get("tab");
+  const isValidTab = (tab: string | null): tab is "in-store" | "at-home" | "sold" =>
+    tab === "in-store" || tab === "at-home" || tab === "sold";
+
+  const tabFromStatus = (s: Item["status"]): "in-store" | "at-home" | "sold" => {
+    switch (s) {
+      case ITEM_STATUS.AVAILABLE:
+        return "at-home";
+      case ITEM_STATUS.SOLD:
+        return "sold";
+      case ITEM_STATUS.LISTED:
+      case ITEM_STATUS.RECALLED:
+      case ITEM_STATUS.ABANDONED:
+      default:
+        return "in-store";
+    }
+  };
+
+  const backTab = isValidTab(tabParam) ? tabParam : tabFromStatus(status);
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
           <Link
-            href={Routes.MEMBER.ITEMS.ROOT}
+            href={`${Routes.MEMBER.ITEMS.ROOT}?tab=${backTab}`}
             className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
           >
             <ChevronLeft className="h-4 w-4 mr-1" />
