@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { Item } from "@src/api/itemsApi";
 import { itemCategories, itemConditions } from "@src/data/itemReferenceData";
 import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
@@ -36,16 +37,120 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
-// Add SortableImage component
+// Helper function to convert image URL to File using canvas
+// Tries multiple approaches to handle CORS issues
+async function urlToFile(url: string): Promise<File> {
+  return new Promise((resolve, reject) => {
+    // First, try to find if the image is already loaded in the DOM
+    const existingImg = document.querySelector(`img[src="${url}"]`) as HTMLImageElement;
+
+    if (existingImg && existingImg.complete) {
+      // Image is already loaded, use it directly
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = existingImg.naturalWidth || existingImg.width;
+        canvas.height = existingImg.naturalHeight || existingImg.height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          throw new Error('Could not get canvas context');
+        }
+        ctx.drawImage(existingImg, 0, 0);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const fileName = url.split('/').pop()?.split('?')[0] || 'image.jpg';
+            const file = new File([blob], fileName, { type: blob.type || 'image/jpeg' });
+            resolve(file);
+          } else {
+            throw new Error('Failed to convert canvas to blob');
+          }
+        }, 'image/jpeg', 0.95);
+        return;
+      } catch {
+        // Fall through to loading new image
+      }
+    }
+
+    const img = new window.Image();
+
+    // Try with CORS first
+    img.crossOrigin = 'anonymous';
+
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Could not get canvas context'));
+          return;
+        }
+        ctx.drawImage(img, 0, 0);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const fileName = url.split('/').pop()?.split('?')[0] || 'image.jpg';
+            const file = new File([blob], fileName, { type: blob.type || 'image/jpeg' });
+            resolve(file);
+          } else {
+            reject(new Error('Failed to convert canvas to blob'));
+          }
+        }, 'image/jpeg', 0.95);
+      } catch (error) {
+        reject(error);
+      }
+    };
+
+    img.onerror = () => {
+      const img2 = new window.Image();
+      img2.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = img2.width;
+          canvas.height = img2.height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            reject(new Error('Could not get canvas context'));
+            return;
+          }
+          ctx.drawImage(img2, 0, 0);
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const fileName = url.split('/').pop()?.split('?')[0] || 'image.jpg';
+              const file = new File([blob], fileName, { type: blob.type || 'image/jpeg' });
+              resolve(file);
+            } else {
+              reject(new Error('Failed to convert canvas to blob'));
+            }
+          }, 'image/jpeg', 0.95);
+        } catch (error) {
+          reject(error);
+        }
+      };
+      img2.onerror = () => reject(new Error('Failed to load image - CORS issue. Please configure S3 CORS or use a proxy.'));
+      // Don't set crossOrigin - try without it
+      img2.src = url;
+    };
+
+    img.src = url;
+  });
+}
+
 function SortableImage({
   url,
   index,
   onRemove,
+  cacheBust,
 }: {
   url: string;
   index: number;
   onRemove: () => void;
+  cacheBust?: number;
 }) {
+  const getImageUrl = (imageUrl: string) => {
+    if (!cacheBust || imageUrl.startsWith('blob:')) return imageUrl;
+    const separator = imageUrl.includes('?') ? '&' : '?';
+    return `${imageUrl}${separator}_t=${cacheBust}`;
+  };
   const {
     attributes,
     listeners,
@@ -81,7 +186,7 @@ function SortableImage({
       </Button>
       <div className="w-full h-full relative rounded-md overflow-hidden">
         <Image
-          src={url}
+          src={getImageUrl(url)}
           alt={`Preview ${index + 1}`}
           fill
           className="object-cover"
@@ -111,6 +216,8 @@ interface ItemFormProps {
   errors?: Record<string, string[]>;
   availableCategories?: number[]; // IDs of categories available in the store
   availableConditions?: number[]; // IDs of conditions available in the store
+  initialItem?: Item; // For editing existing items
+  disableCategoryAndCondition?: boolean; // Disable category/condition fields (for listed items)
 }
 
 export default function ItemForm({
@@ -120,18 +227,41 @@ export default function ItemForm({
   errors: externalErrors = {},
   availableCategories,
   availableConditions,
+  initialItem,
+  disableCategoryAndCondition = false,
 }: ItemFormProps) {
-  // Form state
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [size, setSize] = useState("");
-  const [price, setPrice] = useState("");
-  const [condition, setCondition] = useState("");
-  const [category, setCategory] = useState("");
-  const [images, setImages] = useState<File[]>([]);
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
-  const [errors, setErrors] =
-    useState<Record<string, string[]>>(externalErrors);
+  const [name, setName] = useState(initialItem?.name || "");
+  const [description, setDescription] = useState(initialItem?.description || "");
+  const [size, setSize] = useState(initialItem?.size || "");
+  const [price, setPrice] = useState(initialItem?.price?.toString() || "");
+  const [condition, setCondition] = useState(initialItem?.condition?.toString() || "");
+  const [category, setCategory] = useState(initialItem?.category?.toString() || "");
+  const [imageUrls, setImageUrls] = useState<string[]>(
+    initialItem?.images?.map((img: { image_url: string }) => img.image_url) || []
+  );
+  const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
+  const [newImageBlobUrls, setNewImageBlobUrls] = useState<string[]>([]);
+  const [errors, setErrors] = useState<Record<string, string[]>>(externalErrors);
+  const [imageCacheBust, setImageCacheBust] = useState(Date.now());
+
+  useEffect(() => {
+    if (!initialItem) return;
+
+    setName(initialItem.name || "");
+    setDescription(initialItem.description || "");
+    setSize(initialItem.size || "");
+    setPrice(initialItem.price?.toString() || "");
+    setCondition(initialItem.condition?.toString() || "");
+    setCategory(initialItem.category?.toString() || "");
+
+    const existingUrls = initialItem.images?.map((img: { image_url: string }) => img.image_url) || [];
+    setImageUrls([...existingUrls]);
+    setImageCacheBust(Date.now());
+
+    newImageBlobUrls.forEach((url) => URL.revokeObjectURL(url));
+    setNewImageFiles([]);
+    setNewImageBlobUrls([]);
+  }, [initialItem?.id, initialItem?.images?.length]);
 
   // Add sensors for drag and drop
   const sensors = useSensors(
@@ -154,18 +284,59 @@ export default function ItemForm({
   // Handle image upload
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const newImages = Array.from(e.target.files);
-      setImages((prev) => [...prev, ...newImages]);
+      const newFiles = Array.from(e.target.files);
+      const currentCount = imageUrls.length;
+      const maxImages = 6;
 
-      // Create URLs for preview
-      const newUrls = newImages.map((file) => URL.createObjectURL(file));
-      setImageUrls((prev) => [...prev, ...newUrls]);
+      if (currentCount + newFiles.length > maxImages) {
+        const allowedCount = maxImages - currentCount;
+        if (allowedCount <= 0) {
+          setErrors({
+            images: [`Maximum ${maxImages} images allowed. Please remove some images first.`],
+          });
+          e.target.value = '';
+          return;
+        }
+        const trimmedFiles = newFiles.slice(0, allowedCount);
+        const newBlobUrls = trimmedFiles.map((file) => URL.createObjectURL(file));
+
+        setNewImageFiles((prev) => [...prev, ...trimmedFiles]);
+        setNewImageBlobUrls((prev) => [...prev, ...newBlobUrls]);
+        setImageUrls((prev) => [...prev, ...newBlobUrls]);
+        setErrors({
+          images: [`Only ${allowedCount} more image(s) can be added. Maximum ${maxImages} images allowed.`],
+        });
+      } else {
+        const newBlobUrls = newFiles.map((file) => URL.createObjectURL(file));
+
+        setNewImageFiles((prev) => [...prev, ...newFiles]);
+        setNewImageBlobUrls((prev) => [...prev, ...newBlobUrls]);
+        setImageUrls((prev) => [...prev, ...newBlobUrls]);
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.images;
+          return newErrors;
+        });
+      }
+      e.target.value = '';
     }
   };
 
   // Remove image
   const removeImage = (index: number) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
+    const urlToRemove = imageUrls[index];
+
+    // If it's a blob URL (new image), remove from new images tracking
+    if (urlToRemove.startsWith('blob:')) {
+      const blobIndex = newImageBlobUrls.indexOf(urlToRemove);
+      if (blobIndex !== -1) {
+        setNewImageFiles((prev) => prev.filter((_, i) => i !== blobIndex));
+        setNewImageBlobUrls((prev) => prev.filter((_, i) => i !== blobIndex));
+        URL.revokeObjectURL(urlToRemove);
+      }
+    }
+
+    // Remove from display array
     setImageUrls((prev) => prev.filter((_, i) => i !== index));
   };
 
@@ -177,8 +348,26 @@ export default function ItemForm({
       const oldIndex = imageUrls.indexOf(active.id.toString());
       const newIndex = imageUrls.indexOf(over.id.toString());
 
-      setImages((items) => arrayMove(items, oldIndex, newIndex));
-      setImageUrls((items) => arrayMove(items, oldIndex, newIndex));
+      // Reorder the display array
+      const reorderedUrls = arrayMove(imageUrls, oldIndex, newIndex);
+      setImageUrls(reorderedUrls);
+
+      // Also reorder new image files to match
+      const reorderedNewFiles: File[] = [];
+      const reorderedNewBlobUrls: string[] = [];
+
+      for (const url of reorderedUrls) {
+        if (url.startsWith('blob:')) {
+          const blobIndex = newImageBlobUrls.indexOf(url);
+          if (blobIndex !== -1) {
+            reorderedNewFiles.push(newImageFiles[blobIndex]);
+            reorderedNewBlobUrls.push(url);
+          }
+        }
+      }
+
+      setNewImageFiles(reorderedNewFiles);
+      setNewImageBlobUrls(reorderedNewBlobUrls);
     }
   };
 
@@ -204,15 +393,18 @@ export default function ItemForm({
       newErrors.price = ["Price must be a positive number"];
     }
 
-    if (!condition) {
-      newErrors.condition = ["Condition is required"];
+    if (!disableCategoryAndCondition) {
+      if (!condition) {
+        newErrors.condition = ["Condition is required"];
+      }
+
+      if (!category) {
+        newErrors.category = ["Category is required"];
+      }
     }
 
-    if (!category) {
-      newErrors.category = ["Category is required"];
-    }
-
-    if (images.length === 0) {
+    // Require at least one image
+    if (imageUrls.length === 0) {
       newErrors.images = ["At least one image is required"];
     }
 
@@ -229,15 +421,95 @@ export default function ItemForm({
     }
 
     try {
-      await onSubmit({
+      // Determine condition and category values
+      let conditionNum: number;
+      let categoryNum: number;
+
+      if (!disableCategoryAndCondition) {
+        // For new items or available items, use form values
+        conditionNum = Number(condition);
+        categoryNum = Number(category);
+
+        // Double-check they're valid numbers (shouldn't happen due to validation, but safety check)
+        if (isNaN(conditionNum) || isNaN(categoryNum)) {
+          setErrors({
+            condition: isNaN(conditionNum) ? ["Condition is required"] : [],
+            category: isNaN(categoryNum) ? ["Category is required"] : [],
+          });
+          return;
+        }
+      } else {
+        // For listed items, use existing values from initialItem
+        if (!initialItem) {
+          setErrors({
+            non_field_errors: ["Cannot edit item without initial data"],
+          });
+          return;
+        }
+        conditionNum = initialItem.condition || 0;
+        categoryNum = initialItem.category || 0;
+      }
+
+      // Build final images array: existing images (fetch) + new images (already Files)
+      const finalImages: File[] = [];
+
+      // Process imageUrls in order
+      for (const url of imageUrls) {
+        if (url.startsWith('blob:')) {
+          // This is a new image - get File from newImageFiles
+          const blobIndex = newImageBlobUrls.indexOf(url);
+          if (blobIndex !== -1 && blobIndex < newImageFiles.length) {
+            finalImages.push(newImageFiles[blobIndex]);
+          }
+        } else {
+          try {
+            const cleanUrl = url.split('?')[0].split('&')[0];
+            const proxyUrl = `/api/images/proxy?url=${encodeURIComponent(cleanUrl)}`;
+            const response = await fetch(proxyUrl, { cache: 'no-store' });
+
+            if (!response.ok) {
+              throw new Error(`Failed to fetch via proxy: ${response.statusText}`);
+            }
+
+            const blob = await response.blob();
+            const fileName = url.split('/').pop()?.split('?')[0] || 'image.jpg';
+            const file = new File([blob], fileName, { type: blob.type || 'image/jpeg' });
+            finalImages.push(file);
+          } catch (error) {
+            console.error('Error fetching image via proxy:', url, error);
+            try {
+              const file = await urlToFile(url);
+              finalImages.push(file);
+            } catch (canvasError) {
+              console.error('Canvas method also failed:', canvasError);
+              setErrors({
+                images: [`Failed to process image "${url.split('/').pop()}". Please try removing and re-adding it.`],
+              });
+              return;
+            }
+          }
+        }
+      }
+
+      // Validate we have at least one image
+      if (finalImages.length === 0) {
+        setErrors({
+          images: ["At least one image is required"],
+        });
+        return;
+      }
+
+      const formData: ItemFormData = {
         name,
         description,
         size,
         price: Number(price),
-        condition: Number(condition),
-        category: Number(category),
-        images: images,
-      });
+        condition: conditionNum,
+        category: categoryNum,
+        images: finalImages, // All images in correct order
+      };
+
+      await onSubmit(formData);
     } catch (error) {
       console.error("Error submitting form:", error);
       setErrors({
@@ -246,12 +518,11 @@ export default function ItemForm({
     }
   };
 
-  // Clean up image URLs on unmount
   useEffect(() => {
     return () => {
-      imageUrls.forEach((url) => URL.revokeObjectURL(url));
+      newImageBlobUrls.forEach((url) => URL.revokeObjectURL(url));
     };
-  }, [imageUrls]);
+  }, [newImageBlobUrls]);
 
   // Get selected condition description
   const selectedCondition = condition
@@ -276,7 +547,7 @@ export default function ItemForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl mx-auto">
+    <form onSubmit={handleSubmit} className="space-y-6">
       {/* Images Card - Moved to top */}
       <Card>
         <CardContent className="space-y-6 pt-4">
@@ -315,23 +586,26 @@ export default function ItemForm({
                             url={url}
                             index={index}
                             onRemove={() => removeImage(index)}
+                            cacheBust={imageCacheBust}
                           />
                         ))}
                       </SortableContext>
                     </DndContext>
-                    <div className="aspect-square flex items-center justify-center">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          document.getElementById("images")?.click();
-                        }}
-                        className="h-12 w-12 rounded-full"
-                      >
-                        <Plus className="h-6 w-6" />
-                      </Button>
-                    </div>
+                    {imageUrls.length < 6 && (
+                      <div className="aspect-square flex items-center justify-center">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            document.getElementById("images")?.click();
+                          }}
+                          className="h-12 w-12 rounded-full"
+                        >
+                          <Plus className="h-6 w-6" />
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -441,12 +715,31 @@ export default function ItemForm({
         <CardContent className="space-y-6 pt-4">
           {/* Condition */}
           <div className="space-y-2">
-            <Accordion type="single" collapsible className="w-full">
+            <Accordion
+              type="single"
+              collapsible={!disableCategoryAndCondition}
+              className="w-full"
+            >
               <AccordionItem value="condition">
-                <AccordionTrigger className="text-base">
+                <AccordionTrigger
+                  className={`text-base ${disableCategoryAndCondition ? "cursor-not-allowed opacity-50 pointer-events-none" : ""}`}
+                  onClick={(e) => {
+                    if (disableCategoryAndCondition) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      return false;
+                    }
+                  }}
+                  onPointerDown={(e) => {
+                    if (disableCategoryAndCondition) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }
+                  }}
+                >
                   <div className="flex items-center gap-2">
-                    <Info className="h-4 w-4" />
-                    <span>Select condition</span>
+                    <Info className={`h-4 w-4 ${disableCategoryAndCondition ? "text-muted-foreground" : ""}`} />
+                    <span className={disableCategoryAndCondition ? "text-muted-foreground" : ""}>Select condition</span>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
@@ -464,11 +757,12 @@ export default function ItemForm({
                                 ? "default"
                                 : "secondary"
                             }
-                            className={`px-3 py-1 cursor-pointer ${
-                              !isAvailable ? "opacity-50 line-through" : ""
-                            }`}
+                            className={`px-3 py-1 ${disableCategoryAndCondition || !isAvailable
+                                ? "opacity-50 cursor-not-allowed"
+                                : "cursor-pointer"
+                              }`}
                             onClick={() => {
-                              if (!isAvailable) return; // Don't allow selection of unavailable conditions
+                              if (disableCategoryAndCondition || !isAvailable) return;
                               // Toggle selection - if already selected, deselect it
                               if (condition === itemCondition.id.toString()) {
                                 setCondition("");
@@ -498,12 +792,31 @@ export default function ItemForm({
 
           {/* Category */}
           <div className="space-y-2">
-            <Accordion type="single" collapsible className="w-full">
+            <Accordion
+              type="single"
+              collapsible={!disableCategoryAndCondition}
+              className="w-full"
+            >
               <AccordionItem value="category">
-                <AccordionTrigger className="text-base">
+                <AccordionTrigger
+                  className={`text-base ${disableCategoryAndCondition ? "cursor-not-allowed opacity-50 pointer-events-none" : ""}`}
+                  onClick={(e) => {
+                    if (disableCategoryAndCondition) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      return false;
+                    }
+                  }}
+                  onPointerDown={(e) => {
+                    if (disableCategoryAndCondition) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }
+                  }}
+                >
                   <div className="flex items-center gap-2">
-                    <Tag className="h-4 w-4" />
-                    <span>Select category</span>
+                    <Tag className={`h-4 w-4 ${disableCategoryAndCondition ? "text-muted-foreground" : ""}`} />
+                    <span className={disableCategoryAndCondition ? "text-muted-foreground" : ""}>Select category</span>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
@@ -521,11 +834,12 @@ export default function ItemForm({
                                 ? "default"
                                 : "secondary"
                             }
-                            className={`px-3 py-1 cursor-pointer ${
-                              !isAvailable ? "opacity-50 line-through" : ""
-                            }`}
+                            className={`px-3 py-1 ${disableCategoryAndCondition || !isAvailable
+                                ? "opacity-50 cursor-not-allowed"
+                                : "cursor-pointer"
+                              }`}
                             onClick={() => {
-                              if (!isAvailable) return; // Don't allow selection of unavailable categories
+                              if (disableCategoryAndCondition || !isAvailable) return;
                               // Toggle selection - if already selected, deselect it
                               if (category === itemCategory.id.toString()) {
                                 setCategory("");

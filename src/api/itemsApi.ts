@@ -49,6 +49,7 @@ export interface ItemStoreInfo {
   reason?: string;
   description?: string;
   collection_deadline?: string;
+  collection_pin?: string;
   // ABANDONED status fields
   abandoned_at?: string;
   tag_removed?: boolean;
