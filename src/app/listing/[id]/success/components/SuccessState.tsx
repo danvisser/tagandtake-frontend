@@ -44,7 +44,7 @@ export function SuccessState({ purchaseData, onGoHome }: SuccessStateProps) {
               src={
                 purchaseData.listing.item_details.main_image ||
                 (purchaseData.listing.item_details.images &&
-                purchaseData.listing.item_details.images.length > 0
+                  purchaseData.listing.item_details.images.length > 0
                   ? purchaseData.listing.item_details.images[0].image_url
                   : "")
               }

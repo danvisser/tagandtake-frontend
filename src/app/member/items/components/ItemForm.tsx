@@ -254,14 +254,17 @@ export default function ItemForm({
     setCondition(initialItem.condition?.toString() || "");
     setCategory(initialItem.category?.toString() || "");
 
-    const existingUrls = initialItem.images?.map((img: { image_url: string }) => img.image_url) || [];
-    setImageUrls([...existingUrls]);
+    const existingUrls =
+      initialItem.images?.map((img: { image_url: string }) => img.image_url) || [];
+    setImageUrls(existingUrls);
     setImageCacheBust(Date.now());
 
-    newImageBlobUrls.forEach((url) => URL.revokeObjectURL(url));
     setNewImageFiles([]);
-    setNewImageBlobUrls([]);
-  }, [initialItem?.id, initialItem?.images?.length]);
+    setNewImageBlobUrls((prev) => {
+      prev.forEach((url) => URL.revokeObjectURL(url));
+      return [];
+    });
+  }, [initialItem]);
 
   // Add sensors for drag and drop
   const sensors = useSensors(

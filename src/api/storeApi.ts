@@ -117,6 +117,8 @@ export interface PublicStore {
   min_price: number;
 }
 
+export type StoreListResponse = PaginatedResponse<PublicStore>;
+
 // Types for Basic Store Info
 export interface BasicStoreInfo {
   id: number;
