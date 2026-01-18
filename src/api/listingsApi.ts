@@ -98,6 +98,42 @@ export interface SoldItemListing extends ItemListing {
   sold_at: string;
 }
 
+export type StoreDelistedListingStatus = "abandoned" | "delisted";
+
+export interface StoreDelistedListingBase {
+  id: number;
+  tag: number;
+  store_commission_amount: number;
+  min_listing_days: number;
+  item_price: number;
+  transaction_fee: number;
+  listing_price: number;
+  member_earnings: number;
+  item_details: Item;
+  created_at: string;
+  updated_at: string;
+  reason: ListingRemovalReason;
+  status: StoreDelistedListingStatus;
+  event_at: string;
+  needs_tag_removed?: boolean;
+}
+
+export interface StoreDelistedAbandonedListing extends StoreDelistedListingBase {
+  status: "abandoned";
+  abandoned_at: string;
+  tag_removed: boolean;
+}
+
+export interface StoreDelistedDelistedListing extends StoreDelistedListingBase {
+  status: "delisted";
+  delisted_at: string;
+  tag_removed: true;
+}
+
+export type StoreDelistedListing =
+  | StoreDelistedAbandonedListing
+  | StoreDelistedDelistedListing;
+
 // Interface for listing creation
 export interface CreateListingData {
   item_id: number;
@@ -338,6 +374,77 @@ export const getStoreRecalledListings = async (
         success: false,
         error:
           error.response?.data?.detail || "Failed to fetch recalled listings",
+      };
+    }
+    throw error;
+  }
+};
+
+export const getStoreDelistedListings = async (
+  page?: number
+): Promise<{
+  success: boolean;
+  data?: PaginatedResponse<StoreDelistedListing>;
+  error?: string;
+}> => {
+  try {
+    const url = page
+      ? `${API_ROUTES.STORES.DELISTED_LISTINGS.LIST}?page=${page}`
+      : API_ROUTES.STORES.DELISTED_LISTINGS.LIST;
+    const { data } = await fetchClient({
+      method: "GET",
+      url,
+    });
+
+    return {
+      success: true,
+      data,
+    };
+  } catch (error: unknown) {
+    console.error("Get store delisted listings error:", error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.detail || "Failed to fetch delisted listings",
+      };
+    }
+    throw error;
+  }
+};
+
+export const getStoreDelistedListingById = async (
+  id: number
+): Promise<{
+  success: boolean;
+  data?: StoreDelistedListing;
+  error?: string;
+}> => {
+  try {
+    let page = 1;
+    let totalPages = 1;
+
+    while (page <= totalPages) {
+      const result = await getStoreDelistedListings(page);
+      if (!result.success || !result.data) {
+        return { success: false, error: result.error || "Failed to load delisted listings" };
+      }
+
+      totalPages = result.data.total_pages || 1;
+      const match = result.data.results.find((row) => row.id === id);
+      if (match) return { success: true, data: match };
+
+      page += 1;
+    }
+
+    return { success: false, error: "Listing not found" };
+  } catch (error: unknown) {
+    console.error(`Get store delisted listing ${id} error:`, error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.detail || `Failed to fetch delisted listing ${id}`,
       };
     }
     throw error;

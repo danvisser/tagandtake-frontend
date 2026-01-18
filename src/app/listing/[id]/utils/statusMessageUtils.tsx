@@ -10,6 +10,7 @@ import {
 import { formatDate } from "./listingHelpers";
 import { ITEM_STATUS } from "@src/api/itemsApi";
 import { AlertCircle, CheckCircle, HelpCircle, XCircle } from "lucide-react";
+import { Badge } from "@src/components/ui/badge";
 
 // Define a consistent interface for all status messages
 interface StatusMessageContent {
@@ -27,7 +28,7 @@ export function getStatusMessage(
     | SoldItemListing
     | VacantTag,
   userRole: ListingRole | null
-): StatusMessageContent | null {
+): StatusMessageContent | React.ReactNode | null {
   // Handle vacant tag
   if ("is_member" in listing) {
     return null; // Vacant tags don't have status messages
@@ -53,11 +54,27 @@ export function getStatusMessage(
     const recalledListing = listing as RecalledItemListing;
 
     if (userRole === ListingRoles.OWNER) {
-      return {
-        icon: <AlertCircle className="h-5 w-5 text-destructive/50" />,
-        mainText: `Collection pin: ${recalledListing.collection_pin}`,
-        secondaryText: `Please take this tag to a member of staff to confirm collection`,
-      };
+      return (
+        <div className="flex items-start gap-2">
+          <AlertCircle className="h-5 w-5 text-destructive/50 mt-0.5 flex-shrink-0" />
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-medium">Collection PIN</span>
+              {recalledListing.collection_pin && (
+                <Badge
+                  variant="secondary-inverse"
+                  className="h-5 min-w-5 px-1.5 flex items-center justify-center text-xs font-mono leading-none"
+                >
+                  {recalledListing.collection_pin}
+                </Badge>
+              )}
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Please take this tag to a member of staff to confirm collection
+            </p>
+          </div>
+        </div>
+      );
     }
 
 

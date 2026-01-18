@@ -303,7 +303,7 @@ function MemberItemsContent() {
             {recalledCount > 0 && (
               <Badge
                 variant="destructive"
-                className="h-5 min-w-5 px-1.5 flex items-center justify-center text-xs"
+                className="pointer-events-none h-4 min-w-4 px-1 flex items-center justify-center text-[10px] sm:h-5 sm:min-w-5 sm:px-1.5 sm:text-xs"
               >
                 {recalledCount}
               </Badge>

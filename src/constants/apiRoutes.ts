@@ -78,6 +78,9 @@ export const API_ROUTES = {
       DETAIL: (id: number) => `/stores/me/sold-listings/${id}/`,
       REMOVE_TAG: (id: number) => `/stores/me/sold-listings/${id}/remove-tag/`,
     },
+    DELISTED_LISTINGS: {
+      LIST: `/stores/me/delisted-listings/`,
+    },
   },
   CHECKOUT: {
     ITEM: `/checkout/item/`,

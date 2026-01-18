@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { RecalledItemListing } from "@src/api/listingsApi";
 import { Card, CardContent } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
@@ -7,6 +8,7 @@ import { formatCurrency } from "@src/lib/formatters";
 import { Routes } from "@src/constants/routes";
 import Link from "next/link";
 import Image from "next/image";
+import { formatShortDate, getImageUrl as getCachedImageUrl } from "@src/lib/utils";
 
 interface RecalledListingCardProps {
   listing: RecalledItemListing;
@@ -15,47 +17,53 @@ interface RecalledListingCardProps {
 export default function RecalledListingCard({
   listing,
 }: RecalledListingCardProps) {
+  const [cacheBust] = useState(() => Date.now());
   const item = listing.item_details;
   const image = item?.images?.[0]?.image_url;
   const itemName = item?.name || "Unknown Item";
-  const category = item?.category_details?.name || "Unknown";
+  const size = item?.size || "Unknown";
+  const condition = item?.condition_details?.condition || "Unknown";
   const price = listing.listing_price;
   const reason = listing.reason?.reason || "Unknown reason";
-  const collectionDeadline = new Date(listing.collection_deadline);
-  const collectionPin = listing.collection_pin;
+  const collectionDeadlineText =
+    formatShortDate(listing.collection_deadline) ?? "Unknown date";
+
+  const href = Routes.LISTING.DETAILS(listing.tag.toString());
 
   return (
-    <Card className="overflow-hidden">
-      {image && (
-        <div className="relative w-full h-48">
-          <Image src={image} alt={itemName} fill className="object-cover" />
-        </div>
-      )}
-      <CardContent className="p-4">
-        <h3 className="font-medium text-lg mb-1">{itemName}</h3>
-        <p className="text-sm text-muted-foreground mb-2">{category}</p>
-        <p className="text-xl font-semibold mb-4">{formatCurrency(price)}</p>
-
-        <div className="space-y-2 mb-4 text-sm">
-          <div className="text-muted-foreground">Reason: {reason}</div>
-          <div className="text-muted-foreground">
-            Deadline: {collectionDeadline.toLocaleDateString()}
+    <Link href={href} className="h-full">
+      <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col">
+        {image && (
+          <div className="relative w-full h-48 flex-shrink-0">
+            <Image
+              src={getCachedImageUrl(image, cacheBust)}
+              alt={itemName}
+              fill
+              className="object-cover"
+              unoptimized
+            />
           </div>
-          {collectionPin && (
-            <div className="font-medium">Pin: {collectionPin}</div>
-          )}
-        </div>
+        )}
+        <CardContent className="p-4 flex-1 flex flex-col">
+          <h3 className="font-medium text-lg mb-1">{itemName}</h3>
+          <p className="text-xs sm:text-sm text-muted-foreground mb-2">
+            {size} • {condition}
+          </p>
 
-        <Badge variant="destructive" className="mb-4">
-          Recalled
-        </Badge>
-
-        <Link href={Routes.STORE.LISTINGS.RECALLED(listing.id.toString())}>
-          <div className="text-sm text-primary hover:underline cursor-pointer">
-            View Details
+          <div className="mt-auto">
+            <p className="text-base sm:text-lg font-normal mb-4">
+              {formatCurrency(price)}
+            </p>
+            <Badge variant="destructive" className="mb-2">
+              Recalled
+            </Badge>
+            <div className="mt-2 text-xs sm:text-sm text-muted-foreground space-y-1">
+              <div>Collect by {collectionDeadlineText}</div>
+              <div>{reason}</div>
+            </div>
           </div>
-        </Link>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }

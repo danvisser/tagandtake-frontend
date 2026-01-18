@@ -35,6 +35,7 @@ import {
   RecalledItemListing,
   AbandonedItemListing,
   SoldItemListing,
+  StoreDelistedListing,
 } from "@src/api/listingsApi";
 import { Info } from "lucide-react";
 
@@ -51,7 +52,8 @@ interface ListingCardProps {
     | ItemListing
     | RecalledItemListing
     | AbandonedItemListing
-    | SoldItemListing;
+    | SoldItemListing
+    | StoreDelistedListing;
   statusMessage?: ReactNode | StatusMessageContent;
   statusBadge?: {
     label: string;

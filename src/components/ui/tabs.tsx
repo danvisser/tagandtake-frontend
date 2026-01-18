@@ -14,7 +14,7 @@ const tabsListVariants = cva(
     variants: {
       variant: {
         default: "h-9 rounded-lg bg-muted p-1",
-        pill: "w-full justify-start gap-2 bg-transparent p-0 text-foreground overflow-x-auto rounded-none h-auto",
+        pill: "w-full justify-start gap-2 bg-transparent p-0 text-foreground flex-wrap rounded-none h-auto",
       },
     },
     defaultVariants: {
@@ -44,11 +44,11 @@ const tabsTriggerVariants = cva(
         default:
           "rounded-md px-3 py-1 text-sm font-medium data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow",
         primary:
-          "shrink-0 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary hover:bg-primary/10 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:border-primary data-[state=active]:shadow-none",
+          "rounded-full border border-primary bg-white px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/10 sm:px-4 sm:py-2 sm:text-sm data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:border-primary data-[state=active]:shadow-none",
         secondary:
-          "shrink-0 rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-black/5 data-[state=active]:bg-black/5 data-[state=active]:text-foreground/80 data-[state=active]:border-black/20 data-[state=active]:shadow-none",
+          "rounded-full border border-black/10 bg-white px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-black/5 sm:px-4 sm:py-2 sm:text-sm data-[state=active]:bg-black/5 data-[state=active]:text-foreground/80 data-[state=active]:border-black/20 data-[state=active]:shadow-none",
         outline:
-          "shrink-0 rounded-full border border-primary bg-white px-4 py-2 text-sm font-medium text-primary hover:bg-primary/10 data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border-primary data-[state=active]:shadow-none",
+          "rounded-full border border-primary bg-white px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/10 sm:px-4 sm:py-2 sm:text-sm data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:border-primary data-[state=active]:shadow-none",
       },
     },
     defaultVariants: {

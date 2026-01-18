@@ -189,9 +189,15 @@ export default function RecalledItemCard({ item, cacheBust }: RecalledItemCardPr
                       </p>
                     )}
                     {listingInfo.collection_pin && (
-                      <p className="text-sm font-medium">
-                        Collection PIN: <span className="font-mono">{listingInfo.collection_pin}</span>
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium">Collection PIN</span>
+                        <Badge
+                          variant="secondary-inverse"
+                          className="h-5 min-w-5 px-1.5 flex items-center justify-center text-xs font-mono leading-none"
+                        >
+                          {listingInfo.collection_pin}
+                        </Badge>
+                      </div>
                     )}
                   </div>
                 </div>

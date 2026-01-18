@@ -1,41 +1,53 @@
 "use client";
 
 import { useState } from "react";
-import { SoldItemListing } from "@src/api/listingsApi";
+import Link from "next/link";
+import Image from "next/image";
 import { Card, CardContent } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
 import { formatCurrency } from "@src/lib/formatters";
-import { Routes } from "@src/constants/routes";
-import Link from "next/link";
-import Image from "next/image";
 import { formatShortDate, getImageUrl as getCachedImageUrl } from "@src/lib/utils";
+import { Routes } from "@src/constants/routes";
+import { StoreDelistedListing } from "@src/api/listingsApi";
 
-interface SoldListingCardProps {
-  listing: SoldItemListing;
+interface DelistedListingCardProps {
+  listing: StoreDelistedListing;
 }
 
-export default function SoldListingCard({
-  listing,
-}: SoldListingCardProps) {
+export default function DelistedListingCard({ listing }: DelistedListingCardProps) {
   const [cacheBust] = useState(() => Date.now());
+
   const item = listing.item_details;
   const image = item?.images?.[0]?.image_url;
   const itemName = item?.name || "Unknown Item";
   const size = item?.size || "Unknown";
   const condition = item?.condition_details?.condition || "Unknown";
   const price = listing.listing_price;
-  const soldAtText = formatShortDate(listing.sold_at) ?? "Unknown date";
-  const storeCommission = listing.store_commission_amount;
-  const tagRemoved = listing.tag_removed;
-  const tagStillAttached = tagRemoved === false;
 
-  const href = tagStillAttached
+  const isAbandoned = listing.status === "abandoned";
+  const needsTagRemoved =
+    isAbandoned && (listing.tag_removed === false || listing.needs_tag_removed === true);
+
+  const eventAtText = formatShortDate(listing.event_at);
+  const statusLabel = isAbandoned ? "Abandoned" : "Delisted";
+  const statusVariant = isAbandoned
+    ? ("destructive" as const)
+    : ("secondary-inverse" as const);
+
+  const href = needsTagRemoved
     ? Routes.LISTING.DETAILS(listing.tag.toString())
-    : `${Routes.STORE.LISTINGS.DETAILS(listing.id.toString())}?tab=sold`;
+    : listing.status === "abandoned"
+      ? `${Routes.STORE.LISTINGS.DETAILS(listing.id.toString())}?tab=abandoned`
+      : `${Routes.STORE.LISTINGS.DETAILS(listing.id.toString())}?tab=delisted`;
 
   return (
     <Link href={href} className="h-full">
-      <Card className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-full flex flex-col">
+      <Card
+        className={[
+          "overflow-hidden h-full flex flex-col",
+          "hover:shadow-lg transition-shadow cursor-pointer",
+        ].join(" ")}
+      >
         {image && (
           <div className="relative w-full h-48 flex-shrink-0">
             <Image
@@ -57,15 +69,14 @@ export default function SoldListingCard({
             <p className="text-base sm:text-lg font-normal mb-4">
               {formatCurrency(price)}
             </p>
-            <Badge variant="secondary" className="mb-2">
-              Sold
+            <Badge variant={statusVariant} className="mb-2">
+              {statusLabel}
             </Badge>
+
             <div className="mt-2 text-xs sm:text-sm text-muted-foreground space-y-1">
-              <div>Sold {soldAtText}</div>
-              <div>Commission {formatCurrency(storeCommission)}</div>
-              {tagStillAttached && (
-                <div className="text-destructive">Tag still attached</div>
-              )}
+              {listing.reason?.reason && <div>{listing.reason.reason}</div>}
+              {eventAtText && <div>{eventAtText}</div>}
+              {needsTagRemoved && <div className="text-destructive">Tag still attached</div>}
             </div>
           </div>
         </CardContent>
@@ -73,3 +84,4 @@ export default function SoldListingCard({
     </Link>
   );
 }
+
