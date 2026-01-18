@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import Image from "next/image";
 import {
   Card,
@@ -22,6 +22,7 @@ import {
   DialogTitle,
 } from "@src/components/ui/dialog";
 import { formatCurrency } from "@src/lib/formatters";
+import { getImageUrl as getCachedImageUrl } from "@src/lib/utils";
 import {
   Carousel,
   CarouselContent,
@@ -71,7 +72,7 @@ export default function ListingCard({
   statusBadge,
   footerContent,
 }: ListingCardProps) {
-  // Extract common properties
+  const [cacheBust] = useState(() => Date.now());
   const item = "item_details" in listing ? listing.item_details : null;
   const title = item?.name || "Vacant Tag";
   const item_price = "item_price" in listing ? listing.item_price : 0;
@@ -92,16 +93,17 @@ export default function ListingCard({
             <Carousel className="w-full">
               <CarouselContent>
                 {images.map((image, index) => (
-                  <CarouselItem key={index}>
+                  <CarouselItem key={`${image.image_url}-${image.order ?? index}`}>
                     <Dialog>
                       <DialogTrigger asChild>
                         <div className="relative w-full h-[400px] cursor-pointer">
                           <Image
-                            src={image.image_url}
+                            src={getCachedImageUrl(image.image_url, cacheBust)}
                             alt={`${title} - Image ${index + 1}`}
                             fill
                             className="object-cover"
                             priority={index === 0}
+                            unoptimized
                           />
                         </div>
                       </DialogTrigger>
@@ -109,11 +111,12 @@ export default function ListingCard({
                         <DialogTitle className="sr-only">{`${title} - Image ${index + 1}`}</DialogTitle>
                         <div className="relative w-full aspect-square sm:aspect-[4/3]">
                           <Image
-                            src={image.image_url}
+                            src={getCachedImageUrl(image.image_url, cacheBust)}
                             alt={`${title} - Image ${index + 1}`}
                             fill
                             className="object-contain"
                             priority
+                            unoptimized
                           />
                         </div>
                       </DialogContent>

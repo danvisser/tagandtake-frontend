@@ -21,6 +21,7 @@ import { useToast } from "@src/hooks/use-toast";
 import { handleListingError } from "@src/app/listing/[id]/utils/listingErrorHandler";
 import { useListingContext } from "@src/app/listing/[id]/context/ListingContext";
 import ConfirmationModal from "@src/app/listing/[id]/components/modals/ConfirmationModal";
+import { getImageUrl as getCachedImageUrl } from "@src/lib/utils";
 
 interface ListItemModalProps {
   isOpen: boolean;
@@ -44,11 +45,13 @@ export default function ListItemModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [pendingItemId, setPendingItemId] = useState<number | null>(null);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [cacheBust, setCacheBust] = useState(Date.now());
 
   useEffect(() => {
     async function fetchItems() {
       if (!isOpen) return;
 
+      setCacheBust(Date.now());
       setIsLoading(true);
       try {
         const response = await getAvailableItems();
@@ -171,11 +174,12 @@ export default function ListItemModal({
                     <div className="relative aspect-square w-28 flex-shrink-0">
                       {item.images && item.images.length > 0 ? (
                         <Image
-                          src={item.images[0].image_url}
+                          src={getCachedImageUrl(item.images[0].image_url, cacheBust)}
                           alt={item.name}
                           fill
                           className="object-cover rounded-md"
                           sizes="(max-width: 112px) 100vw, 112px"
+                          unoptimized
                         />
                       ) : (
                         <div className="w-full h-full bg-gray-100 flex items-center justify-center rounded-md">
