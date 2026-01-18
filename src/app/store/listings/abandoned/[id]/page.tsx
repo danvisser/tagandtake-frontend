@@ -1,10 +1,11 @@
 import { redirect } from "next/navigation";
 import { Routes } from "@src/constants/routes";
 
-export default function AbandonedListingDetailRedirect({
+export default async function AbandonedListingDetailRedirect({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  redirect(`${Routes.STORE.LISTINGS.DETAILS(params.id)}?tab=abandoned`);
+  const { id } = await params;
+  redirect(`${Routes.STORE.LISTINGS.DETAILS(id)}?tab=abandoned`);
 }

@@ -1,10 +1,11 @@
 import { redirect } from "next/navigation";
 import { Routes } from "@src/constants/routes";
 
-export default function RecalledListingDetailRedirect({
+export default async function RecalledListingDetailRedirect({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  redirect(`${Routes.STORE.LISTINGS.DETAILS(params.id)}?tab=recalled`);
+  const { id } = await params;
+  redirect(`${Routes.STORE.LISTINGS.DETAILS(id)}?tab=recalled`);
 }
