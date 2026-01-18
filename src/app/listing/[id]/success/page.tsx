@@ -42,7 +42,7 @@ export default function SuccessPage() {
   if (isLoading) {
     return (
       <StateWrapper>
-        <LoadingSpinner />
+        <LoadingSpinner className="w-full justify-center" />
       </StateWrapper>
     );
   }

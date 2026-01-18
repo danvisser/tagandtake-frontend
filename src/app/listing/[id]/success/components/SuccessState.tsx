@@ -3,6 +3,7 @@ import { CheckCircle, Tag, Home, Mail } from "lucide-react";
 import Image from "next/image";
 import { formatCurrency } from "@src/lib/formatters";
 import { ItemPurchasedResponse } from "@src/api/paymentsApi";
+import { Alert, AlertDescription, AlertTitle } from "@src/components/ui/alert";
 
 interface SuccessStateProps {
   purchaseData: ItemPurchasedResponse | null;
@@ -21,15 +22,19 @@ export function SuccessState({ purchaseData, onGoHome }: SuccessStateProps) {
       </div>
 
       {/* Tag removal instruction - Clear call to action */}
-      <div className="w-full mb-6">
-        <div className="flex items-center gap-2 mb-2">
-          <Tag className="h-5 w-5 text-primary" />
-          <h3 className="text-base font-semibold">Remove tag</h3>
+      <Alert className="w-full mb-6 border-primary/20 bg-primary/5 py-4">
+        <Tag className="h-5 w-5 text-primary" />
+        <div>
+          <AlertTitle className="text-base">
+            Please remove the tag
+          </AlertTitle>
+          <AlertDescription className="text-muted-foreground">
+            <p className="text-sm font-medium text-foreground">
+              Take the item to a member of staff to remove the tag.
+            </p>
+          </AlertDescription>
         </div>
-        <p className="text-sm text-muted-foreground pl-7">
-          Please take the item to a member of staff to remove the tag.
-        </p>
-      </div>
+      </Alert>
 
       {/* Item details - Clean and elegant */}
       {purchaseData?.listing?.item_details && (
