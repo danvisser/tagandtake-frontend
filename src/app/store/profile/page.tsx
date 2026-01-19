@@ -840,15 +840,15 @@ function StoreProfileContent() {
                               prev.map((row, i) =>
                                 i === idx
                                   ? {
-                                      ...row,
-                                      is_closed: isClosed,
-                                      opening_time: isClosed
-                                        ? undefined
-                                        : row.opening_time,
-                                      closing_time: isClosed
-                                        ? undefined
-                                        : row.closing_time,
-                                    }
+                                    ...row,
+                                    is_closed: isClosed,
+                                    opening_time: isClosed
+                                      ? undefined
+                                      : row.opening_time,
+                                    closing_time: isClosed
+                                      ? undefined
+                                      : row.closing_time,
+                                  }
                                   : row
                               )
                             );
