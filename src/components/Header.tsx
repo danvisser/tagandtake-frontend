@@ -107,15 +107,6 @@ export default function Header({ variant }: { variant: UserRole }) {
           )}
           {variant === UserRoles.STORE && (
             <>
-              <Link href={Routes.STORE.ROOT} prefetch={false}>
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  className="text-lg font-light"
-                >
-                  Dashboard
-                </Button>
-              </Link>
               <Link href={Routes.STORE.LISTINGS.ROOT} prefetch={false}>
                 <Button
                   variant="ghost"
@@ -123,6 +114,15 @@ export default function Header({ variant }: { variant: UserRole }) {
                   className="text-lg font-light"
                 >
                   Listings
+                </Button>
+              </Link>
+              <Link href={Routes.STORE.ROOT} prefetch={false}>
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="text-lg font-light"
+                >
+                  Dashboard
                 </Button>
               </Link>
               <Link href={Routes.STORE.HELP} prefetch={false}>
@@ -240,13 +240,13 @@ export default function Header({ variant }: { variant: UserRole }) {
               {variant === UserRoles.STORE && (
                 <>
                   <DropdownMenuItem asChild>
-                    <Link href={Routes.STORE.ROOT} className="w-full">
-                      Dashboard
+                    <Link href={Routes.STORE.LISTINGS.ROOT} className="w-full">
+                      Listings
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href={Routes.STORE.LISTINGS.ROOT} className="w-full">
-                      Listings
+                    <Link href={Routes.STORE.ROOT} className="w-full">
+                      Dashboard
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
@@ -256,12 +256,12 @@ export default function Header({ variant }: { variant: UserRole }) {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href={Routes.STORE.SETTINGS} className="w-full">
-                      Settings
+                      What we accept &amp; pricing
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href={Routes.STORE.SUPPLIES} className="w-full">
-                      Supplies
+                      Tags &amp; supplies
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
