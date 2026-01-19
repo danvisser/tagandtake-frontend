@@ -215,14 +215,45 @@ function StoreListingDetailsContent() {
   }
 
   if ("sold_at" in listing) {
-    const statusMessage = {
-      icon: <CheckCircle className="h-5 w-5 text-green-600" />,
-      mainText: "Item sold",
-      secondaryText: `Sold on ${formatDate(listing.sold_at)}`,
-      additionalInfo: `Store commission: ${formatCurrency(listing.store_commission_amount)}${
-        listing.tag_removed ? "" : " • Tag still attached"
-      }`,
-    };
+    const priceBreakdown = (
+      <div className="space-y-1 text-sm text-muted-foreground">
+        <div className="flex items-baseline justify-between gap-3">
+          <span className="font-medium text-muted-foreground">
+            {formatCurrency(listing.member_earnings)}
+          </span>
+          <span className="text-xs text-muted-foreground">(member earnings)</span>
+        </div>
+        <div className="flex items-baseline justify-between gap-3">
+          <span className="font-medium text-muted-foreground">
+            {formatCurrency(listing.store_commission_amount)}
+          </span>
+          <span className="text-xs text-muted-foreground">(store %)</span>
+        </div>
+        <div className="flex items-baseline justify-between gap-3">
+          <span className="font-medium text-muted-foreground">
+            {formatCurrency(listing.transaction_fee)}
+          </span>
+          <span className="text-xs text-muted-foreground">(service fee)</span>
+        </div>
+      </div>
+    );
+
+    const statusMessage = (
+      <div className="flex items-start gap-2">
+        <div className="mt-0.5 flex-shrink-0">
+          <CheckCircle className="h-5 w-5 text-green-600" />
+        </div>
+        <div className="w-full">
+          <p className="font-medium">Item sold</p>
+          <p className="text-sm text-muted-foreground">
+            Sold on {formatDate(listing.sold_at)}
+          </p>
+          {listing.tag_removed === false && (
+            <p className="text-sm text-destructive mt-1">Tag still attached</p>
+          )}
+        </div>
+      </div>
+    );
 
     return (
       <div className="container mx-auto px-4 py-4">
@@ -242,6 +273,7 @@ function StoreListingDetailsContent() {
               variant: "secondary",
             }}
             statusMessage={statusMessage}
+            priceBreakdown={priceBreakdown}
           />
         </div>
       </div>
@@ -286,9 +318,8 @@ function StoreListingDetailsContent() {
     icon: <AlertCircle className="h-5 w-5 text-muted-foreground" />,
     mainText: "Item abandoned",
     secondaryText: `Abandoned on ${formatDate(listing.abandoned_at)}`,
-    additionalInfo: `Reason: ${listing.reason.reason}${
-      listing.tag_removed ? "" : " • Tag still attached"
-    }`,
+    additionalInfo: `Reason: ${listing.reason.reason}${listing.tag_removed ? "" : " • Tag still attached"
+      }`,
   };
 
   return (

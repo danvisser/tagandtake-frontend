@@ -57,6 +57,7 @@ export default function SoldListingCard({
             <p className="text-base sm:text-lg font-normal mb-4">
               {formatCurrency(price)}
             </p>
+
             <Badge variant="secondary" className="mb-2">
               Sold
             </Badge>

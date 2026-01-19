@@ -49,23 +49,24 @@ interface StatusMessageContent {
 
 interface ListingCardProps {
   listing:
-    | ItemListing
-    | RecalledItemListing
-    | AbandonedItemListing
-    | SoldItemListing
-    | StoreDelistedListing;
+  | ItemListing
+  | RecalledItemListing
+  | AbandonedItemListing
+  | SoldItemListing
+  | StoreDelistedListing;
   statusMessage?: ReactNode | StatusMessageContent;
   statusBadge?: {
     label: string;
     variant?:
-      | "default"
-      | "secondary"
-      | "destructive"
-      | "outline"
-      | "secondary-inverse"
-      | "destructive-inverse";
+    | "default"
+    | "secondary"
+    | "destructive"
+    | "outline"
+    | "secondary-inverse"
+    | "destructive-inverse";
   };
   footerContent?: ReactNode;
+  priceBreakdown?: ReactNode;
 }
 
 export default function ListingCard({
@@ -73,6 +74,7 @@ export default function ListingCard({
   statusMessage,
   statusBadge,
   footerContent,
+  priceBreakdown,
 }: ListingCardProps) {
   const [cacheBust] = useState(() => Date.now());
   const item = "item_details" in listing ? listing.item_details : null;
@@ -228,33 +230,46 @@ export default function ListingCard({
           <div className="h-px bg-gray-100 mb-6"></div>
 
           {/* Simplified price information */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-base text-muted-foreground">
-                {formatCurrency(item_price)}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-xl font-medium">
-                  {formatCurrency(listing_price)}
-                </span>
-                <HoverCard>
-                  <HoverCardTrigger className="cursor-default">
-                    <Info className="w-4 h-4 text-muted-foreground" />
-                  </HoverCardTrigger>
-                  <HoverCardContent className="w-80">
-                    <div className="space-y-2">
-                      <p className="text-sm text-muted-foreground">
-                        A service fee of 10% of the item price plus £1 helps us
-                        provide this service.
-                      </p>
-                    </div>
-                  </HoverCardContent>
-                </HoverCard>
+          {priceBreakdown ? (
+            <div className="space-y-2">
+              <div>{priceBreakdown}</div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-medium">
+                    {formatCurrency(listing_price)}
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-base text-muted-foreground">
+                  {formatCurrency(item_price)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-medium">
+                    {formatCurrency(listing_price)}
+                  </span>
+                  <HoverCard>
+                    <HoverCardTrigger className="cursor-default">
+                      <Info className="w-4 h-4 text-muted-foreground" />
+                    </HoverCardTrigger>
+                    <HoverCardContent className="w-80">
+                      <div className="space-y-2">
+                        <p className="text-sm text-muted-foreground">
+                          A service fee of 10% of the item price plus £1 helps us
+                          provide this service.
+                        </p>
+                      </div>
+                    </HoverCardContent>
+                  </HoverCard>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {statusMessage && (
