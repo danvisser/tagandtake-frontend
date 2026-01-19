@@ -36,7 +36,9 @@ export const Routes = {
 
   STORE: {
     ROOT: "/store",
+    PROFILE: "/store/profile",
     SETTINGS: "/store/settings",
+    HELP: "/store/help",
     PAYMENTS: "/store/payments",
     SUPPLIES: "/store/supplies",
     SUPPLIES_CHECKOUT_SUCCESS: "/store/supplies/success",

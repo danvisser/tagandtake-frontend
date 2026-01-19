@@ -113,7 +113,7 @@ export default function Header({ variant }: { variant: UserRole }) {
                   size="lg"
                   className="text-lg font-light"
                 >
-                  Store Dashboard
+                  Dashboard
                 </Button>
               </Link>
               <Link href={Routes.STORE.LISTINGS.ROOT} prefetch={false}>
@@ -122,7 +122,16 @@ export default function Header({ variant }: { variant: UserRole }) {
                   size="lg"
                   className="text-lg font-light"
                 >
-                  Store Listings
+                  Listings
+                </Button>
+              </Link>
+              <Link href={Routes.STORE.HELP} prefetch={false}>
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="text-lg font-light"
+                >
+                  Help
                 </Button>
               </Link>
             </>
@@ -232,27 +241,37 @@ export default function Header({ variant }: { variant: UserRole }) {
                 <>
                   <DropdownMenuItem asChild>
                     <Link href={Routes.STORE.ROOT} className="w-full">
-                      Store Dashboard
+                      Dashboard
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href={Routes.STORE.LISTINGS.ROOT} className="w-full">
-                      Store Listings
+                      Listings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href={Routes.STORE.PROFILE} className="w-full">
+                      Profile
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href={Routes.STORE.SETTINGS} className="w-full">
-                      Store Settings
+                      Settings
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href={Routes.STORE.SUPPLIES} className="w-full">
-                      Store Supplies
+                      Supplies
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href={Routes.STORE.PAYMENTS} className="w-full">
                       Payments
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href={Routes.STORE.HELP} className="w-full">
+                      Help
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
