@@ -165,7 +165,7 @@ export default function ManageListingModal({
                     {!pastMinListingDays && (
                       <div className="mt-1 px-1">
                         <p className="text-xs text-muted-foreground italic">
-                          Not available until minimum listing period has passed
+                          Not available until the display period guarantee has passed
                         </p>
                       </div>
                     )}

@@ -240,13 +240,13 @@ export default function Header({ variant }: { variant: UserRole }) {
               {variant === UserRoles.STORE && (
                 <>
                   <DropdownMenuItem asChild>
-                    <Link href={Routes.STORE.LISTINGS.ROOT} className="w-full">
-                      Listings
+                    <Link href={Routes.STORE.ROOT} className="w-full">
+                      Dashboard
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href={Routes.STORE.ROOT} className="w-full">
-                      Dashboard
+                    <Link href={Routes.STORE.LISTINGS.ROOT} className="w-full">
+                      Listings
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
@@ -256,7 +256,7 @@ export default function Header({ variant }: { variant: UserRole }) {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href={Routes.STORE.SETTINGS} className="w-full">
-                      What we accept &amp; pricing
+                      Hosting rules
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>

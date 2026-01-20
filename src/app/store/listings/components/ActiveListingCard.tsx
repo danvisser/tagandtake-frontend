@@ -63,7 +63,7 @@ export default function ActiveListingCard({ listing }: ActiveListingCardProps) {
             <div className="mt-2 text-xs sm:text-sm text-muted-foreground space-y-1">
               <div>Tag #{listing.tag}</div>
               {listing.past_min_listing_days ? (
-                <div className="text-destructive">Available for recall</div>
+                <div className="text-destructive">Past display period guarantee</div>
               ) : (
                 <div>{daysListed} days listed</div>
               )}

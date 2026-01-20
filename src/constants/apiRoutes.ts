@@ -81,6 +81,13 @@ export const API_ROUTES = {
     DELISTED_LISTINGS: {
       LIST: `/stores/me/delisted-listings/`,
     },
+    EVENT_LOGS: {
+      LIST: `/stores/me/event-logs/`,
+    },
+    ANALYTICS: {
+      SALES: `/stores/me/analytics/sales/`,
+      CATEGORY_BREAKDOWN: `/stores/me/analytics/category-breakdown/`,
+    },
   },
   CHECKOUT: {
     ITEM: `/checkout/item/`,

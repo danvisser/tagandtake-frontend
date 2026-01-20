@@ -170,6 +170,68 @@ export interface TagAvailabilityResponse {
   reason?: string;
 }
 
+// Store event logs
+export enum ListingEventType {
+  LISTING_CREATED = "listing_created",
+  LISTING_RECALLED = "listing_recalled",
+  LISTING_DELISTED = "listing_delisted",
+  LISTING_COLLECTED = "listing_collected",
+  LISTING_ABANDONED = "listing_abandoned",
+  LISTING_SOLD = "listing_sold",
+  TAG_REPLACED = "tag_replaced",
+  COLLECTION_PIN_UPDATED = "collection_pin_updated",
+  TAG_REMOVED = "tag_removed",
+  PRICE_UPDATED = "price_updated",
+  DESCRIPTION_UPDATED = "description_updated",
+}
+
+export interface ListingEventLog {
+  id: number;
+  event_type: ListingEventType;
+  event_type_display: string;
+  item: number;
+  tag_id: number;
+  store_id: number;
+  store_name: string;
+  item_details: Item;
+  previous_state: string | null;
+  new_state: string | null;
+  performed_by: number | null;
+  performed_by_email: string | null;
+  performed_by_role: string | null;
+  reason_details: ListingRemovalReason | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+  listing_id: number | null;
+  listing_type: string | null;
+}
+
+export type StoreAnalyticsPeriod = "7d" | "30d";
+
+export interface StoreSalesAnalyticsPoint {
+  date: string; // YYYY-MM-DD
+  sales_count: number;
+  commission_total: string; // decimal string
+  sale_total: string; // decimal string
+}
+
+export interface StoreSalesAnalyticsResponse {
+  period: StoreAnalyticsPeriod;
+  series: StoreSalesAnalyticsPoint[];
+}
+
+export interface StoreCategoryBreakdownRow {
+  category_id: number;
+  category_name: string;
+  sales_count: number;
+  commission_total: string; // decimal string
+}
+
+export interface StoreCategoryBreakdownResponse {
+  period: StoreAnalyticsPeriod;
+  category_breakdown: StoreCategoryBreakdownRow[];
+}
+
 // Create a new listing
 export const createListing = async (
   listingData: CreateListingData
@@ -445,6 +507,105 @@ export const getStoreDelistedListingById = async (
         success: false,
         error:
           error.response?.data?.detail || `Failed to fetch delisted listing ${id}`,
+      };
+    }
+    throw error;
+  }
+};
+
+export const getStoreEventLogs = async (options?: {
+  page?: number;
+  eventTypes?: ListingEventType[];
+  itemId?: number;
+}): Promise<{
+  success: boolean;
+  data?: PaginatedResponse<ListingEventLog>;
+  error?: string;
+}> => {
+  try {
+    const params = new URLSearchParams();
+    if (options?.page) params.set("page", options.page.toString());
+    if (typeof options?.itemId === "number") {
+      params.set("item_id", options.itemId.toString());
+      params.set("itemId", options.itemId.toString());
+    }
+    if (options?.eventTypes?.length) {
+      const joined = options.eventTypes.join(",");
+      // Backend expects a string query param and supports comma-separated values.
+      // Different deployments may use either `event_type` or `event_types`.
+      params.set("event_type", joined);
+      params.set("event_types", joined);
+    }
+
+    const url = params.toString()
+      ? `${API_ROUTES.STORES.EVENT_LOGS.LIST}?${params.toString()}`
+      : API_ROUTES.STORES.EVENT_LOGS.LIST;
+
+    const { data } = await fetchClient({
+      method: "GET",
+      url,
+    });
+
+    return { success: true, data };
+  } catch (error: unknown) {
+    console.error("Get store event logs error:", error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error: error.response?.data?.detail || "Failed to fetch store event logs",
+      };
+    }
+    throw error;
+  }
+};
+
+export const getStoreSalesAnalytics = async (
+  period: StoreAnalyticsPeriod
+): Promise<{
+  success: boolean;
+  data?: StoreSalesAnalyticsResponse;
+  error?: string;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "GET",
+      url: `${API_ROUTES.STORES.ANALYTICS.SALES}?period=${encodeURIComponent(period)}`,
+    });
+    return { success: true, data };
+  } catch (error: unknown) {
+    console.error("Get store sales analytics error:", error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.detail || "Failed to fetch store sales analytics",
+      };
+    }
+    throw error;
+  }
+};
+
+export const getStoreCategoryBreakdownAnalytics = async (
+  period: StoreAnalyticsPeriod
+): Promise<{
+  success: boolean;
+  data?: StoreCategoryBreakdownResponse;
+  error?: string;
+}> => {
+  try {
+    const { data } = await fetchClient({
+      method: "GET",
+      url: `${API_ROUTES.STORES.ANALYTICS.CATEGORY_BREAKDOWN}?period=${encodeURIComponent(period)}`,
+    });
+    return { success: true, data };
+  } catch (error: unknown) {
+    console.error("Get store category breakdown analytics error:", error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.detail ||
+          "Failed to fetch store category breakdown analytics",
       };
     }
     throw error;

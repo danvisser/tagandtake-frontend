@@ -6,7 +6,6 @@ import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
 import { Label } from "@src/components/ui/label";
 import { Checkbox } from "@src/components/ui/checkbox";
-import { Badge } from "@src/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -23,6 +22,7 @@ import { itemCategories, itemConditions } from "@src/data/itemReferenceData";
 import { useToast } from "@src/hooks/use-toast";
 import type { PaginatedResponse } from "@src/types/api";
 import { generateNewStorePin } from "@src/api/storeApi";
+import { formatCurrency } from "@src/lib/formatters";
 
 interface StoreProfile {
   store_name: string;
@@ -231,13 +231,6 @@ function StoreSettingsContent() {
     return a.some((v, i) => v !== b[i]);
   }, [initialConditionIds, selectedConditionIds]);
 
-  const hasCapacity = useMemo(() => {
-    if (!storeProfile) return null;
-    const remaining = Number(storeProfile.tags_available ?? 0);
-    if (!Number.isFinite(remaining)) return null;
-    return remaining > 0;
-  }, [storeProfile]);
-
   const openPinDialog = (next: NonNullable<typeof pendingSave>) => {
     setPendingSave(next);
     setPinDialogError(null);
@@ -436,7 +429,7 @@ function StoreSettingsContent() {
     <div className="container mx-auto px-4 py-4 max-w-4xl">
       <div className="mb-4 flex flex-row flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
-          <h1 className="text-3xl font-normal leading-8">Store Settings</h1>
+          <h1 className="text-3xl font-normal leading-8">Hosting rules</h1>
         </div>
       </div>
 
@@ -444,37 +437,33 @@ function StoreSettingsContent() {
         <div className="space-y-8">
           <Card>
             <CardHeader>
-              <CardTitle>At a glance</CardTitle>
+              <CardTitle>{storeProfile.store_name} rules:</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-wrap gap-2 mb-4">
-                {hasCapacity === true && (
-                  <Badge variant="outline" className="px-3 py-1">
-                    Has capacity
-                  </Badge>
-                )}
-                {hasCapacity === false && (
-                  <Badge variant="destructive" className="px-3 py-1">
-                    At capacity
-                  </Badge>
-                )}
-              </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-muted p-4 rounded-lg">
-                  <p className="text-sm text-muted-foreground">Active listings</p>
-                  <p className="text-2xl font-bold">{storeProfile.active_listings_count}</p>
-                </div>
-                <div className="bg-muted p-4 rounded-lg">
-                  <p className="text-sm text-muted-foreground">Tags available</p>
-                  <p className="text-2xl font-bold">{storeProfile.tags_available}</p>
-                </div>
-                <div className="bg-muted p-4 rounded-lg">
-                  <p className="text-sm text-muted-foreground">Stock limit</p>
-                  <p className="text-2xl font-bold">{storeProfile.stock_limit}</p>
-                </div>
-                <div className="bg-muted p-4 rounded-lg">
+                <div className="flex flex-col items-center justify-center gap-2 p-3 md:p-4 bg-slate-50 rounded-lg text-center">
                   <p className="text-sm text-muted-foreground">Commission</p>
-                  <p className="text-2xl font-bold">{storeProfile.commission}%</p>
+                  <p className="text-2xl font-bold tabular-nums">
+                    {commission.trim() ? `${commission.trim()}%` : "—"}
+                  </p>
+                </div>
+                <div className="flex flex-col items-center justify-center gap-2 p-3 md:p-4 bg-slate-50 rounded-lg text-center">
+                  <p className="text-sm text-muted-foreground">Minimum price</p>
+                  <p className="text-2xl font-bold tabular-nums">
+                    {minPrice.trim() && Number.isFinite(Number(minPrice)) ? formatCurrency(Number(minPrice)) : "—"}
+                  </p>
+                </div>
+                <div className="flex flex-col items-center justify-center gap-2 p-3 md:p-4 bg-slate-50 rounded-lg text-center">
+                  <p className="text-sm text-muted-foreground">Max items accepted</p>
+                  <p className="text-2xl font-bold tabular-nums">{stockLimit.trim() ? stockLimit.trim() : "—"}</p>
+                </div>
+                <div className="flex flex-col items-center justify-center gap-2 p-3 md:p-4 bg-slate-50 rounded-lg text-center">
+                  <p className="text-sm text-muted-foreground">Guaranteed display period</p>
+                  <p className="text-2xl font-bold tabular-nums">
+                    {minListingDays.trim()
+                      ? `${minListingDays.trim()} ${Number(minListingDays) === 1 ? "day" : "days"}`
+                      : "—"}
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -482,7 +471,7 @@ function StoreSettingsContent() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Marketplace rules</CardTitle>
+              <CardTitle>Update hosting rules</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -509,23 +498,23 @@ function StoreSettingsContent() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="min-days">Minimum listing days</Label>
-                  <Input
-                    id="min-days"
-                    type="number"
-                    min={7}
-                    value={minListingDays}
-                    onChange={(e) => setMinListingDays(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="stock-limit">Stock limit</Label>
+                  <Label htmlFor="stock-limit">Max items accepted</Label>
                   <Input
                     id="stock-limit"
                     type="number"
                     min={1}
                     value={stockLimit}
                     onChange={(e) => setStockLimit(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="min-days">Guaranteed display period (days)</Label>
+                  <Input
+                    id="min-days"
+                    type="number"
+                    min={7}
+                    value={minListingDays}
+                    onChange={(e) => setMinListingDays(e.target.value)}
                   />
                 </div>
               </div>

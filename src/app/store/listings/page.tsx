@@ -408,9 +408,6 @@ function StoreListingsContent() {
               </Badge>
             )}
           </TabsTrigger>
-          <TabsTrigger variant="secondary" value="recalled">
-            <span>Recalled</span>
-          </TabsTrigger>
           <TabsTrigger variant="secondary" value="sold">
             <span>Sold</span>
             {soldTagAttachedCount > 0 && (
@@ -421,6 +418,9 @@ function StoreListingsContent() {
                 {soldTagAttachedCount}
               </Badge>
             )}
+          </TabsTrigger>
+          <TabsTrigger variant="secondary" value="recalled">
+            <span>Recalled</span>
           </TabsTrigger>
           <TabsTrigger variant="secondary" value="delisted">
             <span>Delisted</span>
