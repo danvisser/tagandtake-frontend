@@ -37,9 +37,6 @@ export const useAuthStore = create<AuthState>()(
           isAuthenticated: !!role,
           initializationStatus: "completed",
         });
-        if (typeof window !== "undefined") {
-          window.dispatchEvent(new Event("storage"));
-        }
       },
 
       initializeAuth: async () => {
@@ -52,6 +49,7 @@ export const useAuthStore = create<AuthState>()(
 
         try {
           const session = await fetchUserSession();
+          setAccessToken(session.access);
           set({
             role: session.user.role,
             accessToken: session.access,
@@ -88,9 +86,6 @@ export const useAuthStore = create<AuthState>()(
             error: null,
           });
 
-          if (typeof window !== "undefined") {
-            window.dispatchEvent(new Event("storage"));
-          }
           return { success: true, role: response.user.role };
         } catch (error) {
           console.error("Login error:", error);
@@ -118,9 +113,6 @@ export const useAuthStore = create<AuthState>()(
             initializationStatus: "idle",
             error: null,
           });
-          if (typeof window !== "undefined") {
-            window.dispatchEvent(new Event("storage"));
-          }
         } catch (error) {
           console.error("Logout error:", error);
           set({
@@ -141,18 +133,31 @@ export const useAuthStore = create<AuthState>()(
   )
 );
 
-// Add the storage event listener for cross-tab sync
+// Subscribe to store changes to sync fetchClient token
+// When the store updates (including from cross-tab sync), update fetchClient's in-memory token
 if (typeof window !== "undefined") {
-  window.addEventListener("storage", () => {
-    const storedState = JSON.parse(
-      localStorage.getItem("auth-storage") || "{}"
-    );
-    if (storedState.state) {
-      useAuthStore.setState({
-        role: storedState.state.role,
-        isAuthenticated: storedState.state.isAuthenticated,
-        accessToken: storedState.state.accessToken,
-      });
+  let prevToken: string | null = useAuthStore.getState().accessToken;
+  useAuthStore.subscribe((state) => {
+    // Only update fetchClient if accessToken actually changed
+    if (state.accessToken !== prevToken) {
+      prevToken = state.accessToken;
+      setAccessToken(state.accessToken);
     }
   });
+
+  // Enable cross-tab sync: listen for storage events and rehydrate the store
+  // This is required because Zustand's persist middleware doesn't automatically
+  // listen to storage events - it only persists, it doesn't sync across tabs
+  const storageName = useAuthStore.persist.getOptions().name;
+
+  const handleStorageChange = (e: StorageEvent) => {
+    // Only react to changes in our auth storage key
+    if (e.key === storageName) {
+      // Rehydrate the store from localStorage, which will trigger React re-renders
+      // This handles both login (e.newValue !== null) and logout (e.newValue === null)
+      useAuthStore.persist.rehydrate();
+    }
+  };
+
+  window.addEventListener("storage", handleStorageChange);
 }

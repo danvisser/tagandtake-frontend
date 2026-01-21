@@ -2,6 +2,7 @@ import { fetchClient } from "@src/lib/fetchClient";
 import { API_ROUTES } from "@src/constants/apiRoutes";
 import axios from "axios";
 import { SoldItemListing } from "@src/api/listingsApi";
+import { useAuthStore } from "@src/stores/authStore";
 
 // Create a dedicated client for this specific endpoint
 const paymentsClient = axios.create({
@@ -12,18 +13,17 @@ const paymentsClient = axios.create({
 });
 
 // Add auth token to requests
-if (typeof window !== "undefined") {
-  paymentsClient.interceptors.request.use(
-    (config) => {
-      const token = localStorage.getItem("auth_access_token");
-      if (token) {
-        config.headers["Authorization"] = `Bearer ${token}`;
-      }
-      return config;
-    },
-    (error) => Promise.reject(error)
-  );
-}
+paymentsClient.interceptors.request.use(
+  (config) => {
+    // Read token from Zustand store (single source of truth)
+    const token = useAuthStore.getState().accessToken;
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 // Types for payment account status
 export interface AccountStatus {

@@ -17,38 +17,27 @@ const REQUEST_TIMEOUT = 15000; // 15 seconds for regular requests
 const REFRESH_TIMEOUT = 5000; // 5 seconds for token refresh operations
 
 // In-memory storage for the access token
+// This is kept in sync with Zustand store via subscription
 let accessToken: string | null = null;
 
-// Initialize token from localStorage if available (only in browser)
+// Initialize token from Zustand store if available (only in browser)
 if (typeof window !== "undefined") {
   try {
-    const storedToken = localStorage.getItem("auth_access_token");
-    if (storedToken) {
-      accessToken = storedToken;
-    }
+    const store = useAuthStore.getState();
+    accessToken = store.accessToken;
   } catch (e) {
-    console.error("Error accessing localStorage:", e);
+    console.error("Error accessing auth store:", e);
   }
 }
 
 let isRefreshing = false;
 let refreshSubscribers: Array<(token: string) => void> = [];
 
+// Update the in-memory token
+// Note: The Zustand store is the source of truth, and this function
+// is called when the store updates (via subscription in authStore.ts)
 export const setAccessToken = (token: string | null) => {
   accessToken = token;
-
-  // Also store in localStorage for persistence across page loads
-  if (typeof window !== "undefined") {
-    try {
-      if (token) {
-        localStorage.setItem("auth_access_token", token);
-      } else {
-        localStorage.removeItem("auth_access_token");
-      }
-    } catch (e) {
-      console.error("Error accessing localStorage:", e);
-    }
-  }
 };
 
 // Function to subscribe to token refresh
@@ -178,11 +167,11 @@ fetchClient.interceptors.response.use(
         const newToken = response.access || null;
 
         if (newToken) {
-          setAccessToken(newToken);
           const store = useAuthStore.getState();
           const userRole = response.user?.role || null;
 
           if (userRole) {
+            // setAuth will call setAccessToken internally
             store.setAuth(userRole, newToken);
           } else {
             try {
@@ -195,6 +184,8 @@ fetchClient.interceptors.response.use(
 
           onTokenRefreshed(newToken);
 
+          // Token is now in Zustand store and will be available via accessToken variable
+          // (setAuth already called setAccessToken)
           originalRequest.headers = originalRequest.headers || {};
           originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
           isRefreshing = false;

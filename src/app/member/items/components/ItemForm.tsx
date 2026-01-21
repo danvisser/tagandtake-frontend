@@ -712,7 +712,7 @@ export default function ItemForm({
               />
               {storeCommission !== undefined && price.trim() && !isNaN(Number(price)) && Number(price) > 0 && (
                 <p className="text-sm text-muted-foreground mt-2">
-                  You'll receive: {formatCurrency(Number(price) * (1 - storeCommission / 100))}
+                  You&apos;ll receive: {formatCurrency(Number(price) * (1 - storeCommission / 100))}
                 </p>
               )}
             </div>
