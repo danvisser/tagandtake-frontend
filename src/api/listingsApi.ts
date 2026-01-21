@@ -375,18 +375,26 @@ export const checkListingRole = async (
   }
 };
 
-// Update getStoreListings to handle pagination
+// Helper function to build query string for listings
+const buildListingsQuery = (page?: number, search?: string): string => {
+  const params = new URLSearchParams();
+  if (page) params.append("page", page.toString());
+  if (search && search.trim()) params.append("search", search.trim());
+  return params.toString() ? `?${params.toString()}` : "";
+};
+
+// Update getStoreListings to handle pagination and search
 export const getStoreListings = async (
-  page?: number
+  page?: number,
+  search?: string
 ): Promise<{
   success: boolean;
   data?: PaginatedResponse<ItemListing>;
   error?: string;
 }> => {
   try {
-    const url = page
-      ? `${API_ROUTES.STORES.LISTINGS.LIST}?page=${page}`
-      : API_ROUTES.STORES.LISTINGS.LIST;
+    const query = buildListingsQuery(page, search);
+    const url = `${API_ROUTES.STORES.LISTINGS.LIST}${query}`;
     const { data } = await fetchClient({
       method: "GET",
       url,
@@ -408,18 +416,18 @@ export const getStoreListings = async (
   }
 };
 
-// Update getStoreRecalledListings to handle pagination
+// Update getStoreRecalledListings to handle pagination and search
 export const getStoreRecalledListings = async (
-  page?: number
+  page?: number,
+  search?: string
 ): Promise<{
   success: boolean;
   data?: PaginatedResponse<RecalledItemListing>;
   error?: string;
 }> => {
   try {
-    const url = page
-      ? `${API_ROUTES.STORES.RECALLED_LISTINGS.LIST}?page=${page}`
-      : API_ROUTES.STORES.RECALLED_LISTINGS.LIST;
+    const query = buildListingsQuery(page, search);
+    const url = `${API_ROUTES.STORES.RECALLED_LISTINGS.LIST}${query}`;
     const { data } = await fetchClient({
       method: "GET",
       url,
@@ -443,16 +451,16 @@ export const getStoreRecalledListings = async (
 };
 
 export const getStoreDelistedListings = async (
-  page?: number
+  page?: number,
+  search?: string
 ): Promise<{
   success: boolean;
   data?: PaginatedResponse<StoreDelistedListing>;
   error?: string;
 }> => {
   try {
-    const url = page
-      ? `${API_ROUTES.STORES.DELISTED_LISTINGS.LIST}?page=${page}`
-      : API_ROUTES.STORES.DELISTED_LISTINGS.LIST;
+    const query = buildListingsQuery(page, search);
+    const url = `${API_ROUTES.STORES.DELISTED_LISTINGS.LIST}${query}`;
     const { data } = await fetchClient({
       method: "GET",
       url,
@@ -846,16 +854,16 @@ export const getStoreAbandonedListings = async (
 
 // Get store sold listings
 export const getStoreSoldListings = async (
-  page?: number
+  page?: number,
+  search?: string
 ): Promise<{
   success: boolean;
   data?: PaginatedResponse<SoldItemListing>;
   error?: string;
 }> => {
   try {
-    const url = page
-      ? `${API_ROUTES.STORES.SOLD_LISTINGS.LIST}?page=${page}`
-      : API_ROUTES.STORES.SOLD_LISTINGS.LIST;
+    const query = buildListingsQuery(page, search);
+    const url = `${API_ROUTES.STORES.SOLD_LISTINGS.LIST}${query}`;
     const { data } = await fetchClient({
       method: "GET",
       url,

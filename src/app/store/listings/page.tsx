@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@src/components/ui/tabs";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Input } from "@src/components/ui/input";
+import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
 import { UserRoles } from "@src/types/roles";
 import AuthenticatedPage from "@src/components/AuthenticatedPage";
 import LoadingSpinner from "@src/components/LoadingSpinner";
@@ -55,6 +56,10 @@ function StoreListingsContent() {
 
   const [activeTab, setActiveTab] = useState<"active" | "recalled" | "sold" | "delisted">(initialTab);
   const [loading, setLoading] = useState(true);
+
+  // Search state
+  const [searchInput, setSearchInput] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Page state for each tab
   const [activePage, setActivePage] = useState(1);
@@ -187,15 +192,24 @@ function StoreListingsContent() {
     };
   }, []);
 
-  // Reset page when tab changes
+  // Debounced search - update searchTerm after user stops typing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchTerm(searchInput);
+    }, 500); // 500ms delay
+
+    return () => clearTimeout(timer);
+  }, [searchInput]);
+
+  // Reset page when tab or search changes
   useEffect(() => {
     setActivePage(1);
     setRecalledPage(1);
     setDelistedPage(1);
     setSoldPage(1);
-  }, [activeTab]);
+  }, [activeTab, searchTerm]);
 
-  // Load data when tab or page changes
+  // Load data when tab, page, or search changes
   useEffect(() => {
     const loadTabData = async () => {
       setLoading(true);
@@ -203,7 +217,7 @@ function StoreListingsContent() {
       try {
         switch (activeTab) {
           case "active":
-            const activeResult = await getStoreListings(activePage);
+            const activeResult = await getStoreListings(activePage, searchTerm);
             if (activeResult.success && activeResult.data) {
               const sorted = [...activeResult.data.results].sort((a, b) => {
                 const at = new Date(a.created_at).getTime();
@@ -223,7 +237,7 @@ function StoreListingsContent() {
             }
             break;
           case "recalled":
-            const recalledResult = await getStoreRecalledListings(recalledPage);
+            const recalledResult = await getStoreRecalledListings(recalledPage, searchTerm);
             if (recalledResult.success && recalledResult.data) {
               setRecalledListings(recalledResult.data.results);
               setRecalledPagination({
@@ -238,7 +252,7 @@ function StoreListingsContent() {
             }
             break;
           case "delisted":
-            const delistedResult = await getStoreDelistedListings(delistedPage);
+            const delistedResult = await getStoreDelistedListings(delistedPage, searchTerm);
             if (delistedResult.success && delistedResult.data) {
               const sorted = [...delistedResult.data.results].sort((a, b) => {
                 const aNeeds =
@@ -267,7 +281,7 @@ function StoreListingsContent() {
             }
             break;
           case "sold":
-            const soldResult = await getStoreSoldListings(soldPage);
+            const soldResult = await getStoreSoldListings(soldPage, searchTerm);
             if (soldResult.success && soldResult.data) {
               const sorted = [...soldResult.data.results].sort((a, b) => {
                 if (a.tag_removed !== b.tag_removed) {
@@ -298,7 +312,7 @@ function StoreListingsContent() {
     };
 
     loadTabData();
-  }, [activeTab, activePage, recalledPage, delistedPage, soldPage]);
+  }, [activeTab, activePage, recalledPage, delistedPage, soldPage, searchTerm]);
 
   // Pagination handlers
   const handleActivePreviousPage = () => {
@@ -381,10 +395,40 @@ function StoreListingsContent() {
     }
   };
 
+  const handleClearSearch = useCallback(() => {
+    setSearchInput("");
+    setSearchTerm("");
+  }, []);
+
   return (
     <div className="container mx-auto px-4 py-4">
       <div className="mb-4 flex flex-row flex-wrap items-center justify-between gap-3">
         <h1 className="text-3xl font-normal leading-8 min-w-0">Listings</h1>
+      </div>
+
+      {/* Search Bar */}
+      <div className="mb-6">
+        <div className="relative max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="text"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            placeholder="Search by item name or description..."
+            className="pl-10 pr-10"
+          />
+          {searchInput && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 p-0"
+              onClick={handleClearSearch}
+              aria-label="Clear search"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </div>
 
       <Tabs
