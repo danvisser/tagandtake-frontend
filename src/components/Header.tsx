@@ -85,7 +85,7 @@ export default function Header({ variant }: { variant: UserRole }) {
           )}
           {variant === UserRoles.MEMBER && (
             <>
-              <Link href={Routes.MEMBER.ITEMS.ROOT} prefetch={false}>
+              <Link href={Routes.MEMBER.ROOT} prefetch={false}>
                 <Button
                   variant="ghost"
                   size="lg"
@@ -206,19 +206,15 @@ export default function Header({ variant }: { variant: UserRole }) {
               )}
               {variant === UserRoles.MEMBER && (
                 <>
+
+                  <DropdownMenuItem asChild>
+                    <Link href={Routes.MEMBER.ROOT} className="w-full">
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href={Routes.STORES.ROOT} className="w-full">
                       Store Finder
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href={Routes.MEMBER.ROOT} className="w-full">
-                      My Account
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href={Routes.MEMBER.ITEMS.ROOT} className="w-full">
-                      My Items
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
@@ -229,6 +225,11 @@ export default function Header({ variant }: { variant: UserRole }) {
                   <DropdownMenuItem asChild>
                     <Link href={Routes.MEMBER.PAYMENTS} className="w-full">
                       Payments
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href={Routes.MEMBER.HELP} className="w-full">
+                      Help
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />

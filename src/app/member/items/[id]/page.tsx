@@ -135,7 +135,7 @@ function MemberItemDetailContent() {
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
           <Link
-            href={`${Routes.MEMBER.ITEMS.ROOT}?tab=${backTab}`}
+            href={`${Routes.MEMBER.ROOT}?tab=${backTab}`}
             className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
           >
             <ChevronLeft className="h-4 w-4 mr-1" />

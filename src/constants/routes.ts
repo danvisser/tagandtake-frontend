@@ -27,6 +27,7 @@ export const Routes = {
     ROOT: "/member",
     SETTINGS: "/member/settings",
     PAYMENTS: "/member/payments",
+    HELP: "/member/help",
     ITEMS: {
       ROOT: "/member/items",
       NEW: "/member/items/new",

@@ -150,12 +150,6 @@ function StoreProfileContent() {
       new_listing_notifications: false,
       sale_notifications: false,
     });
-  const [initialNotificationsDraft, setInitialNotificationsDraft] =
-    useState<StoreNotificationPreferences>({
-      secondary_email: "",
-      new_listing_notifications: false,
-      sale_notifications: false,
-    });
 
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreviewUrl, setPhotoPreviewUrl] = useState<string | null>(null);
@@ -224,7 +218,6 @@ function StoreProfileContent() {
           sale_notifications: Boolean(n.sale_notifications),
         };
         setNotificationsDraft(nd);
-        setInitialNotificationsDraft(nd);
       } catch (err) {
         console.error("Failed to load store profile:", err);
         setError("Failed to load your store profile. Please try again.");
@@ -280,12 +273,6 @@ function StoreProfileContent() {
     );
   }, [hoursDraft, initialHoursDraft]);
 
-  const notificationsDirty = useMemo(() => {
-    return (
-      JSON.stringify(notificationsDraft) !==
-      JSON.stringify(initialNotificationsDraft)
-    );
-  }, [notificationsDraft, initialNotificationsDraft]);
 
   const photoDirty = Boolean(photoFile);
 
@@ -440,7 +427,6 @@ function StoreProfileContent() {
           sale_notifications: Boolean(n.sale_notifications),
         };
         setNotificationsDraft(nd);
-        setInitialNotificationsDraft(nd);
         toast({ title: "Notifications updated" });
       }
 
@@ -542,7 +528,7 @@ function StoreProfileContent() {
         <div className="min-w-0">
           <h1 className="text-3xl font-normal leading-8">Store Profile</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Manage your store details, opening hours, and notifications.
+            Manage your store details and opening hours.
           </p>
         </div>
         <Button asChild variant="outline" size="sm">
@@ -557,7 +543,7 @@ function StoreProfileContent() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex flex-row flex-wrap items-center gap-4">
-              <div className="relative h-20 w-20 overflow-hidden rounded-full border bg-muted">
+              <div className="relative h-20 w-20 overflow-hidden rounded-full bg-muted">
                 {photoSrc ? (
                   <Image
                     src={photoSrc}
@@ -825,12 +811,9 @@ function StoreProfileContent() {
                   DAYS.find((d) => d.key === h.day_of_week)?.label ??
                   h.day_of_week;
                 return (
-                  <div
-                    key={h.day_of_week}
-                    className="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-2 items-center"
-                  >
+                  <div key={h.day_of_week} className="flex flex-col gap-2">
                     <div className="text-sm font-medium">{label}</div>
-                    <div className="flex flex-row flex-wrap items-center gap-3">
+                    <div className="flex flex-row items-center gap-2 sm:gap-3">
                       <label className="flex items-center gap-2 text-sm">
                         <Checkbox
                           checked={Boolean(h.is_closed)}
@@ -840,15 +823,15 @@ function StoreProfileContent() {
                               prev.map((row, i) =>
                                 i === idx
                                   ? {
-                                    ...row,
-                                    is_closed: isClosed,
-                                    opening_time: isClosed
-                                      ? undefined
-                                      : row.opening_time,
-                                    closing_time: isClosed
-                                      ? undefined
-                                      : row.closing_time,
-                                  }
+                                      ...row,
+                                      is_closed: isClosed,
+                                      opening_time: isClosed
+                                        ? undefined
+                                        : row.opening_time,
+                                      closing_time: isClosed
+                                        ? undefined
+                                        : row.closing_time,
+                                    }
                                   : row
                               )
                             );
@@ -856,49 +839,37 @@ function StoreProfileContent() {
                         />
                         Closed
                       </label>
-
-                      <Input
-                        type="time"
-                        className="w-[140px]"
-                        value={h.opening_time ?? ""}
-                        disabled={Boolean(h.is_closed)}
-                        onChange={(e) => {
-                          const v = e.target.value;
-                          setHoursDraft((prev) =>
-                            prev.map((row, i) =>
-                              i === idx ? { ...row, opening_time: v } : row
-                            )
-                          );
-                        }}
-                      />
-                      <span className="text-sm text-muted-foreground">to</span>
-                      <Input
-                        type="time"
-                        className="w-[140px]"
-                        value={h.closing_time ?? ""}
-                        disabled={Boolean(h.is_closed)}
-                        onChange={(e) => {
-                          const v = e.target.value;
-                          setHoursDraft((prev) =>
-                            prev.map((row, i) =>
-                              i === idx ? { ...row, closing_time: v } : row
-                            )
-                          );
-                        }}
-                      />
-                      <Input
-                        placeholder="Timezone (optional)"
-                        className="w-[220px]"
-                        value={h.timezone ?? ""}
-                        onChange={(e) => {
-                          const v = e.target.value;
-                          setHoursDraft((prev) =>
-                            prev.map((row, i) =>
-                              i === idx ? { ...row, timezone: v } : row
-                            )
-                          );
-                        }}
-                      />
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="time"
+                          className="w-[100px] sm:w-[120px]"
+                          value={h.opening_time ?? ""}
+                          disabled={Boolean(h.is_closed)}
+                          onChange={(e) => {
+                            const v = e.target.value;
+                            setHoursDraft((prev) =>
+                              prev.map((row, i) =>
+                                i === idx ? { ...row, opening_time: v } : row
+                              )
+                            );
+                          }}
+                        />
+                        <span className="text-sm text-muted-foreground">to</span>
+                        <Input
+                          type="time"
+                          className="w-[100px] sm:w-[120px]"
+                          value={h.closing_time ?? ""}
+                          disabled={Boolean(h.is_closed)}
+                          onChange={(e) => {
+                            const v = e.target.value;
+                            setHoursDraft((prev) =>
+                              prev.map((row, i) =>
+                                i === idx ? { ...row, closing_time: v } : row
+                              )
+                            );
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                 );
@@ -916,69 +887,6 @@ function StoreProfileContent() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Notifications</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-3">
-              <label className="flex items-center gap-3 text-sm">
-                <Checkbox
-                  checked={Boolean(notificationsDraft.new_listing_notifications)}
-                  onCheckedChange={(checked) =>
-                    setNotificationsDraft((n) => ({
-                      ...n,
-                      new_listing_notifications: Boolean(checked),
-                    }))
-                  }
-                />
-                New listings / drop-offs
-              </label>
-              <label className="flex items-center gap-3 text-sm">
-                <Checkbox
-                  checked={Boolean(notificationsDraft.sale_notifications)}
-                  onCheckedChange={(checked) =>
-                    setNotificationsDraft((n) => ({
-                      ...n,
-                      sale_notifications: Boolean(checked),
-                    }))
-                  }
-                />
-                Sales
-              </label>
-
-              <div className="space-y-2 max-w-md">
-                <Label htmlFor="secondary_email">
-                  Secondary email (optional)
-                </Label>
-                <Input
-                  id="secondary_email"
-                  placeholder="name@store.com"
-                  value={notificationsDraft.secondary_email ?? ""}
-                  onChange={(e) =>
-                    setNotificationsDraft((n) => ({
-                      ...n,
-                      secondary_email: e.target.value,
-                    }))
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end">
-              <Button
-                onClick={() => openPinDialog({ kind: "notifications" })}
-                disabled={
-                  !notificationsDirty ||
-                  isSaving.notifications ||
-                  isSubmittingWithPin
-                }
-              >
-                Save
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       <Dialog

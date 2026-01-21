@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@src/components/ui/card";
 import AuthenticatedPage from "@src/components/AuthenticatedPage";
@@ -9,7 +10,7 @@ import LoadingSpinner from "@src/components/LoadingSpinner";
 import { Button } from "@src/components/ui/button";
 import { Badge } from "@src/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@src/components/ui/tabs";
-import { ChevronRight, Clock, Settings, Shirt, Tag, User } from "lucide-react";
+import { ChevronRight, Clock, Settings, Shirt, Store, Tag, User } from "lucide-react";
 import {
   Bar,
   BarChart,
@@ -50,6 +51,8 @@ export default function StoreDashboardPage() {
 function StoreDashboardContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [storeName, setStoreName] = useState<string | null>(null);
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState<string | null>(null);
 
   const [activeListingsCount, setActiveListingsCount] = useState<number | null>(null);
   const [stockLimit, setStockLimit] = useState<number | null>(null);
@@ -178,6 +181,8 @@ function StoreDashboardContent() {
           return;
         }
 
+        setStoreName(profileRes.data.store_name);
+        setProfilePhotoUrl(profileRes.data.profile_photo_url || null);
         setActiveListingsCount(profileRes.data.active_listings_count);
         setStockLimit(profileRes.data.stock_limit);
 
@@ -284,10 +289,43 @@ function StoreDashboardContent() {
     );
   }
 
+  const getImageUrl = (imageUrl: string) => {
+    if (imageUrl.startsWith('blob:')) return imageUrl;
+    const separator = imageUrl.includes('?') ? '&' : '?';
+    return `${imageUrl}${separator}_t=${Date.now()}`;
+  };
+
   return (
     <div className="container mx-auto px-4 py-4 max-w-4xl">
       <div className="mb-4">
-        <h1 className="text-3xl font-normal leading-8">Dashboard</h1>
+        <div className="flex items-end gap-4">
+          <div className="relative shrink-0">
+            {loading ? (
+              <div className="h-24 w-24 md:h-32 md:w-32 lg:h-40 lg:w-40 rounded-full bg-muted animate-pulse" />
+            ) : profilePhotoUrl ? (
+              <div className="relative h-24 w-24 md:h-32 md:w-32 lg:h-40 lg:w-40 rounded-full overflow-hidden bg-muted">
+                <Image
+                  src={getImageUrl(profilePhotoUrl)}
+                  alt={storeName || "Store"}
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
+            ) : (
+              <div className="h-24 w-24 md:h-32 md:w-32 lg:h-40 lg:w-40 rounded-full bg-muted flex items-center justify-center">
+                <Store className="h-12 w-12 md:h-16 md:w-16 lg:h-20 lg:w-20 text-muted-foreground" />
+              </div>
+            )}
+          </div>
+          {storeName && (
+            <div className="flex items-end pb-2">
+              <span className="text-3xl font-normal leading-8">
+                {storeName}
+              </span>
+            </div>
+          )}
+        </div>
         <div className="mt-3 flex flex-row flex-wrap items-center gap-2">
           <Button asChild variant="ghost" size="sm" className="w-full sm:w-auto justify-between">
             <Link

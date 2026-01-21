@@ -19,7 +19,7 @@ export default function ListingNavigation({
     backLink = Routes.STORE.LISTINGS.ROOT;
     backText = "Store Listings";
   } else if (userRole === ListingRoles.OWNER) {
-    backLink = Routes.MEMBER.ITEMS.ROOT;
+    backLink = Routes.MEMBER.ROOT;
     backText = "My Items";
   }
 

@@ -239,6 +239,7 @@ export default function ListingsNewPage() {
         availableConditions={
           storeInfo?.conditions?.map((cond) => cond.id) || []
         }
+        storeCommission={storeInfo?.commission}
       />
     </div>
   );

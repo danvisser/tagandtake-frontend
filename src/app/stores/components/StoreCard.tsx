@@ -39,25 +39,48 @@ export default function StoreCard({ store }: StoreCardProps) {
       <CardContent className="p-0">
         <div className="flex flex-col md:flex-row">
           {/* Image on the left - responsive width */}
-          <div className="relative w-full md:w-2/5 lg:w-1/3 h-64 md:h-auto min-w-[200px] md:min-w-[250px] flex-shrink-0">
-            {store.profile_photo_url ? (
-              <Image
-                src={store.profile_photo_url}
-                alt={store.store_name}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 40vw, 33vw"
-              />
-            ) : (
-              <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                <span className="text-gray-400">No image available</span>
-              </div>
-            )}
-          </div>
+          {store.google_profile_url ? (
+            <Link
+              href={store.google_profile_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative w-full md:w-2/5 lg:w-1/3 h-64 md:h-auto min-w-[200px] md:min-w-[250px] flex-shrink-0 cursor-pointer"
+            >
+              {store.profile_photo_url ? (
+                <Image
+                  src={store.profile_photo_url}
+                  alt={store.store_name}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 40vw, 33vw"
+                />
+              ) : (
+                <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                  <span className="text-gray-400">No image available</span>
+                </div>
+              )}
+            </Link>
+          ) : (
+            <div className="relative w-full md:w-2/5 lg:w-1/3 h-64 md:h-auto min-w-[200px] md:min-w-[250px] flex-shrink-0">
+              {store.profile_photo_url ? (
+                <Image
+                  src={store.profile_photo_url}
+                  alt={store.store_name}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 40vw, 33vw"
+                />
+              ) : (
+                <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                  <span className="text-gray-400">No image available</span>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Content on the right */}
           <div className="flex-1 p-4 md:p-6 space-y-3 md:space-y-4">
-            {/* Store name and Google link */}
+            {/* Store name */}
             <div className="flex items-start justify-between gap-4">
               <h3 className="text-2xl font-semibold">
                 {store.store_name}
@@ -67,27 +90,32 @@ export default function StoreCard({ store }: StoreCardProps) {
                   </span>
                 )}
               </h3>
-              {store.google_profile_url && (
-                <Link
-                  href={store.google_profile_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-shrink-0 text-muted-foreground hover:text-primary transition-colors"
-                  aria-label="View store on Google"
-                >
-                  <MapPin className="h-5 w-5" />
-                </Link>
-              )}
             </div>
 
-            {/* Address */}
-            {store.store_address && (
-              <div className="text-sm text-muted-foreground">
-                <p>
+            {/* Address with Google profile link */}
+            {store.store_address && store.google_profile_url && (
+              <Link
+                href={store.google_profile_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-muted-foreground hover:text-primary transition-colors flex items-center gap-1"
+              >
+                <MapPin className="h-4 w-4 text-primary" />
+                <span>
                   {store.store_address.street_address}
                   {store.store_address.city && `, ${store.store_address.city}`}
                   {store.store_address.postal_code && ` ${store.store_address.postal_code}`}
-                </p>
+                </span>
+              </Link>
+            )}
+            {store.store_address && !store.google_profile_url && (
+              <div className="text-sm text-muted-foreground flex items-center gap-1">
+                <MapPin className="h-4 w-4" />
+                <span>
+                  {store.store_address.street_address}
+                  {store.store_address.city && `, ${store.store_address.city}`}
+                  {store.store_address.postal_code && ` ${store.store_address.postal_code}`}
+                </span>
               </div>
             )}
 

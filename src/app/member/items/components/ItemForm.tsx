@@ -18,6 +18,7 @@ import {
 import { Card, CardContent } from "@src/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@src/components/ui/alert";
 import { AlertCircle, Camera, Plus, X, Info, Tag } from "lucide-react";
+import { formatCurrency } from "@src/lib/formatters";
 import {
   DndContext,
   closestCenter,
@@ -218,6 +219,7 @@ interface ItemFormProps {
   availableConditions?: number[]; // IDs of conditions available in the store
   initialItem?: Item; // For editing existing items
   disableCategoryAndCondition?: boolean; // Disable category/condition fields (for listed items)
+  storeCommission?: number; // Store commission percentage (for showing earnings preview)
 }
 
 export default function ItemForm({
@@ -229,6 +231,7 @@ export default function ItemForm({
   availableConditions,
   initialItem,
   disableCategoryAndCondition = false,
+  storeCommission,
 }: ItemFormProps) {
   const [name, setName] = useState(initialItem?.name || "");
   const [description, setDescription] = useState(initialItem?.description || "");
@@ -696,16 +699,23 @@ export default function ItemForm({
             <Label htmlFor="price" className="text-md">
               Price
             </Label>
-            <Input
-              id="price"
-              type="number"
-              min="0"
-              step="0.01"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              placeholder="£0.00"
-              className={errors.price ? "border-destructive" : ""}
-            />
+            <div className="relative">
+              <Input
+                id="price"
+                type="number"
+                min="0"
+                step="0.01"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
+                placeholder="£0.00"
+                className={errors.price ? "border-destructive" : ""}
+              />
+              {storeCommission !== undefined && price.trim() && !isNaN(Number(price)) && Number(price) > 0 && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  You'll receive: {formatCurrency(Number(price) * (1 - storeCommission / 100))}
+                </p>
+              )}
+            </div>
             {errors.price && (
               <p className="text-sm text-destructive">{errors.price[0]}</p>
             )}
