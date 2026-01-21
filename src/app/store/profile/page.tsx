@@ -9,6 +9,7 @@ import { Input } from "@src/components/ui/input";
 import { Label } from "@src/components/ui/label";
 import { Textarea } from "@src/components/ui/textarea";
 import { Checkbox } from "@src/components/ui/checkbox";
+import { Settings } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -532,7 +533,13 @@ function StoreProfileContent() {
           </p>
         </div>
         <Button asChild variant="outline" size="sm">
-          <Link href={Routes.STORE.SETTINGS}>Marketplace settings</Link>
+        <Link
+              href={Routes.STORE.SETTINGS}
+              className="flex items-center"
+            >
+                <Settings className="h-4 w-4" />
+                Hosting rules
+            </Link>
         </Button>
       </div>
 

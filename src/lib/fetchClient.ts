@@ -20,16 +20,6 @@ const REFRESH_TIMEOUT = 5000; // 5 seconds for token refresh operations
 // This is kept in sync with Zustand store via subscription
 let accessToken: string | null = null;
 
-// Initialize token from Zustand store if available (only in browser)
-if (typeof window !== "undefined") {
-  try {
-    const store = useAuthStore.getState();
-    accessToken = store.accessToken;
-  } catch (e) {
-    console.error("Error accessing auth store:", e);
-  }
-}
-
 let isRefreshing = false;
 let refreshSubscribers: Array<(token: string) => void> = [];
 
@@ -92,8 +82,25 @@ export const fetchClient = axios.create({
 // Request interceptor to add the token to requests
 fetchClient.interceptors.request.use(
   (config) => {
-    if (accessToken) {
-      config.headers["Authorization"] = `Bearer ${accessToken}`;
+    // Get token from store (source of truth) or fallback to in-memory cache
+    // This ensures we always have the latest token, even if subscription hasn't fired yet
+    let token = accessToken;
+    if (typeof window !== "undefined") {
+      try {
+        const store = useAuthStore.getState();
+        token = store.accessToken || accessToken;
+        // Update in-memory cache if store has a different value
+        if (token !== accessToken) {
+          accessToken = token;
+        }
+      } catch {
+        // If store access fails, use cached token
+        // This can happen during SSR or before store is initialized
+      }
+    }
+
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
     return config;
   },
