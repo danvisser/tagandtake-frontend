@@ -103,6 +103,15 @@ export default function Header({ variant }: { variant: UserRole }) {
                   Store Finder
                 </Button>
               </Link>
+              <Link href={Routes.MEMBER.HELP} prefetch={false}>
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="text-lg font-light"
+                >
+                  Help
+                </Button>
+              </Link>
             </>
           )}
           {variant === UserRoles.STORE && (
