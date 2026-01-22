@@ -1,13 +1,19 @@
 "use client";
 
+import { useState } from "react";
 import { Item, ITEM_STATUS } from "@src/api/itemsApi";
 import { Card, CardContent } from "@src/components/ui/card";
 import { Badge } from "@src/components/ui/badge";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@src/components/ui/hover-card";
 import { formatCurrency } from "@src/lib/formatters";
 import { Routes } from "@src/constants/routes";
 import Link from "next/link";
 import Image from "next/image";
-import { Store } from "lucide-react";
+import { Store, Eye } from "lucide-react";
 
 interface ItemCardProps {
   item: Item;
@@ -15,6 +21,7 @@ interface ItemCardProps {
 }
 
 export default function ItemCard({ item, tab }: ItemCardProps) {
+  const [showTooltip, setShowTooltip] = useState(false);
   const image = item.images?.[0]?.image_url;
   const itemName = item.name || "Unknown Item";
   const size = item.size || "Unknown";
@@ -61,9 +68,37 @@ export default function ItemCard({ item, tab }: ItemCardProps) {
             <p className="text-base sm:text-lg font-normal mb-4">
               {formatCurrency(price)}
             </p>
-            <Badge variant={statusBadge.variant} className="mb-2">
-              {statusBadge.label}
-            </Badge>
+            <div className="flex items-center justify-between mb-2">
+              <Badge variant={statusBadge.variant}>
+                {statusBadge.label}
+              </Badge>
+              {status === ITEM_STATUS.LISTED && item.view_count !== undefined && (
+                <div className="relative">
+                  <HoverCard open={showTooltip} onOpenChange={setShowTooltip}>
+                    <HoverCardTrigger asChild>
+                      <div
+                        className="flex items-center gap-1.5 text-sm text-muted-foreground cursor-default"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowTooltip(!showTooltip);
+                        }}
+                      >
+                        <Eye className="h-4 w-4" />
+                        <span>{item.view_count}</span>
+                      </div>
+                    </HoverCardTrigger>
+                    <HoverCardContent className="w-auto">
+                      <p className="text-sm">
+                        {item.view_count === 1
+                          ? "1 person has viewed this item"
+                          : `${item.view_count} people have viewed this item`}
+                      </p>
+                    </HoverCardContent>
+                  </HoverCard>
+                </div>
+              )}
+            </div>
 
             {item.listing_info && (
               <div className="mt-2 text-xs sm:text-sm text-muted-foreground flex items-center gap-1.5">

@@ -71,6 +71,7 @@ export interface Item {
   category_details?: ItemCategory;
   condition_details?: ItemCondition;
   listing_info?: ItemStoreInfo;
+  view_count?: number;
 }
 
 // Types for Item Creation
