@@ -502,7 +502,7 @@ export default function StoreSignupForm({
             value="business"
             className={hasFieldError("store") ? "text-destructive" : ""}
           >
-            Business Info
+            Info
           </TabsTrigger>
           <TabsTrigger
             value="address"
@@ -751,12 +751,12 @@ export default function StoreSignupForm({
             <h3 className="text-lg font-medium">Opening Hours</h3>
 
             {openingHours.map((hours, index) => (
-              <div key={index} className="flex items-center space-x-4">
-                <div className="w-24">
-                  <Label className="capitalize">{hours.day_of_week}</Label>
+              <div key={index} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                <div className="w-20 sm:w-24 shrink-0">
+                  <Label className="capitalize text-sm sm:text-base">{hours.day_of_week}</Label>
                 </div>
 
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-2 shrink-0">
                   <Checkbox
                     id={`closed-${index}`}
                     checked={hours.is_closed}
@@ -764,12 +764,12 @@ export default function StoreSignupForm({
                       updateOpeningHours(index, "is_closed", checked === true)
                     }
                   />
-                  <Label htmlFor={`closed-${index}`}>Closed</Label>
+                  <Label htmlFor={`closed-${index}`} className="text-sm sm:text-base whitespace-nowrap">Closed</Label>
                 </div>
 
                 {!hours.is_closed && (
-                  <>
-                    <div className="flex-1">
+                  <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                    <div className="w-20 sm:w-24 md:flex-1 min-w-0 shrink-0">
                       <Select
                         value={hours.opening_time}
                         onValueChange={(value) =>
@@ -777,12 +777,12 @@ export default function StoreSignupForm({
                         }
                         disabled={hours.is_closed || isLoading}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Opening time">
                             {formatTimeForDisplay(hours.opening_time)}
                           </SelectValue>
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="max-h-[300px]">
                           {timeOptions.map((option) => (
                             <SelectItem key={option.value} value={option.value}>
                               {option.label}
@@ -791,8 +791,8 @@ export default function StoreSignupForm({
                         </SelectContent>
                       </Select>
                     </div>
-                    <span>to</span>
-                    <div className="flex-1">
+                    <span className="text-sm sm:text-base shrink-0 whitespace-nowrap">to</span>
+                    <div className="w-20 sm:w-24 md:flex-1 min-w-0 shrink-0">
                       <Select
                         value={hours.closing_time}
                         onValueChange={(value) =>
@@ -800,12 +800,12 @@ export default function StoreSignupForm({
                         }
                         disabled={hours.is_closed || isLoading}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Closing time">
                             {formatTimeForDisplay(hours.closing_time)}
                           </SelectValue>
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="max-h-[300px]">
                           {timeOptions.map((option) => (
                             <SelectItem key={option.value} value={option.value}>
                               {option.label}
@@ -814,7 +814,7 @@ export default function StoreSignupForm({
                         </SelectContent>
                       </Select>
                     </div>
-                  </>
+                  </div>
                 )}
               </div>
             ))}

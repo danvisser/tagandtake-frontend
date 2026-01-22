@@ -58,7 +58,6 @@ function StoreSettingsContent() {
   const [storeProfile, setStoreProfile] = useState<StoreProfile | null>(null);
   const [commission, setCommission] = useState<string>("");
   const [stockLimit, setStockLimit] = useState<string>("");
-  const [minListingDays, setMinListingDays] = useState<string>("");
   const [minPrice, setMinPrice] = useState<string>("");
 
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([]);
@@ -71,7 +70,6 @@ function StoreSettingsContent() {
   const [initialRules, setInitialRules] = useState<{
     commission: number;
     stock_limit: number;
-    min_listing_days: number;
     min_price: number;
   } | null>(null);
   const [initialCategoryIds, setInitialCategoryIds] = useState<number[] | null>(null);
@@ -125,7 +123,6 @@ function StoreSettingsContent() {
         setInitialRules({
           commission: Number(profile.commission),
           stock_limit: Number(profile.stock_limit),
-          min_listing_days: Number(profile.min_listing_days),
           min_price: Number(profile.min_price),
         });
 
@@ -168,7 +165,6 @@ function StoreSettingsContent() {
   const syncFormFromProfile = (profile: StoreProfile) => {
     setCommission(String(profile.commission ?? ""));
     setStockLimit(String(profile.stock_limit ?? ""));
-    setMinListingDays(String(profile.min_listing_days ?? ""));
     setMinPrice(String(profile.min_price ?? ""));
   };
 
@@ -194,14 +190,12 @@ function StoreSettingsContent() {
     const current = {
       commission: normalizeNumber(commission),
       stock_limit: normalizeNumber(stockLimit),
-      min_listing_days: normalizeNumber(minListingDays),
       min_price: normalizeMoney(minPrice),
     };
 
     if (
       current.commission === null ||
       current.stock_limit === null ||
-      current.min_listing_days === null ||
       current.min_price === null
     ) {
       return true;
@@ -210,10 +204,9 @@ function StoreSettingsContent() {
     return (
       current.commission !== initialRules.commission ||
       current.stock_limit !== initialRules.stock_limit ||
-      current.min_listing_days !== initialRules.min_listing_days ||
       current.min_price !== initialRules.min_price
     );
-  }, [commission, stockLimit, minListingDays, minPrice, initialRules]);
+  }, [commission, stockLimit, minPrice, initialRules]);
 
   const categoriesDirty = useMemo(() => {
     if (!initialCategoryIds) return false;
@@ -264,7 +257,6 @@ function StoreSettingsContent() {
   const handleSaveRules = async () => {
     const commissionNum = Number(commission);
     const stockLimitNum = Number(stockLimit);
-    const minListingDaysNum = Number(minListingDays);
     const minPriceNum = Number(minPrice);
 
     if (!Number.isFinite(commissionNum) || commissionNum < 0 || commissionNum > 50) {
@@ -273,10 +265,6 @@ function StoreSettingsContent() {
     }
     if (!Number.isFinite(stockLimitNum) || stockLimitNum < 1) {
       toast({ title: "Stock limit must be at least 1", variant: "destructive" });
-      return;
-    }
-    if (!Number.isFinite(minListingDaysNum) || minListingDaysNum < 7) {
-      toast({ title: "Minimum listing days must be at least 7", variant: "destructive" });
       return;
     }
     if (!Number.isFinite(minPriceNum) || minPriceNum < 0) {
@@ -310,7 +298,6 @@ function StoreSettingsContent() {
       if (pendingSave.kind === "rules") {
         const commissionNum = Number(commission);
         const stockLimitNum = Number(stockLimit);
-        const minListingDaysNum = Number(minListingDays);
         const minPriceNum = Number(minPrice);
 
         setIsSavingRules(true);
@@ -321,7 +308,6 @@ function StoreSettingsContent() {
             pin,
             commission: commissionNum,
             stock_limit: stockLimitNum,
-            min_listing_days: minListingDaysNum,
             min_price: minPriceNum,
           },
         });
@@ -331,7 +317,6 @@ function StoreSettingsContent() {
         setInitialRules({
           commission: Number(profile.commission),
           stock_limit: Number(profile.stock_limit),
-          min_listing_days: Number(profile.min_listing_days),
           min_price: Number(profile.min_price),
         });
         toast({ title: "Settings updated" });
@@ -440,30 +425,22 @@ function StoreSettingsContent() {
               <CardTitle>{storeProfile.store_name} rules:</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="flex flex-col items-center justify-center gap-2 p-3 md:p-4 bg-slate-50 rounded-lg text-center">
+              <div className="grid grid-cols-3 gap-4">
+                <div className="flex flex-col items-center justify-between gap-2 p-3 md:p-4 bg-slate-50 rounded-lg text-center">
                   <p className="text-sm text-muted-foreground">Commission</p>
                   <p className="text-2xl font-bold tabular-nums">
                     {commission.trim() ? `${commission.trim()}%` : "—"}
                   </p>
                 </div>
-                <div className="flex flex-col items-center justify-center gap-2 p-3 md:p-4 bg-slate-50 rounded-lg text-center">
-                  <p className="text-sm text-muted-foreground">Minimum price</p>
+                <div className="flex flex-col items-center justify-between gap-2 p-3 md:p-4 bg-slate-50 rounded-lg text-center">
+                  <p className="text-sm text-muted-foreground">Min price</p>
                   <p className="text-2xl font-bold tabular-nums">
                     {minPrice.trim() && Number.isFinite(Number(minPrice)) ? formatCurrency(Number(minPrice)) : "—"}
                   </p>
                 </div>
-                <div className="flex flex-col items-center justify-center gap-2 p-3 md:p-4 bg-slate-50 rounded-lg text-center">
-                  <p className="text-sm text-muted-foreground">Max items accepted</p>
+                <div className="flex flex-col items-center justify-between gap-2 p-3 md:p-4 bg-slate-50 rounded-lg text-center">
+                  <p className="text-sm text-muted-foreground">Max items</p>
                   <p className="text-2xl font-bold tabular-nums">{stockLimit.trim() ? stockLimit.trim() : "—"}</p>
-                </div>
-                <div className="flex flex-col items-center justify-center gap-2 p-3 md:p-4 bg-slate-50 rounded-lg text-center">
-                  <p className="text-sm text-muted-foreground">Guaranteed display period</p>
-                  <p className="text-2xl font-bold tabular-nums">
-                    {minListingDays.trim()
-                      ? `${minListingDays.trim()} ${Number(minListingDays) === 1 ? "day" : "days"}`
-                      : "—"}
-                  </p>
                 </div>
               </div>
             </CardContent>
@@ -487,7 +464,7 @@ function StoreSettingsContent() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="min-price">Minimum price</Label>
+                  <Label htmlFor="min-price">Minimum price (£)</Label>
                   <Input
                     id="min-price"
                     type="number"
@@ -505,16 +482,6 @@ function StoreSettingsContent() {
                     min={1}
                     value={stockLimit}
                     onChange={(e) => setStockLimit(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="min-days">Guaranteed display period (days)</Label>
-                  <Input
-                    id="min-days"
-                    type="number"
-                    min={7}
-                    value={minListingDays}
-                    onChange={(e) => setMinListingDays(e.target.value)}
                   />
                 </div>
               </div>

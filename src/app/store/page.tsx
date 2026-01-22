@@ -10,7 +10,7 @@ import LoadingSpinner from "@src/components/LoadingSpinner";
 import { Button } from "@src/components/ui/button";
 import { Badge } from "@src/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@src/components/ui/tabs";
-import { ChevronRight, Clock, Settings, Shirt, Store, Tag, User } from "lucide-react";
+import { ChevronRight, Clock, Settings, Shirt, Store, Tag, User, AlertTriangle, XCircle, RotateCcw } from "lucide-react";
 import {
   Bar,
   BarChart,
@@ -55,7 +55,7 @@ function StoreDashboardContent() {
   const [profilePhotoUrl, setProfilePhotoUrl] = useState<string | null>(null);
 
   const [activeListingsCount, setActiveListingsCount] = useState<number | null>(null);
-  const [stockLimit, setStockLimit] = useState<number | null>(null);
+  const [tagsAvailable, setTagsAvailable] = useState<number | null>(null);
   const [recalledCount, setRecalledCount] = useState<number | null>(null);
 
   const [soldTagAttachedCount, setSoldTagAttachedCount] = useState<number | null>(null);
@@ -82,10 +82,6 @@ function StoreDashboardContent() {
     return { totalSales, totalCommission, totalSaleValue };
   }, [salesSeries]);
 
-  const availableSpaces = useMemo(() => {
-    if (activeListingsCount === null || stockLimit === null) return null;
-    return Math.max(stockLimit - activeListingsCount, 0);
-  }, [activeListingsCount, stockLimit]);
 
   const salesChartConfig = useMemo(() => {
     return {
@@ -184,7 +180,7 @@ function StoreDashboardContent() {
         setStoreName(profileRes.data.store_name);
         setProfilePhotoUrl(profileRes.data.profile_photo_url || null);
         setActiveListingsCount(profileRes.data.active_listings_count);
-        setStockLimit(profileRes.data.stock_limit);
+        setTagsAvailable(profileRes.data.tags_available);
 
         if (recalledRes.success && recalledRes.data) {
           setRecalledCount(recalledRes.data.count);
@@ -367,8 +363,113 @@ function StoreDashboardContent() {
       </div>
 
       <div className="space-y-6">
+        {/* Action Required Hero Section */}
+        {(soldTagAttachedCount !== null && soldTagAttachedCount > 0) ||
+          (delistedNeedsTagRemovedCount !== null && delistedNeedsTagRemovedCount > 0) ||
+          (availableForRecallCount !== null && availableForRecallCount > 0) ? (
+          <Card className="border-2 bg-gradient-to-br from-destructive/5 via-background to-background shadow-lg">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="rounded-full bg-destructive/10 p-2">
+                  <AlertTriangle className="h-5 w-5 text-destructive" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl">Action Required</CardTitle>
+                  {/* <p className="text-sm text-muted-foreground mt-1">
+                    Items that need your attention
+                  </p> */}
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {soldTagAttachedCount !== null && soldTagAttachedCount > 0 && (
+                <div className="flex items-center gap-3 p-4 rounded-lg bg-destructive/5 border border-destructive/20">
+                  <XCircle className="h-5 w-5 text-destructive shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-sm sm:text-base">Sold tags to remove</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">
+                      Remove tags from sold items
+                    </div>
+                  </div>
+                  <Badge
+                    variant="destructive"
+                    className="h-6 min-w-6 px-2 flex items-center justify-center text-sm font-semibold shrink-0"
+                  >
+                    {soldTagAttachedCount}
+                  </Badge>
+                  <Button asChild variant="default" size="default" className="shrink-0">
+                    <Link href={`${Routes.STORE.LISTINGS.ROOT}?tab=sold`}>
+                      View
+                      <ChevronRight className="h-4 w-4 ml-1" />
+                    </Link>
+                  </Button>
+                </div>
+              )}
+              {delistedNeedsTagRemovedCount !== null && delistedNeedsTagRemovedCount > 0 && (
+                <div className="flex items-center gap-3 p-4 rounded-lg bg-destructive/5 border border-destructive/20">
+                  <Tag className="h-5 w-5 text-destructive shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-sm sm:text-base">Abandoned listings</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">
+                      Remove tags from abandoned items
+                    </div>
+                  </div>
+                  <Badge
+                    variant="destructive"
+                    className="h-6 min-w-6 px-2 flex items-center justify-center text-sm font-semibold shrink-0"
+                  >
+                    {delistedNeedsTagRemovedCount}
+                  </Badge>
+                  <Button asChild variant="default" size="default" className="shrink-0">
+                    <Link href={`${Routes.STORE.LISTINGS.ROOT}?tab=delisted`}>
+                      View
+                      <ChevronRight className="h-4 w-4 ml-1" />
+                    </Link>
+                  </Button>
+                </div>
+              )}
+              {availableForRecallCount !== null && availableForRecallCount > 0 && (
+                <div className="flex items-center gap-3 p-4 rounded-lg bg-primary/5 border border-primary/20">
+                  <RotateCcw className="h-5 w-5 text-primary shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-sm sm:text-base">Past display period guarantee</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">
+                      Items eligible for recall
+                    </div>
+                  </div>
+                  <Badge
+                    variant="secondary-inverse"
+                    className="h-6 min-w-6 px-2 flex items-center justify-center text-sm font-semibold shrink-0"
+                  >
+                    {availableForRecallCount}
+                  </Badge>
+                  <Button asChild variant="default" size="default" className="shrink-0">
+                    <Link href={`${Routes.STORE.LISTINGS.ROOT}?tab=active`}>
+                      View
+                      <ChevronRight className="h-4 w-4 ml-1" />
+                    </Link>
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="border border-muted">
+            <CardHeader>
+              <CardTitle className="text-lg">Action Required</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">No actions required at this time.</p>
+            </CardContent>
+          </Card>
+        )}
+
+
         <Card>
-          <CardContent className="pt-6">
+          <CardHeader>
+            <CardTitle>In Store Now</CardTitle>
+          </CardHeader>
+          <CardContent>
             <h2 className="sr-only">At a glance</h2>
             <div className="grid grid-cols-3 gap-2 md:gap-3">
               <div className="flex flex-col items-center gap-2 p-3 md:p-4 bg-slate-50 rounded-lg">
@@ -387,7 +488,7 @@ function StoreDashboardContent() {
                   <span className="text-foreground text-sm md:text-base">Spaces available</span>
                 </div>
                 <span className="font-bold text-xl md:text-2xl text-foreground">
-                  {availableSpaces ?? "—"}
+                  {tagsAvailable ?? "—"}
                 </span>
               </div>
 
@@ -404,97 +505,6 @@ function StoreDashboardContent() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Action required</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center justify-between gap-3">
-              <div className="text-sm">
-                <span className="font-medium">Sold tags to remove</span>
-              </div>
-              <div className="flex items-center gap-2">
-                {soldTagAttachedCount === null ? (
-                  <span className="text-sm text-muted-foreground">—</span>
-                ) : soldTagAttachedCount > 0 ? (
-                  <Badge
-                    variant="destructive"
-                    className="pointer-events-none h-5 min-w-5 px-1.5 flex items-center justify-center text-xs"
-                  >
-                    {soldTagAttachedCount}
-                  </Badge>
-                ) : (
-                  <span className="text-sm text-muted-foreground">0</span>
-                )}
-                {soldTagAttachedCount !== null && soldTagAttachedCount > 0 ? (
-                  <Button asChild variant="outline" size="sm">
-                    <Link href={`${Routes.STORE.LISTINGS.ROOT}?tab=sold`}>View</Link>
-                  </Button>
-                ) : (
-                  <Button variant="outline" size="sm" disabled>
-                    View
-                  </Button>
-                )}
-              </div>
-            </div>
-            <div className="flex items-center justify-between gap-3">
-              <div className="text-sm">
-                <span className="font-medium">Abandoned listings</span>
-              </div>
-              <div className="flex items-center gap-2">
-                {delistedNeedsTagRemovedCount === null ? (
-                  <span className="text-sm text-muted-foreground">—</span>
-                ) : delistedNeedsTagRemovedCount > 0 ? (
-                  <Badge
-                    variant="destructive"
-                    className="pointer-events-none h-5 min-w-5 px-1.5 flex items-center justify-center text-xs"
-                  >
-                    {delistedNeedsTagRemovedCount}
-                  </Badge>
-                ) : (
-                  <span className="text-sm text-muted-foreground">0</span>
-                )}
-                {delistedNeedsTagRemovedCount !== null && delistedNeedsTagRemovedCount > 0 ? (
-                  <Button asChild variant="outline" size="sm">
-                    <Link href={`${Routes.STORE.LISTINGS.ROOT}?tab=delisted`}>View</Link>
-                  </Button>
-                ) : (
-                  <Button variant="outline" size="sm" disabled>
-                    View
-                  </Button>
-                )}
-              </div>
-            </div>
-            <div className="flex items-center justify-between gap-3">
-              <div className="text-sm">
-                <span className="font-medium">Past display period guarantee</span>
-              </div>
-              <div className="flex items-center gap-2">
-                {availableForRecallCount === null ? (
-                  <span className="text-sm text-muted-foreground">—</span>
-                ) : availableForRecallCount > 0 ? (
-                  <Badge
-                    variant="secondary-inverse"
-                    className="pointer-events-none h-5 min-w-5 px-1.5 flex items-center justify-center text-xs"
-                  >
-                    {availableForRecallCount}
-                  </Badge>
-                ) : (
-                  <span className="text-sm text-muted-foreground">0</span>
-                )}
-                {availableForRecallCount !== null && availableForRecallCount > 0 ? (
-                  <Button asChild variant="outline" size="sm">
-                    <Link href={`${Routes.STORE.LISTINGS.ROOT}?tab=active`}>View</Link>
-                  </Button>
-                ) : (
-                  <Button variant="outline" size="sm" disabled>
-                    View
-                  </Button>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
 
         <Card>
           <CardHeader>
@@ -526,7 +536,7 @@ function StoreDashboardContent() {
             </div>
 
             <div className="grid grid-cols-3 gap-2 sm:gap-4">
-            <div className="bg-muted p-3 sm:p-4 rounded-lg">
+              <div className="bg-muted p-3 sm:p-4 rounded-lg">
                 <p className="text-sm text-muted-foreground">Total sales</p>
                 <p className="text-lg sm:text-2xl font-bold tabular-nums break-words">
                   {formatCurrency(salesTotals.totalSaleValue)}

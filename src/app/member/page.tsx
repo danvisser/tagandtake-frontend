@@ -6,7 +6,6 @@ import Image from "next/image";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@src/components/ui/tabs";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
-import { Alert, AlertTitle, AlertDescription } from "@src/components/ui/alert";
 import {
   Dialog,
   DialogContent,
@@ -14,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@src/components/ui/dialog";
-import { ChevronLeft, ChevronRight, AlertCircle, User, Camera } from "lucide-react";
+import { ChevronLeft, ChevronRight, User, Camera, Package } from "lucide-react";
 import { UserRoles } from "@src/types/roles";
 import AuthenticatedPage from "@src/components/AuthenticatedPage";
 import LoadingSpinner from "@src/components/LoadingSpinner";
@@ -502,13 +501,15 @@ function MemberItemsContent() {
           ) : (
             <>
               {recalledCount > 0 && (
-                <Alert variant="destructive" className="mb-6">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>You have recalled items</AlertTitle>
-                  <AlertDescription>
-                    Please collect your recalled items before their collection deadline.
-                  </AlertDescription>
-                </Alert>
+                <div className="flex items-center gap-3 p-4 rounded-lg border-2 border-destructive/20 bg-gradient-to-br from-destructive/10 via-background to-background shadow-lg mb-6">
+                  <Package className="h-5 w-5 text-destructive shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-sm sm:text-base">Recalled items to collect</div>
+                    <div className="text-xs sm:text-sm text-muted-foreground">
+                      Please collect your recalled items before their collection deadline.
+                    </div>
+                  </div>
+                </div>
               )}
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {inStoreItems.map((item) => (

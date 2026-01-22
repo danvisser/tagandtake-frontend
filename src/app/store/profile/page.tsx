@@ -527,26 +527,23 @@ function StoreProfileContent() {
     <div className="container mx-auto px-4 py-4 max-w-4xl">
       <div className="mb-4 flex flex-row flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
-          <h1 className="text-3xl font-normal leading-8">Store Profile</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Manage your store details and opening hours.
-          </p>
+          <h1 className="text-3xl font-normal leading-8">Hosting Profile</h1>
         </div>
-        <Button asChild variant="outline" size="sm">
-        <Link
-              href={Routes.STORE.SETTINGS}
-              className="flex items-center"
-            >
-                <Settings className="h-4 w-4" />
-                Hosting rules
-            </Link>
+        <Button asChild variant="secondary" size="sm" className="text-muted-foreground border-muted-foreground">
+          <Link
+            href={Routes.STORE.SETTINGS}
+            className="flex items-center"
+          >
+            <Settings className="h-4 w-4" />
+            Hosting rules
+          </Link>
         </Button>
       </div>
 
       <div className="space-y-8">
         <Card>
           <CardHeader>
-            <CardTitle>Store photo</CardTitle>
+            <CardTitle>Profile photo</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex flex-row flex-wrap items-center gap-4">
@@ -620,7 +617,7 @@ function StoreProfileContent() {
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="store_name">Store name</Label>
+                <Label htmlFor="store_name">Name</Label>
                 <Input
                   id="store_name"
                   value={profileDraft.store_name}
@@ -643,7 +640,7 @@ function StoreProfileContent() {
                 />
               </div>
               <div className="md:col-span-2 space-y-2">
-                <Label htmlFor="store_bio">Store bio</Label>
+                <Label htmlFor="store_bio">Bio</Label>
                 <Textarea
                   id="store_bio"
                   value={profileDraft.store_bio}
@@ -830,15 +827,15 @@ function StoreProfileContent() {
                               prev.map((row, i) =>
                                 i === idx
                                   ? {
-                                      ...row,
-                                      is_closed: isClosed,
-                                      opening_time: isClosed
-                                        ? undefined
-                                        : row.opening_time,
-                                      closing_time: isClosed
-                                        ? undefined
-                                        : row.closing_time,
-                                    }
+                                    ...row,
+                                    is_closed: isClosed,
+                                    opening_time: isClosed
+                                      ? undefined
+                                      : row.opening_time,
+                                    closing_time: isClosed
+                                      ? undefined
+                                      : row.closing_time,
+                                  }
                                   : row
                               )
                             );

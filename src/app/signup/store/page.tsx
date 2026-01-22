@@ -88,8 +88,8 @@ export default function StoreSignupPage() {
             <span className="border-b-4 border-primary/50">become a host!</span>
           </h2>
           <p className="text-center text-muted-foreground mt-2">
-            Join the forward-thinking businesses transforming unused space into
-            hubs for revenue and community.
+          Join the forward-thinking businesses making the most of their space 
+          - no renovations required.
           </p>
         </div>
       </div>
