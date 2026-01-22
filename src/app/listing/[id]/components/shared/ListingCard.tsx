@@ -77,6 +77,9 @@ export default function ListingCard({
   priceBreakdown,
 }: ListingCardProps) {
   const [cacheBust] = useState(() => Date.now());
+  const [showConditionTooltip, setShowConditionTooltip] = useState(false);
+  const [showCategoryTooltip, setShowCategoryTooltip] = useState(false);
+  const [showTransactionFeeTooltip, setShowTransactionFeeTooltip] = useState(false);
   const item = "item_details" in listing ? listing.item_details : null;
   const title = item?.name || "Vacant Tag";
   const item_price = "item_price" in listing ? listing.item_price : 0;
@@ -186,9 +189,18 @@ export default function ListingCard({
               <div className="flex items-center gap-2">
                 <span className="font-medium">{condition}</span>
                 {conditionDescription && (
-                  <HoverCard>
-                    <HoverCardTrigger className="cursor-default">
-                      <Info className="w-4 h-4 text-muted-foreground" />
+                  <HoverCard open={showConditionTooltip} onOpenChange={setShowConditionTooltip}>
+                    <HoverCardTrigger asChild>
+                      <div
+                        className="cursor-default"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowConditionTooltip(!showConditionTooltip);
+                        }}
+                      >
+                        <Info className="w-4 h-4 text-muted-foreground" />
+                      </div>
                     </HoverCardTrigger>
                     <HoverCardContent className="w-80">
                       <div className="space-y-2">
@@ -208,9 +220,18 @@ export default function ListingCard({
               <div className="flex items-center gap-2">
                 <span className="font-medium">{category}</span>
                 {categoryDescription && (
-                  <HoverCard>
-                    <HoverCardTrigger className="cursor-default">
-                      <Info className="w-4 h-4 text-muted-foreground" />
+                  <HoverCard open={showCategoryTooltip} onOpenChange={setShowCategoryTooltip}>
+                    <HoverCardTrigger asChild>
+                      <div
+                        className="cursor-default"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowCategoryTooltip(!showCategoryTooltip);
+                        }}
+                      >
+                        <Info className="w-4 h-4 text-muted-foreground" />
+                      </div>
                     </HoverCardTrigger>
                     <HoverCardContent className="w-80">
                       <div className="space-y-2">
@@ -248,25 +269,44 @@ export default function ListingCard({
                   {formatCurrency(item_price)}
                 </span>
               </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="text-xl font-medium">
-                    {formatCurrency(listing_price)}
-                  </span>
-                  <HoverCard>
-                    <HoverCardTrigger className="cursor-default">
-                      <Info className="w-4 h-4 text-muted-foreground" />
-                    </HoverCardTrigger>
-                    <HoverCardContent className="w-80">
-                      <div className="space-y-2">
-                        <p className="text-sm text-muted-foreground">
-                          A service fee of 10% of the item price plus £1 helps us
-                          provide this service.
-                        </p>
-                      </div>
-                    </HoverCardContent>
-                  </HoverCard>
+              {"transaction_fee" in listing && listing.transaction_fee !== undefined && (
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-base text-muted-foreground">
+                      {formatCurrency(listing.transaction_fee)}
+                    </span>
+                    <HoverCard open={showTransactionFeeTooltip} onOpenChange={setShowTransactionFeeTooltip}>
+                      <HoverCardTrigger asChild>
+                        <div
+                          className="flex items-center gap-1 cursor-default"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setShowTransactionFeeTooltip(!showTransactionFeeTooltip);
+                          }}
+                        >
+                          <span className="text-xs text-muted-foreground">
+                            (service fee)
+                          </span>
+                          <Info className="w-3 h-3 text-muted-foreground" />
+                        </div>
+                      </HoverCardTrigger>
+                      <HoverCardContent className="w-80">
+                        <div className="space-y-2">
+                          <p className="text-sm text-muted-foreground">
+                            A service fee of 10% of the item price plus £1 helps us
+                            provide this service.
+                          </p>
+                        </div>
+                      </HoverCardContent>
+                    </HoverCard>
+                  </div>
                 </div>
+              )}
+              <div className="flex items-center justify-between">
+                <span className="text-xl font-medium">
+                  {formatCurrency(listing_price)}
+                </span>
               </div>
             </div>
           )}

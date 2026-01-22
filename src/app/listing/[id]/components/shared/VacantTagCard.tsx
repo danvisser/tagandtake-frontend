@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import {
   Card,
   CardContent,
@@ -46,6 +46,16 @@ export default function VacantTagCard({
   footerContent,
   userRole = ListingRoles.VIEWER,
 }: VacantTagCardProps) {
+  const [openTooltips, setOpenTooltips] = useState<Map<number, boolean>>(new Map());
+  
+  const toggleTooltip = (index: number) => {
+    setOpenTooltips((prev) => {
+      const newMap = new Map(prev);
+      newMap.set(index, !prev.get(index));
+      return newMap;
+    });
+  };
+
   // Extract properties from the vacant tag
   const {
     min_listing_days,
@@ -158,11 +168,26 @@ export default function VacantTagCard({
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {store_conditions.map((sc, index) => (
-                      <HoverCard key={index}>
+                      <HoverCard
+                        key={index}
+                        open={openTooltips.get(index) || false}
+                        onOpenChange={(open) => {
+                          setOpenTooltips((prev) => {
+                            const newMap = new Map(prev);
+                            newMap.set(index, open);
+                            return newMap;
+                          });
+                        }}
+                      >
                         <HoverCardTrigger asChild>
                           <Badge
                             variant="secondary"
                             className="px-3 py-1 cursor-pointer truncate"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              toggleTooltip(index);
+                            }}
                           >
                             {sc.condition.condition}
                           </Badge>
@@ -198,29 +223,47 @@ export default function VacantTagCard({
                     Items must belong to one of these categories:
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {store_categories.map((sc, index) => (
-                      <HoverCard key={index}>
-                        <HoverCardTrigger asChild>
-                          <Badge
-                            variant="secondary"
-                            className="px-3 py-1 cursor-pointer truncate"
-                          >
-                            {sc.category.name}
-                          </Badge>
-                        </HoverCardTrigger>
-                        <HoverCardContent className="w-80">
-                          <div className="space-y-2">
-                            <h4 className="text-sm font-semibold">
+                    {store_categories.map((sc, index) => {
+                      const categoryIndex = store_conditions.length + index;
+                      return (
+                        <HoverCard
+                          key={index}
+                          open={openTooltips.get(categoryIndex) || false}
+                          onOpenChange={(open) => {
+                            setOpenTooltips((prev) => {
+                              const newMap = new Map(prev);
+                              newMap.set(categoryIndex, open);
+                              return newMap;
+                            });
+                          }}
+                        >
+                          <HoverCardTrigger asChild>
+                            <Badge
+                              variant="secondary"
+                              className="px-3 py-1 cursor-pointer truncate"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                toggleTooltip(categoryIndex);
+                              }}
+                            >
                               {sc.category.name}
-                            </h4>
-                            <p className="text-sm text-muted-foreground">
-                              {sc.category.description ||
-                                `Items in the ${sc.category.name} category are accepted for listing.`}
-                            </p>
-                          </div>
-                        </HoverCardContent>
-                      </HoverCard>
-                    ))}
+                            </Badge>
+                          </HoverCardTrigger>
+                          <HoverCardContent className="w-80">
+                            <div className="space-y-2">
+                              <h4 className="text-sm font-semibold">
+                                {sc.category.name}
+                              </h4>
+                              <p className="text-sm text-muted-foreground">
+                                {sc.category.description ||
+                                  `Items in the ${sc.category.name} category are accepted for listing.`}
+                              </p>
+                            </div>
+                          </HoverCardContent>
+                        </HoverCard>
+                      );
+                    })}
                   </div>
                 </div>
               </AccordionContent>

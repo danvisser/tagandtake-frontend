@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { PublicStore } from "@src/api/storeApi";
@@ -25,6 +26,16 @@ interface StoreCardProps {
 }
 
 export default function StoreCard({ store }: StoreCardProps) {
+  const [openTooltips, setOpenTooltips] = useState<Map<number, boolean>>(new Map());
+  
+  const toggleTooltip = (id: number) => {
+    setOpenTooltips((prev) => {
+      const newMap = new Map(prev);
+      newMap.set(id, !prev.get(id));
+      return newMap;
+    });
+  };
+
   // Get category and condition details
   const categories = store.category_ids
     .map((id) => getCategoryById(id))
@@ -177,11 +188,26 @@ export default function StoreCard({ store }: StoreCardProps) {
                           </p>
                           <div className="flex flex-wrap gap-2">
                             {conditions.map((condition) => (
-                              <HoverCard key={condition.id}>
+                              <HoverCard
+                                key={condition.id}
+                                open={openTooltips.get(condition.id) || false}
+                                onOpenChange={(open) => {
+                                  setOpenTooltips((prev) => {
+                                    const newMap = new Map(prev);
+                                    newMap.set(condition.id, open);
+                                    return newMap;
+                                  });
+                                }}
+                              >
                                 <HoverCardTrigger asChild>
                                   <Badge
                                     variant="secondary"
                                     className="px-3 py-1 cursor-pointer truncate"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      toggleTooltip(condition.id);
+                                    }}
                                   >
                                     {condition.condition}
                                   </Badge>
@@ -219,11 +245,26 @@ export default function StoreCard({ store }: StoreCardProps) {
                           </p>
                           <div className="flex flex-wrap gap-2">
                             {categories.map((category) => (
-                              <HoverCard key={category.id}>
+                              <HoverCard
+                                key={category.id}
+                                open={openTooltips.get(category.id) || false}
+                                onOpenChange={(open) => {
+                                  setOpenTooltips((prev) => {
+                                    const newMap = new Map(prev);
+                                    newMap.set(category.id, open);
+                                    return newMap;
+                                  });
+                                }}
+                              >
                                 <HoverCardTrigger asChild>
                                   <Badge
                                     variant="secondary"
                                     className="px-3 py-1 cursor-pointer truncate"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      toggleTooltip(category.id);
+                                    }}
                                   >
                                     {category.name}
                                   </Badge>
