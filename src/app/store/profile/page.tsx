@@ -9,7 +9,7 @@ import { Input } from "@src/components/ui/input";
 import { Label } from "@src/components/ui/label";
 import { Textarea } from "@src/components/ui/textarea";
 import { Checkbox } from "@src/components/ui/checkbox";
-import { Settings } from "lucide-react";
+import { Settings, Camera, User } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -523,8 +523,70 @@ function StoreProfileContent() {
 
   const photoSrc = photoPreviewUrl ?? profile?.profile_photo_url ?? null;
 
+  const getImageUrl = (imageUrl: string) => {
+    if (imageUrl.startsWith("blob:")) return imageUrl;
+    const separator = imageUrl.includes("?") ? "&" : "?";
+    return `${imageUrl}${separator}_t=${Date.now()}`;
+  };
+
   return (
     <div className="container mx-auto px-4 py-4 max-w-4xl">
+      <div className="mb-6 flex flex-row flex-wrap items-end justify-between gap-3">
+        <div className="flex items-end gap-4">
+          <div className="relative shrink-0 group">
+            {photoSrc ? (
+              <div className="relative h-24 w-24 md:h-32 md:w-32 lg:h-40 lg:w-40 rounded-full overflow-hidden bg-muted">
+                <Image
+                  src={getImageUrl(photoSrc)}
+                  alt={profile?.store_name || "Store profile"}
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
+            ) : (
+              <div className="h-24 w-24 md:h-32 md:w-32 lg:h-40 lg:w-40 rounded-full bg-muted flex items-center justify-center">
+                <User className="h-12 w-12 md:h-16 md:w-16 lg:h-20 lg:w-20 text-muted-foreground" />
+              </div>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const f = e.target.files?.[0] ?? null;
+                if (f) {
+                  setPhotoFile(f);
+                }
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isSaving.photo || isSubmittingWithPin}
+              className="absolute bottom-0 right-0 h-8 w-8 md:h-10 md:w-10 lg:h-12 lg:w-12 rounded-full bg-background border-2 border-foreground/10 flex items-center justify-center shadow-lg hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Camera className="h-4 w-4 md:h-5 md:w-5 lg:h-6 lg:w-6 text-muted-foreground" />
+            </button>
+          </div>
+          {profile?.store_name && (
+            <div className="flex items-end pb-2">
+              <span className="text-lg md:text-xl lg:text-2xl font-medium text-foreground">
+                {profile.store_name}
+              </span>
+            </div>
+          )}
+        </div>
+        <div className="flex items-end pb-2 shrink-0">
+          <Link href={Routes.STORE.ROOT}>
+            <Button size="sm" variant="outline" className="lg:text-base lg:px-4 lg:py-2">
+              Dashboard
+            </Button>
+          </Link>
+        </div>
+      </div>
+
       <div className="mb-4 flex flex-row flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
           <h1 className="text-3xl font-normal leading-8">Hosting Profile</h1>
@@ -564,16 +626,6 @@ function StoreProfileContent() {
               </div>
 
               <div className="flex flex-col gap-2">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => {
-                    const f = e.target.files?.[0] ?? null;
-                    setPhotoFile(f);
-                  }}
-                />
                 <div className="flex flex-row flex-wrap items-center gap-2">
                   <Button
                     type="button"
@@ -888,6 +940,22 @@ function StoreProfileContent() {
                 Save
               </Button>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Close Account Note */}
+        <Card className="border-muted">
+          <CardContent className="pt-6">
+            <p className="text-sm text-muted-foreground">
+              Looking to close your account? Please{" "}
+              <Link
+                href={Routes.CONTACT}
+                className="text-primary hover:underline"
+              >
+                contact support
+              </Link>{" "}
+              with a request to close your account and we will assist you.
+            </p>
           </CardContent>
         </Card>
 

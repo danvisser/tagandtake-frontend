@@ -237,6 +237,11 @@ export default function Header({ variant }: { variant: UserRole }) {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
+                    <Link href={Routes.MEMBER.SETTINGS} className="w-full">
+                      Settings
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
                     <Link href={Routes.MEMBER.HELP} className="w-full">
                       Help
                     </Link>

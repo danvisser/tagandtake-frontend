@@ -103,7 +103,11 @@ export function RecentActivityTable() {
     let cancelled = false
 
     const load = async () => {
-      if (selectedEventTypes.length === 0) {
+      // When filtering by item, show all event types for that item
+      // Otherwise, respect the selected event type filters
+      const eventTypesToUse = itemFilterId ? QUERYABLE_EVENT_TYPES : selectedEventTypes
+
+      if (eventTypesToUse.length === 0) {
         setLogs([])
         setTotalPages(1)
         setError(null)
@@ -116,7 +120,7 @@ export function RecentActivityTable() {
 
       const res = await getStoreEventLogs({
         page,
-        eventTypes: selectedEventTypes,
+        eventTypes: eventTypesToUse,
         itemId: itemFilterId ?? undefined,
       })
 
@@ -233,8 +237,11 @@ export function RecentActivityTable() {
                 return
               }
               // Commit selection when menu closes, then re-query.
-              setPage(1)
-              setSelectedEventTypes(draftEventTypes)
+              // Only update if draftEventTypes is different and not empty to avoid clearing filters
+              if (draftEventTypes.length > 0 && JSON.stringify(draftEventTypes) !== JSON.stringify(selectedEventTypes)) {
+                setPage(1)
+                setSelectedEventTypes(draftEventTypes)
+              }
             }}
           >
             <DropdownMenuTrigger asChild>

@@ -2,11 +2,13 @@
 
 import { useMemo, useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@src/components/ui/tabs";
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
-import { ChevronLeft, ChevronRight, Search, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, X, Camera, User, LayoutDashboard } from "lucide-react";
 import { UserRoles } from "@src/types/roles";
 import AuthenticatedPage from "@src/components/AuthenticatedPage";
 import LoadingSpinner from "@src/components/LoadingSpinner";
@@ -21,6 +23,7 @@ import {
   SoldItemListing,
   StoreDelistedListing,
 } from "@src/api/listingsApi";
+import { getStoreProfile, StoreProfile } from "@src/api/storeApi";
 import ActiveListingCard from "./components/ActiveListingCard";
 import RecalledListingCard from "./components/RecalledListingCard";
 import DelistedListingCard from "@src/app/store/listings/components/DelistedListingCard";
@@ -56,6 +59,26 @@ function StoreListingsContent() {
 
   const [activeTab, setActiveTab] = useState<"active" | "recalled" | "sold" | "delisted">(initialTab);
   const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<StoreProfile | null>(null);
+  const [profileLoading, setProfileLoading] = useState(true);
+
+  // Load store profile
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const result = await getStoreProfile();
+        if (result.success && result.data) {
+          setProfile(result.data);
+        }
+      } catch (error) {
+        console.error("Error loading store profile:", error);
+      } finally {
+        setProfileLoading(false);
+      }
+    };
+
+    loadProfile();
+  }, []);
 
   // Search state
   const [searchInput, setSearchInput] = useState("");
@@ -400,8 +423,55 @@ function StoreListingsContent() {
     setSearchTerm("");
   }, []);
 
+  const getImageUrl = (imageUrl: string) => {
+    if (imageUrl.startsWith("blob:")) return imageUrl;
+    const separator = imageUrl.includes("?") ? "&" : "?";
+    return `${imageUrl}${separator}_t=${Date.now()}`;
+  };
+
+  const photoSrc = profile?.profile_photo_url ?? null;
+
   return (
     <div className="container mx-auto px-4 py-4">
+      <div className="mb-6 flex flex-row flex-wrap items-end justify-between gap-3">
+        <div className="flex items-end gap-4">
+          <div className="relative shrink-0 group">
+            {profileLoading ? (
+              <div className="h-24 w-24 md:h-32 md:w-32 lg:h-40 lg:w-40 rounded-full bg-muted animate-pulse" />
+            ) : photoSrc ? (
+              <div className="relative h-24 w-24 md:h-32 md:w-32 lg:h-40 lg:w-40 rounded-full overflow-hidden bg-muted">
+                <Image
+                  src={getImageUrl(photoSrc)}
+                  alt={profile?.store_name || "Store profile"}
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
+            ) : (
+              <div className="h-24 w-24 md:h-32 md:w-32 lg:h-40 lg:w-40 rounded-full bg-muted flex items-center justify-center">
+                <User className="h-12 w-12 md:h-16 md:w-16 lg:h-20 lg:w-20 text-muted-foreground" />
+              </div>
+            )}
+          </div>
+          {profile?.store_name && (
+            <div className="flex items-end pb-2">
+              <span className="text-lg md:text-xl lg:text-2xl font-medium text-foreground">
+                {profile.store_name}
+              </span>
+            </div>
+          )}
+        </div>
+        <div className="flex items-end pb-2 shrink-0">
+          <Link href={Routes.STORE.ROOT}>
+            <Button size="sm" variant="outline" className="lg:text-base lg:px-4 lg:py-2">
+              <LayoutDashboard className="h-4 w-4 mr-2" />
+              Dashboard
+            </Button>
+          </Link>
+        </div>
+      </div>
+
       <div className="mb-4 flex flex-row flex-wrap items-center justify-between gap-3">
         <h1 className="text-3xl font-normal leading-8 min-w-0">Listings</h1>
       </div>
