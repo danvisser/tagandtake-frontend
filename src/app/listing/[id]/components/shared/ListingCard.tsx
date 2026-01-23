@@ -88,7 +88,7 @@ export default function ListingCard({
   const conditionDescription = item?.condition_details?.description;
   const category = item?.category_details?.name || "Unknown";
   const categoryDescription = item?.category_details?.description;
-  const size = item?.size;
+  const size = item?.attributes?.size;
   const description = item?.description;
   const images = item?.images || [];
 

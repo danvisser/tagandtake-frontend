@@ -36,7 +36,7 @@ export default function AvailableItemCard({ item, onEditItem, cacheBust }: Avail
   const condition = item.condition_details?.condition || "Unknown";
   const price = item.price;
   const description = item.description;
-  const size = item.size;
+  const size = item.attributes?.size;
 
   return (
     <Card className="w-full overflow-hidden" variant="borderless">

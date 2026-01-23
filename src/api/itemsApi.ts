@@ -60,7 +60,7 @@ export interface Item {
   id: number;
   name: string;
   description?: string;
-  size?: string;
+  attributes?: Record<string, string>;
   price: number;
   condition: number;
   category: number;
@@ -78,7 +78,7 @@ export interface Item {
 export interface ItemCreateData {
   name: string;
   description?: string;
-  size?: string;
+  attributes?: Record<string, string>;
   price: number;
   condition: number;
   category: number;
@@ -89,7 +89,7 @@ export interface ItemCreateData {
 export interface ItemUpdateData {
   name?: string;
   description?: string;
-  size?: string;
+  attributes?: Record<string, string>;
   price?: number;
   condition?: number;
   category?: number;
@@ -100,7 +100,7 @@ export interface ItemUpdateData {
 export interface ItemError {
   name?: string[];
   description?: string[];
-  size?: string[];
+  attributes?: string[];
   price?: string[];
   condition?: string[];
   category?: string[];

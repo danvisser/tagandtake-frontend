@@ -19,7 +19,7 @@ export default function ActiveListingCard({ listing }: ActiveListingCardProps) {
   const item = listing.item_details;
   const image = item?.images?.[0]?.image_url;
   const itemName = item?.name || "Unknown Item";
-  const size = item?.size || "Unknown";
+  const size = item?.attributes?.size || "Unknown";
   const condition = item?.condition_details?.condition || "Unknown";
   const price = listing.listing_price;
 

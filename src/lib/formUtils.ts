@@ -12,7 +12,9 @@ export const appendItemFormData = (
   // Append basic item fields
   formData.append("name", itemData.name);
   if (itemData.description) formData.append("description", itemData.description);
-  if (itemData.size) formData.append("size", itemData.size);
+  if (itemData.attributes) {
+    formData.append("attributes", JSON.stringify(itemData.attributes));
+  }
   formData.append("price", itemData.price.toString());
   formData.append("condition", itemData.condition.toString());
   formData.append("category", itemData.category.toString());
@@ -35,7 +37,9 @@ export const appendItemUpdateFormData = (
   // Append basic item fields if they exist
   if (itemData.name) formData.append("name", itemData.name);
   if (itemData.description) formData.append("description", itemData.description);
-  if (itemData.size) formData.append("size", itemData.size);
+  if (itemData.attributes) {
+    formData.append("attributes", JSON.stringify(itemData.attributes));
+  }
   if (itemData.price) formData.append("price", itemData.price.toString());
   if (itemData.condition) formData.append("condition", itemData.condition.toString());
   if (itemData.category) formData.append("category", itemData.category.toString());

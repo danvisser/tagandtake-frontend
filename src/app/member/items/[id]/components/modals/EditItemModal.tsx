@@ -48,7 +48,7 @@ export default function EditItemModal({
       const updateData: ItemUpdateData = {
         name: data.name,
         description: data.description,
-        size: data.size,
+        attributes: data.attributes,
         price: data.price,
         images: data.images,
       };

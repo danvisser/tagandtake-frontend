@@ -87,7 +87,7 @@ export default function ListingsNewPage() {
       const response = await createItemAndListing({
         name: data.name,
         description: data.description,
-        size: data.size,
+        attributes: data.attributes,
         price: data.price,
         condition: data.condition,
         category: data.category,

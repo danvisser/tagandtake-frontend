@@ -34,7 +34,7 @@ export default function SoldItemCard({ item, cacheBust }: SoldItemCardProps) {
   const condition = item.condition_details?.condition || "Unknown";
   const price = item.price;
   const description = item.description;
-  const size = item.size;
+  const size = item.attributes?.size;
   const listingInfo = item.listing_info;
 
   return (

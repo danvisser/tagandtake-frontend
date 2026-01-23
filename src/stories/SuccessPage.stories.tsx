@@ -45,7 +45,7 @@ const mockPurchaseData: ItemPurchasedResponse = {
       id: 101,
       name: "Blue T-Shirt",
       description: "A comfortable blue t-shirt made from 100% cotton.",
-      size: "M",
+      attributes: { size: "M" },
       price: 25.99,
       condition: 1,
       category: 1,

@@ -24,7 +24,7 @@ export default function ItemCard({ item, tab }: ItemCardProps) {
   const [showTooltip, setShowTooltip] = useState(false);
   const image = item.images?.[0]?.image_url;
   const itemName = item.name || "Unknown Item";
-  const size = item.size || "Unknown";
+  const size = item.attributes?.size || "Unknown";
   const condition = item.condition_details?.condition || "Unknown";
   const price = item.price;
   const status = item.status || ITEM_STATUS.AVAILABLE;

@@ -35,7 +35,7 @@ export default function ItemsNewPage() {
       const itemResponse = await createItem({
         name: data.name,
         description: data.description,
-        size: data.size,
+        attributes: data.attributes,
         price: data.price,
         condition: data.condition,
         category: data.category,

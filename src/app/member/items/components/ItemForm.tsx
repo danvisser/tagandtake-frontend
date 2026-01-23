@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Item } from "@src/api/itemsApi";
 import { itemCategories, itemConditions } from "@src/data/itemReferenceData";
+import { ITEM_SIZES, type ItemSize } from "@src/data/itemSizes";
+import { ITEM_COLORS, COLOR_HEX_MAP, type ItemColor } from "@src/data/itemColors";
 import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
 import { Label } from "@src/components/ui/label";
@@ -203,7 +205,7 @@ function SortableImage({
 export interface ItemFormData {
   name: string;
   description: string;
-  size: string;
+  attributes: Record<string, string>;
   price: number;
   condition: number;
   category: number;
@@ -235,7 +237,12 @@ export default function ItemForm({
 }: ItemFormProps) {
   const [name, setName] = useState(initialItem?.name || "");
   const [description, setDescription] = useState(initialItem?.description || "");
-  const [size, setSize] = useState(initialItem?.size || "");
+  const [size, setSize] = useState(initialItem?.attributes?.size || "");
+  const [sizeSearch, setSizeSearch] = useState(initialItem?.attributes?.size || "");
+  const [showSizeDropdown, setShowSizeDropdown] = useState(false);
+  const [color, setColor] = useState(initialItem?.attributes?.color || "");
+  const [colorSearch, setColorSearch] = useState(initialItem?.attributes?.color || "");
+  const [showColorDropdown, setShowColorDropdown] = useState(false);
   const [price, setPrice] = useState(initialItem?.price?.toString() || "");
   const [condition, setCondition] = useState(initialItem?.condition?.toString() || "");
   const [category, setCategory] = useState(initialItem?.category?.toString() || "");
@@ -252,7 +259,12 @@ export default function ItemForm({
 
     setName(initialItem.name || "");
     setDescription(initialItem.description || "");
-    setSize(initialItem.size || "");
+    const initialSize = initialItem.attributes?.size || "";
+    setSize(initialSize);
+    setSizeSearch(initialSize);
+    const initialColor = initialItem.attributes?.color || "";
+    setColor(initialColor);
+    setColorSearch(initialColor);
     setPrice(initialItem.price?.toString() || "");
     setCondition(initialItem.condition?.toString() || "");
     setCategory(initialItem.category?.toString() || "");
@@ -391,6 +403,13 @@ export default function ItemForm({
 
     if (!size.trim()) {
       newErrors.size = ["Size is required"];
+    } else if (!ITEM_SIZES.includes(size as ItemSize)) {
+      newErrors.size = ["Size must be selected from the list"];
+    }
+
+    // Color is optional, but if provided, must be from the list
+    if (color.trim() && !ITEM_COLORS.includes(color as ItemColor)) {
+      newErrors.color = ["Color must be selected from the list"];
     }
 
     if (!price.trim()) {
@@ -505,10 +524,19 @@ export default function ItemForm({
         return;
       }
 
+      // Build attributes object from selected size and color
+      const attributes: Record<string, string> = {};
+      if (size.trim()) {
+        attributes.size = size.trim();
+      }
+      if (color.trim()) {
+        attributes.color = color.trim();
+      }
+
       const formData: ItemFormData = {
         name,
         description,
-        size,
+        attributes,
         price: Number(price),
         condition: conditionNum,
         category: categoryNum,
@@ -682,15 +710,243 @@ export default function ItemForm({
             <Label htmlFor="size" className="text-md">
               Size
             </Label>
-            <Input
-              id="size"
-              value={size}
-              onChange={(e) => setSize(e.target.value)}
-              placeholder="Any size format accepted"
-              className={`text-base ${errors.size ? "border-destructive" : ""}`}
-            />
+            <div className="relative">
+              <Input
+                id="size"
+                value={sizeSearch}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSizeSearch(value); // Keep what user types (preserve case)
+                  setShowSizeDropdown(true);
+                  // Clear size if user is typing something different
+                  setSize("");
+                  // Don't auto-select - let user see dropdown and select manually
+                }}
+                onFocus={() => {
+                  setShowSizeDropdown(true);
+                }}
+                onBlur={() => {
+                  // Delay to allow click on dropdown item
+                  setTimeout(() => {
+                    setShowSizeDropdown(false);
+                    // On blur, validate that the size is from the list
+                    if (sizeSearch) {
+                      const match = ITEM_SIZES.find(
+                        (s) => s.toLowerCase() === sizeSearch.trim().toLowerCase()
+                      );
+                      if (match) {
+                        setSize(match);
+                        setSizeSearch(match);
+                      } else {
+                        // Clear if not a valid size
+                        setSize("");
+                        setSizeSearch("");
+                      }
+                    } else if (size) {
+                      // If we have a valid size, keep it
+                      if (ITEM_SIZES.includes(size as ItemSize)) {
+                        setSizeSearch(size);
+                      } else {
+                        setSize("");
+                        setSizeSearch("");
+                      }
+                    }
+                  }, 200);
+                }}
+                placeholder="Search and select a size..."
+                className={errors.size ? "border-destructive" : ""}
+              />
+              {showSizeDropdown && (
+                <div className="absolute z-50 w-full mt-1 bg-white border rounded-md shadow-lg max-h-60 overflow-auto">
+                  {(() => {
+                    const searchTerm = sizeSearch.trim().toLowerCase();
+                    const filtered = searchTerm
+                      ? ITEM_SIZES.filter((s) => s.toLowerCase().includes(searchTerm))
+                      : ITEM_SIZES;
+                    
+                    if (filtered.length === 0) {
+                      return (
+                        <div className="px-3 py-2 text-sm text-muted-foreground">
+                          No sizes found. Please select from the list.
+                        </div>
+                      );
+                    }
+                    
+                    return filtered.map((sizeOption) => (
+                      <div
+                        key={sizeOption}
+                        className="px-3 py-2 hover:bg-gray-100 cursor-pointer"
+                        onMouseDown={(e) => {
+                          e.preventDefault(); // Prevent blur
+                          setSize(sizeOption);
+                          setSizeSearch(sizeOption);
+                          setShowSizeDropdown(false);
+                        }}
+                      >
+                        {sizeOption}
+                      </div>
+                    ));
+                  })()}
+                </div>
+              )}
+            </div>
+            {size && (
+              <div className="text-sm text-muted-foreground">
+                Selected: <span className="font-medium">{size}</span>
+              </div>
+            )}
             {errors.size && (
               <p className="text-sm text-destructive">{errors.size[0]}</p>
+            )}
+          </div>
+
+          {/* Color */}
+          <div className="space-y-2">
+            <Label htmlFor="color" className="text-md">
+              Color (Optional)
+            </Label>
+            <div className="relative">
+              <Input
+                id="color"
+                value={colorSearch}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setColorSearch(value); // Keep what user types (preserve case)
+                  setShowColorDropdown(true);
+                  // Clear color if user is typing something different
+                  setColor("");
+                  // Don't auto-select - let user see dropdown and select manually
+                }}
+                onFocus={() => {
+                  setShowColorDropdown(true);
+                }}
+                onBlur={() => {
+                  // Delay to allow click on dropdown item
+                  setTimeout(() => {
+                    setShowColorDropdown(false);
+                    // On blur, validate that the color is from the list (if provided)
+                    if (colorSearch) {
+                      const match = ITEM_COLORS.find(
+                        (c) => c.toLowerCase() === colorSearch.trim().toLowerCase()
+                      );
+                      if (match) {
+                        setColor(match);
+                        setColorSearch(match);
+                      } else {
+                        // Clear if not a valid color
+                        setColor("");
+                        setColorSearch("");
+                      }
+                    } else if (color) {
+                      // If we have a valid color, keep it
+                      if (ITEM_COLORS.includes(color as ItemColor)) {
+                        setColorSearch(color);
+                      } else {
+                        setColor("");
+                        setColorSearch("");
+                      }
+                    }
+                  }, 200);
+                }}
+                placeholder="Search and select a color..."
+                className={errors.color ? "border-destructive" : ""}
+              />
+              {showColorDropdown && (
+                <div className="absolute z-50 w-full mt-1 bg-white border rounded-md shadow-lg max-h-60 overflow-auto">
+                  {(() => {
+                    const searchTerm = colorSearch.trim().toLowerCase();
+                    const filtered = searchTerm
+                      ? ITEM_COLORS.filter((c) => c.toLowerCase().includes(searchTerm))
+                      : ITEM_COLORS;
+                    
+                    if (filtered.length === 0) {
+                      return (
+                        <div className="px-3 py-2 text-sm text-muted-foreground">
+                          No colors found. Please select from the list.
+                        </div>
+                      );
+                    }
+                    
+                    return filtered.map((colorOption) => {
+                      const colorHex = COLOR_HEX_MAP[colorOption];
+                      if (!colorHex) {
+                        // Fallback if color not found in map
+                        return (
+                          <div
+                            key={colorOption}
+                            className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-2"
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              setColor(colorOption);
+                              setColorSearch(colorOption);
+                              setShowColorDropdown(false);
+                            }}
+                          >
+                            <div className="w-4 h-4 rounded border border-gray-300 flex-shrink-0 bg-gray-200" />
+                            <span>{colorOption}</span>
+                          </div>
+                        );
+                      }
+                      
+                      const isGradient = colorHex.startsWith('linear-gradient') || 
+                                        colorHex.startsWith('radial-gradient') || 
+                                        colorHex.startsWith('repeating-linear-gradient');
+                      
+                      return (
+                        <div
+                          key={colorOption}
+                          className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex items-center gap-2"
+                          onMouseDown={(e) => {
+                            e.preventDefault(); // Prevent blur
+                            setColor(colorOption);
+                            setColorSearch(colorOption);
+                            setShowColorDropdown(false);
+                          }}
+                        >
+                          <div
+                            className="w-4 h-4 rounded border border-gray-300 flex-shrink-0"
+                            style={
+                              isGradient
+                                ? { background: colorHex }
+                                : { backgroundColor: colorHex }
+                            }
+                          />
+                          <span>{colorOption}</span>
+                        </div>
+                      );
+                    });
+                  })()}
+                </div>
+              )}
+            </div>
+            {color && (
+              <div className="text-sm text-muted-foreground flex items-center gap-2">
+                <span>Selected:</span>
+                <div className="flex items-center gap-1.5">
+                  {(() => {
+                    const colorHex = color && ITEM_COLORS.includes(color as ItemColor) 
+                      ? COLOR_HEX_MAP[color as ItemColor] 
+                      : undefined;
+                    const isGradient = colorHex?.startsWith('linear-gradient') || 
+                                      colorHex?.startsWith('radial-gradient') || 
+                                      colorHex?.startsWith('repeating-linear-gradient');
+                    const swatchStyle: React.CSSProperties = isGradient
+                      ? { background: colorHex }
+                      : { backgroundColor: colorHex };
+                    
+                    return (
+                      <div
+                        className="w-4 h-4 rounded border border-gray-300 flex-shrink-0"
+                        style={swatchStyle}
+                      />
+                    );
+                  })()}
+                  <span className="font-medium">{color}</span>
+                </div>
+              </div>
+            )}
+            {errors.color && (
+              <p className="text-sm text-destructive">{errors.color[0]}</p>
             )}
           </div>
 
