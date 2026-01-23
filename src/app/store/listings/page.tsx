@@ -8,7 +8,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@src/components/ui/tab
 import { Badge } from "@src/components/ui/badge";
 import { Button } from "@src/components/ui/button";
 import { Input } from "@src/components/ui/input";
-import { ChevronLeft, ChevronRight, Search, X, Camera, User, LayoutDashboard } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search, X, User, LayoutDashboard } from "lucide-react";
 import { UserRoles } from "@src/types/roles";
 import AuthenticatedPage from "@src/components/AuthenticatedPage";
 import LoadingSpinner from "@src/components/LoadingSpinner";

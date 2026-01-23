@@ -1,9 +1,15 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@src/components/ui/card";
 import { Input } from "@src/components/ui/input";
-import { Search } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@src/components/ui/accordion";
+import { Search, ChevronRight, Shirt, Search as SearchIcon, CreditCard, Store } from "lucide-react";
 import { storeHelpContent, type HelpSection, type HelpSubSection } from "@src/data/storeHelpContent";
 
 export default function StoreHelpPage() {
@@ -21,6 +27,7 @@ interface FilteredSection extends HelpSection {
 
 function StoreHelpContent() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [openAccordionItems, setOpenAccordionItems] = useState<string[]>([]);
 
   const filteredSections = useMemo((): FilteredSection[] => {
     if (!searchTerm.trim()) {
@@ -49,14 +56,9 @@ function StoreHelpContent() {
               subSection.steps?.some((step) => step.text.toLowerCase().includes(term)) ?? false;
 
             if (subTitleMatch || descriptionMatch || contentMatch || stepsMatch) {
-              // If searching, filter steps to only show matching ones
-              const filteredSteps = subSection.steps?.filter((step) =>
-                step.text.toLowerCase().includes(term)
-              );
-
+              // If any step matches, show all steps in the subsection
               return {
                 ...subSection,
-                steps: filteredSteps && filteredSteps.length > 0 ? filteredSteps : subSection.steps,
                 hasMatch: true,
               };
             }
@@ -76,7 +78,24 @@ function StoreHelpContent() {
       .filter((section): section is FilteredSection => section !== null);
   }, [searchTerm]);
 
-  const highlightText = (text: string, searchTerm: string) => {
+  // Update open accordion items when searching
+  React.useEffect(() => {
+    if (!searchTerm.trim()) {
+      setOpenAccordionItems([]); // Close all when no search
+      return;
+    }
+    // Open all matching accordion items when searching
+    const items: string[] = [];
+    filteredSections.forEach((section) => {
+      section.subSections.forEach((subSection) => {
+        const itemId = `${section.title}-${subSection.title}`.toLowerCase().replace(/\s+/g, "-");
+        items.push(itemId);
+      });
+    });
+    setOpenAccordionItems(items);
+  }, [searchTerm, filteredSections]);
+
+  const highlightText = (text: string, searchTerm: string, inline: boolean = false) => {
     if (!searchTerm.trim()) {
       return text;
     }
@@ -85,7 +104,7 @@ function StoreHelpContent() {
     const regex = new RegExp(`(${escapedTerm})`, "gi");
     const parts = text.split(regex);
 
-    return (
+    const content = (
       <>
         {parts.map((part, index) =>
           regex.test(part) ? (
@@ -98,12 +117,62 @@ function StoreHelpContent() {
         )}
       </>
     );
+
+    // Wrap in span for inline contexts (like titles) to preserve flex layout
+    return inline ? <span>{content}</span> : content;
+  };
+
+  const scrollToSection = (sectionTitle: string) => {
+    const id = sectionTitle.toLowerCase().replace(/\s+/g, "-");
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+      // Small delay to ensure accordion is expanded if needed
+      setTimeout(() => {
+        const accordionTrigger = element.querySelector('[data-state="closed"]');
+        if (accordionTrigger) {
+          (accordionTrigger as HTMLElement).click();
+        }
+      }, 100);
+    }
   };
 
   return (
     <div className="container mx-auto px-4 py-4 max-w-4xl">
       <div className="mb-4">
         <h1 className="text-3xl font-normal leading-8">Help Center</h1>
+      </div>
+
+      {/* Quick Links */}
+      <div className="mb-6 space-y-2">
+        {storeHelpContent.map((section) => {
+            const getIcon = () => {
+              switch (section.title) {
+                case "Hosting basics":
+                  return <Shirt className="h-4 w-4" />;
+                case "Troubleshooting":
+                  return <SearchIcon className="h-4 w-4" />;
+                case "Payments and withdrawals":
+                  return <CreditCard className="h-4 w-4" />;
+                case "Account and settings":
+                  return <Store className="h-4 w-4" />;
+                default:
+                  return null;
+              }
+            };
+
+            return (
+              <button
+                key={section.title}
+                onClick={() => scrollToSection(section.title)}
+                className="flex items-center gap-2 text-sm text-primary hover:underline"
+              >
+                {getIcon()}
+                <span>{section.title}</span>
+                <ChevronRight className="h-4 w-4 ml-auto" />
+              </button>
+            );
+          })}
       </div>
 
       <div className="mb-6">
@@ -130,43 +199,69 @@ function StoreHelpContent() {
           </Card>
         ) : (
           filteredSections.map((section) => (
-            <Card key={section.title} className="overflow-hidden">
+            <Card key={section.title} id={section.title.toLowerCase().replace(/\s+/g, "-")} className="overflow-hidden scroll-mt-4">
               <CardHeader className="pb-3">
-                <CardTitle className="text-xl">{highlightText(section.title, searchTerm)}</CardTitle>
+                <CardTitle className="text-xl flex items-center gap-2">
+                  {(() => {
+                    switch (section.title) {
+                      case "Hosting basics":
+                        return <Shirt className="h-5 w-5 text-muted-foreground" />;
+                      case "Troubleshooting":
+                        return <SearchIcon className="h-5 w-5 text-muted-foreground" />;
+                      case "Payments and withdrawals":
+                        return <CreditCard className="h-5 w-5 text-muted-foreground" />;
+                      case "Account and settings":
+                        return <Store className="h-5 w-5 text-muted-foreground" />;
+                      default:
+                        return null;
+                    }
+                  })()}
+                  {highlightText(section.title, searchTerm, true)}
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
-                {section.subSections.map((subSection, subIndex) => (
-                  <div
-                    key={subSection.title}
-                    className={`${subIndex > 0 ? "pt-4 border-t border-border" : ""}`}
-                  >
-                    <h3 className="font-semibold text-base mb-2 text-foreground">
-                      {highlightText(subSection.title, searchTerm)}
-                    </h3>
+              <CardContent>
+                <Accordion
+                  type="multiple"
+                  className="w-full"
+                  value={openAccordionItems}
+                  onValueChange={setOpenAccordionItems}
+                >
+                  {section.subSections.map((subSection) => {
+                    const itemId = `${section.title}-${subSection.title}`.toLowerCase().replace(/\s+/g, "-");
+                    return (
+                      <AccordionItem key={subSection.title} value={itemId}>
+                        <AccordionTrigger className="text-base">
+                          {highlightText(subSection.title, searchTerm)}
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="space-y-3">
+                            {subSection.description && (
+                              <p className="text-sm text-muted-foreground">
+                                {highlightText(subSection.description, searchTerm)}
+                              </p>
+                            )}
 
-                    {subSection.description && (
-                      <p className="text-sm text-muted-foreground mb-3">
-                        {highlightText(subSection.description, searchTerm)}
-                      </p>
-                    )}
+                            {subSection.content && (
+                              <p className="text-sm text-muted-foreground">
+                                {highlightText(subSection.content, searchTerm)}
+                              </p>
+                            )}
 
-                    {subSection.content && (
-                      <p className="text-sm text-muted-foreground mb-3">
-                        {highlightText(subSection.content, searchTerm)}
-                      </p>
-                    )}
-
-                    {subSection.steps && subSection.steps.length > 0 && (
-                      <ol className="list-decimal pl-5 space-y-2 text-sm text-muted-foreground">
-                        {subSection.steps.map((step, stepIndex) => (
-                          <li key={stepIndex} className="pl-2">
-                            {highlightText(step.text, searchTerm)}
-                          </li>
-                        ))}
-                      </ol>
-                    )}
-                  </div>
-                ))}
+                            {subSection.steps && subSection.steps.length > 0 && (
+                              <ol className="list-decimal pl-5 space-y-2 text-sm text-muted-foreground">
+                                {subSection.steps.map((step, stepIndex) => (
+                                  <li key={stepIndex} className="pl-2">
+                                    {highlightText(step.text, searchTerm)}
+                                  </li>
+                                ))}
+                              </ol>
+                            )}
+                          </div>
+                        </AccordionContent>
+                      </AccordionItem>
+                    );
+                  })}
+                </Accordion>
               </CardContent>
             </Card>
           ))

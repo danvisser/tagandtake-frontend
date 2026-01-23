@@ -19,8 +19,8 @@ export const storeHelpContent: HelpSection[] = [
     title: "Hosting basics",
     subSections: [
       {
-        title: "Listing items",
-        description: "How to list items in your store",
+        title: "Accepting listings",
+        description: "How to accept and list items in your store",
         steps: [
           { text: "Step 1: Scan the tag" },
           { text: "Step 2: Enter item details" },
@@ -28,33 +28,18 @@ export const storeHelpContent: HelpSection[] = [
         ],
       },
       {
-        title: "Managing items",
-        description: "How to manage your listed items",
+        title: "Managing stock",
+        description: "How to manage your listed items and handle recalls",
         steps: [
           { text: "View all active listings" },
           { text: "Edit item details if needed" },
-          { text: "Handle recalls when necessary" },
+          { text: "Recall items when necessary" },
+          { text: "Go to the listing details page" },
+          { text: "Click 'Recall Item'" },
+          { text: "Provide reason for recall" },
+          { text: "Confirm recall" },
         ],
       },
-    ],
-  },
-  {
-    title: "Collections",
-    subSections: [
-      {
-        title: "Processing collections",
-        description: "How to handle item collections",
-        steps: [
-          { text: "Verify member identity" },
-          { text: "Scan the tag" },
-          { text: "Confirm collection" },
-        ],
-      },
-    ],
-  },
-  {
-    title: "Sales",
-    subSections: [
       {
         title: "Processing sales",
         description: "How to process item sales",
@@ -64,21 +49,22 @@ export const storeHelpContent: HelpSection[] = [
           { text: "Remove tag after sale" },
         ],
       },
-    ],
-  },
-  {
-    title: "Replacing tags",
-    subSections: [
       {
-        title: "Replacing tags (not scanning/damaged)",
-        description:
-          "It is common that tags need replacing because they are not scanning or tags are damaged. Here's how to replace them:",
+        title: "Collections",
+        description: "How to handle item collections",
         steps: [
-          { text: "Identify the damaged or non-scanning tag" },
-          { text: "Go to the listing details page" },
-          { text: "Click 'Replace Tag'" },
-          { text: "Scan the new tag" },
-          { text: "Confirm replacement" },
+          { text: "Verify member identity" },
+          { text: "Scan the tag" },
+          { text: "Confirm collection" },
+        ],
+      },
+      {
+        title: "Abandoned items",
+        description: "How to handle abandoned items",
+        steps: [
+          { text: "Identify items that have been abandoned" },
+          { text: "Remove the tag from the item" },
+          { text: "Mark the item as abandoned in the system" },
         ],
       },
     ],
@@ -92,46 +78,52 @@ export const storeHelpContent: HelpSection[] = [
         content:
           "If you encounter issues with tags not scanning, check the tag condition and ensure it's properly attached to the item.",
       },
-    ],
-  },
-  {
-    title: "Dashboard notifications",
-    subSections: [
+      {
+        title: "Replacing tags",
+        description:
+          "It is common that tags need replacing because they are not scanning or tags are damaged. Here's how to replace them:",
+        steps: [
+          { text: "Identify the damaged or non-scanning tag" },
+          { text: "Go to the listing details page" },
+          { text: "Click 'Replace Tag'" },
+          { text: "Scan the new tag" },
+          { text: "Confirm replacement" },
+        ],
+      },
+      {
+        title: "Lost or stolen items",
+        description: "What to do if an item is lost or stolen",
+        content:
+          "If an item goes missing or is stolen from your store, document the incident and contact support immediately. Provide details about when the item was last seen and any relevant information.",
+      },
+      {
+        title: "Damaged items",
+        description: "Handling items that are damaged while in store",
+        content:
+          "If an item is damaged while in your store, document the damage with photos and contact support. The item owner will need to be notified and arrangements made for collection or compensation.",
+      },
+      {
+        title: "Refunds",
+        description: "Processing refunds for sold items",
+        content:
+          "If a refund is required for a sold item, contact support with the listing details and reason for refund. Refunds will be processed according to your store's policy and the platform's terms.",
+      },
       {
         title: "Understanding notifications",
         description: "How to read and act on dashboard notifications",
-        steps: [
-          { text: "Check the dashboard regularly" },
-          { text: "Review action required items" },
-          { text: "Complete pending tasks" },
-        ],
-      },
-    ],
-  },
-  {
-    title: "Listing page",
-    subSections: [
-      {
-        title: "Using the listing page",
-        description: "How to navigate and use the listings page",
         content:
-          "The listings page shows all your active, recalled, sold, and delisted items. Use the tabs to filter by status.",
+          "Notifications and badge numbers on your dashboard and listings page are there to notify you when you need to take action. This includes removing tags, handling abandoned items, processing recalls, and other tasks that require your attention. Check these regularly and complete pending tasks promptly.",
       },
-    ],
-  },
-  {
-    title: "Recent activity",
-    subSections: [
       {
-        title: "Viewing activity",
-        description: "How to view recent activity in your store",
+        title: "Finding item information",
+        description: "How to find information about items for customer disputes or questions",
         content:
-          "The recent activity section shows all actions taken on your listings, including sales, collections, and tag replacements.",
+          "If you need to handle customer disputes or answer questions about what has happened to an item, you can search for it on the listings page using the search function, or find it in the recent activity section and click 'Item history' to see the full history of that item.",
       },
     ],
   },
   {
-    title: "Payment and withdrawals",
+    title: "Payments and withdrawals",
     subSections: [
       {
         title: "Managing payments",
