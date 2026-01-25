@@ -22,7 +22,7 @@ type HeroButton = {
 };
 
 type HeroContent = {
-  title: string;
+  title: string | React.ReactNode;
   subtitle: React.ReactNode | null;
   buttons: HeroButton[];
 };
@@ -42,7 +42,11 @@ export default function HomePage() {
 
   const heroContent: Record<PageVariant, HeroContent> = {
     [UserRoles.GUEST]: {
-      title: "Your new favourite marketplace",
+      title: (
+        <>
+          Buy and sell clothes <span className="underline decoration-primary/70">in-store</span>
+        </>
+      ),
       subtitle: (
         <p className="text-xl md:text-2xl lg:text-3xl xl:text-4xl text-white drop-shadow-md">
           <span className="italic font-medium">No messaging. No shipping. Just drop off and earn </span>
