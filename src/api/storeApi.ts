@@ -222,7 +222,7 @@ export const generateNewStorePin = async (): Promise<{
   try {
     const { data } = await fetchClient({
       method: "PATCH",
-      url: API_ROUTES.STORES.PIN,
+      url: API_ROUTES.STORES.UPDATE_PIN,
     });
 
     return {
@@ -638,5 +638,38 @@ export const getBasicStoreInfo = async (
       };
     }
     throw error;
+  }
+};
+
+// Validate store PIN
+export const validateStorePin = async (
+  pin: string
+): Promise<{
+  success: boolean;
+  error?: string;
+}> => {
+  try {
+    await fetchClient({
+      method: "PUT",
+      url: API_ROUTES.STORES.VALIDATE_PIN,
+      data: { pin },
+    });
+
+    return {
+      success: true,
+    };
+  } catch (error: unknown) {
+    console.error("Validate store PIN error:", error);
+    if (axios.isAxiosError(error)) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.detail || "Invalid PIN",
+      };
+    }
+    return {
+      success: false,
+      error: "Failed to validate PIN",
+    };
   }
 };
