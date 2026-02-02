@@ -44,12 +44,15 @@ export default function HomePage() {
     [UserRoles.GUEST]: {
       title: (
         <>
-          Buy and sell clothes <span className="underline decoration-primary/70">in-store</span>
+        <span className="text-left block font-medium">
+          Your new favourite marketplace. <br />
+          Buy and sell clothes <span className="underline decoration-primary">in-store</span>
+          </span>
         </>
       ),
       subtitle: (
         <p className="text-xl md:text-2xl lg:text-3xl xl:text-4xl text-white drop-shadow-md">
-          <span className="italic font-medium">No messaging. No shipping. Just drop off and earn </span>
+          <span className="italic text-left block font-normal">No messaging. No shipping. Just drop off and earn </span>
         </p>
       ),
       buttons: [
